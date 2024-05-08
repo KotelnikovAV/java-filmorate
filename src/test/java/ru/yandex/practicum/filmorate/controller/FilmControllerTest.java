@@ -85,8 +85,7 @@ class FilmControllerTest {
     }
 
     @Test
-    public void checkCreateNotValidDescriptionFilm() {
-        FilmController filmController1 = new FilmController();
+    public void checkCreateNotValidDescriptionFilm() throws Exception {
         Film film1 = Film.builder()
                 .name("Терминатор 2")
                 .description("5!7@$#9s6Gt^4D*2+hQlp~xoV0w3FjYbu1cEznC&L8K-WqrRiXvUJMyfdkPZTaIBOmNgH5!7@$#9s6Gt^4D*2" +
@@ -95,9 +94,10 @@ class FilmControllerTest {
                 .releaseDate(LocalDate.of(1980, 1, 1))
                 .duration(140)
                 .build();
-        ValidationException thrown = assertThrows(ValidationException.class, () -> filmController1.create(film1));
-        assertEquals("Описание должно содержать меньше 200 символов",
-                thrown.getMessage());
+        this.mockMvc.perform(post("/films")
+                .content(mapper.writeValueAsString(film1))
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")).andExpect(status().is4xxClientError());
     }
 
     @Test
