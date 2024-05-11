@@ -4,28 +4,28 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmManager;
+import ru.yandex.practicum.filmorate.service.FilmServiceImp;
 
 import java.util.Collection;
 
 
 @RestController
 @RequestMapping("/films")
-public final class FilmController {
-    private final FilmManager filmManager = new FilmManager();
+public class FilmController {
+    private final FilmServiceImp filmService = new FilmServiceImp();
 
     @GetMapping
     public Collection<Film> findAll() {
-        return filmManager.findAll();
+        return filmService.findAll();
     }
 
     @PostMapping
-    public Film create(@Valid @RequestBody final Film film) {
-        return filmManager.create(film);
+    public Film create(@Valid @RequestBody Film film) {
+        return filmService.create(film);
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody final Film newFilm) {
-        return filmManager.update(newFilm);
+    public Film update(@Valid @RequestBody Film newFilm) {
+        return filmService.update(newFilm);
     }
 }

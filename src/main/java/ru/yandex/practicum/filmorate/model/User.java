@@ -14,6 +14,7 @@ public class User {
     @Email
     private String email;
     @NotBlank
+    @Pattern(regexp = "^[A-Za-z0-9]*$", message = "имя пользователя должно быть без специальных символов и пробелов")
     private String login;
     private String name;
     @PastOrPresent

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -12,16 +13,19 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 @Slf4j
-public final class FilmManager {
+public final class FilmServiceImp implements FilmService {
     private static final LocalDate MINIMUM_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     private final Map<Integer, Film> films = new HashMap<>();
 
+    @Override
     public Collection<Film> findAll() {
         return films.values();
     }
 
+    @Override
     public Film create(Film film) {
         log.info("Начало процесса создания нового фильма");
 
@@ -36,6 +40,7 @@ public final class FilmManager {
         return film;
     }
 
+    @Override
     public Film update(Film newFilm) {
         log.info("Начало процесса обновления фильма");
 

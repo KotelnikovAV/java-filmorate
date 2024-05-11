@@ -8,7 +8,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -32,7 +31,7 @@ class UserControllerTest {
     public void checkCreateValidUser() throws Exception {
         User user1 = User.builder()
                 .name("Андрей")
-                .login("qwer")
+                .login("andrey1")
                 .email("qwer@ya.ru")
                 .birthday(LocalDate.of(1996, 10, 20))
                 .build();
@@ -58,7 +57,6 @@ class UserControllerTest {
 
     @Test
     public void checkCreateNotValidLoginUser() throws Exception {
-        UserController userController1 = new UserController();
         User user1 = User.builder()
                 .name("Андрей")
                 .login("")
@@ -75,8 +73,6 @@ class UserControllerTest {
                 .content(mapper.writeValueAsString(user1))
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")).andExpect(status().is4xxClientError());
-        ValidationException thrown = assertThrows(ValidationException.class, () -> userController1.create(user2));
-        assertEquals("Логин не может содержать пробелы", thrown.getMessage());
     }
 
     @Test
