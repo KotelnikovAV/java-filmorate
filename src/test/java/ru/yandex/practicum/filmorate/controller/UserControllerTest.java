@@ -3,12 +3,15 @@ package ru.yandex.practicum.filmorate.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.service.UserServiceImp;
 
 import java.time.LocalDate;
 
@@ -18,7 +21,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@WebMvcTest
+@SpringBootTest
+@AutoConfigureMockMvc
 class UserControllerTest {
     @Autowired
     ObjectMapper mapper;
@@ -91,7 +95,8 @@ class UserControllerTest {
 
     @Test
     public void checkUpdateNotValidIdFilm() {
-        UserController userController1 = new UserController();
+        UserService userService = new UserServiceImp();
+        UserController userController1 = new UserController(userService);
         User user1 = User.builder()
                 .id(4)
                 .name("Андрей")
