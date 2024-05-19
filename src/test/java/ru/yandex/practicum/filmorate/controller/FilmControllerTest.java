@@ -13,6 +13,10 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.FilmServiceImp;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 
@@ -30,7 +34,7 @@ class FilmControllerTest {
     @MockBean
     FilmController filmController;
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Test
     public void checkCreateValidFilm() throws Exception {
@@ -43,7 +47,7 @@ class FilmControllerTest {
         this.mockMvc.perform(post("/films")
                 .content(mapper.writeValueAsString(film1))
                 .contentType(MediaType.APPLICATION_JSON)
-                .characterEncoding("utf-8")).andExpect(status().isOk());
+                .characterEncoding("utf-8")).andExpect(status().is2xxSuccessful());
     }
 
     @Test
@@ -76,8 +80,10 @@ class FilmControllerTest {
 
     @Test
     public void checkCreateNotValidLocalDateFilm() {
-        FilmService filmService = new FilmServiceImp();
-        FilmController filmController1 = new FilmController(filmService);
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        UserStorage userStorage = new InMemoryUserStorage();
+        FilmService filmService = new FilmServiceImp(filmStorage, userStorage);
+        FilmController filmController1 = new FilmController(filmStorage, filmService);
         Film film1 = Film.builder()
                 .name("Терминатор 2")
                 .description("Про терминатора")
@@ -107,8 +113,10 @@ class FilmControllerTest {
 
     @Test
     public void checkUpdateNotValidIdFilm() {
-        FilmService filmService = new FilmServiceImp();
-        FilmController filmController1 = new FilmController(filmService);
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        UserStorage userStorage = new InMemoryUserStorage();
+        FilmService filmService = new FilmServiceImp(filmStorage, userStorage);
+        FilmController filmController1 = new FilmController(filmStorage, filmService);
         Film film1 = Film.builder()
                 .id(4)
                 .name("Человек паук 2")

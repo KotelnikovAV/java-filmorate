@@ -6,12 +6,13 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
 @EqualsAndHashCode(of = {"id"})
 public class Film {
-    private int id;
+    private long id;
     @NotBlank
     private String name;
     @Size(max = 200)
@@ -19,4 +20,5 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private int duration;
+    private List<Long> likes;
 }
