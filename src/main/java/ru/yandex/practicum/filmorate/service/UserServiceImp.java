@@ -5,27 +5,27 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
 @Slf4j
 public class UserServiceImp implements UserService {
-    private final InMemoryUserStorage inMemoryUserStorage;
+    private final UserStorage userStorage;
 
-    public UserServiceImp(UserStorage inMemoryUserStorage) {
-        this.inMemoryUserStorage = (InMemoryUserStorage) inMemoryUserStorage;
+    public UserServiceImp(UserStorage userStorage) {
+        this.userStorage = userStorage;
     }
 
     @Override
     public User addFriend(long id, long friendId) {
         log.info("Начало процесса добавления друга");
         log.debug("Значения переменных при добавлении друга id и friendId: " + id + ", " + friendId);
-        List<Long> friends = inMemoryUserStorage.getUser(id).getFriends();
-        User user = inMemoryUserStorage.getUser(id);
-        User friend = inMemoryUserStorage.getUser(friendId);
+        List<Long> friends = userStorage.getUser(id).getFriends();
+        User user = userStorage.getUser(id);
+        User friend = userStorage.getUser(friendId);
 
         if (friends.contains(friendId)) {
             log.info("Данный пользователь уже есть в друзьях");
@@ -42,8 +42,8 @@ public class UserServiceImp implements UserService {
     public User deleteFriend(long id, long friendId) {
         log.info("Начало процесса удаления друга");
         log.debug("Значения переменных при удалении друга id и friendId: " + id + ", " + friendId);
-        User user = inMemoryUserStorage.getUser(id);
-        User friend = inMemoryUserStorage.getUser(friendId);
+        User user = userStorage.getUser(id);
+        User friend = userStorage.getUser(friendId);
         List<Long> userFriends = user.getFriends();
         List<Long> friendFriends = friend.getFriends();
 
@@ -62,8 +62,8 @@ public class UserServiceImp implements UserService {
     public List<User> getMutualFriends(long id, long otherId) {
         log.info("Начало процесса получения списка общих друзей");
         log.debug("Значения переменных при получении списка общих друзей id и otherId: " + id + ", " + otherId);
-        List<Long> userFriends = inMemoryUserStorage.getUser(id).getFriends();
-        User otherUser = inMemoryUserStorage.getUser(otherId);
+        List<Long> userFriends = userStorage.getUser(id).getFriends();
+        User otherUser = userStorage.getUser(otherId);
         List<Long> otherUserFriends = otherUser.getFriends();
         List<Long> mutualFriends = userFriends.stream().filter(otherUserFriends::contains).toList();
 
@@ -73,15 +73,35 @@ public class UserServiceImp implements UserService {
         }
 
         log.info("Список общих друзей получен");
-        return mutualFriends.stream().map(inMemoryUserStorage::getUser).toList();
+        return mutualFriends.stream().map(userStorage::getUser).toList();
     }
 
     @Override
     public List<User> getAllFriends(long id) {
         log.info("Начало процесса получения списка всех друзей");
         log.debug("Значения переменной при получении списка всех друзей id: " + id);
-        List<Long> friends = inMemoryUserStorage.getUser(id).getFriends();
+        List<Long> friends = userStorage.getUser(id).getFriends();
         log.info("Список всех друзей получен");
-        return friends.stream().map(inMemoryUserStorage::getUser).toList();
+        return friends.stream().map(userStorage::getUser).toList();
+    }
+
+    @Override
+    public Collection<User> findAll() {
+        return userStorage.findAll();
+    }
+
+    @Override
+    public User create(User user) {
+        return userStorage.create(user);
+    }
+
+    @Override
+    public User update(User newUser) {
+        return userStorage.update(newUser);
+    }
+
+    @Override
+    public User getUser(long id) {
+       return userStorage.getUser(id);
     }
 }

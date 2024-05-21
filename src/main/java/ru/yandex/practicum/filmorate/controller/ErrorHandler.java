@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,35 +12,41 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
 
 @RestControllerAdvice
+@Slf4j
 public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleDuplicatedData(final DuplicatedDataException e) {
+    public ErrorResponse handleDuplicatedData(DuplicatedDataException e) {
+        log.warn("Возникло исключение DuplicatedDataException. " + e.getMessage());
         return new ErrorResponse("Дублирование данных", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundData(final NotFoundException e) {
+    public ErrorResponse handleNotFoundData(NotFoundException e) {
+        log.warn("Возникло исключение NotFoundException. " + e.getMessage());
         return new ErrorResponse("Данные не найдены", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleNotValidationData(final ValidationException e) {
+    public ErrorResponse handleNotValidationData(ValidationException e) {
+        log.warn("Возникло исключение ValidationException. " + e.getMessage());
         return new ErrorResponse("Введены некорректные данные", e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleNotValidationData(final Throwable e) {
+    public ErrorResponse handleNotValidationData(Throwable e) {
+        log.warn("Возникло исключение Throwable. " + e.getMessage());
         return new ErrorResponse("Ошибка", "Произошла непредвиденная ошибка.");
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleNotValidationData1(final MethodArgumentNotValidException e) {
+    public ErrorResponse handleNotValidationData1(MethodArgumentNotValidException e) {
+        log.warn("Возникло исключение MethodArgumentNotValidException. " + e.getMessage());
         return new ErrorResponse("Введены некорректные данные", e.getMessage());
     }
 }

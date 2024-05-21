@@ -54,6 +54,7 @@ public class InMemoryUserStorage implements UserStorage {
         return oldUser;
     }
 
+    @Override
     public User getUser(long id) {
         if (!users.containsKey(id)) {
             log.info("Пользователя с таким id не существует");

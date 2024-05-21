@@ -83,7 +83,7 @@ class FilmControllerTest {
         FilmStorage filmStorage = new InMemoryFilmStorage();
         UserStorage userStorage = new InMemoryUserStorage();
         FilmService filmService = new FilmServiceImp(filmStorage, userStorage);
-        FilmController filmController1 = new FilmController(filmStorage, filmService);
+        FilmController filmController1 = new FilmController(filmService);
         Film film1 = Film.builder()
                 .name("Терминатор 2")
                 .description("Про терминатора")
@@ -116,7 +116,7 @@ class FilmControllerTest {
         FilmStorage filmStorage = new InMemoryFilmStorage();
         UserStorage userStorage = new InMemoryUserStorage();
         FilmService filmService = new FilmServiceImp(filmStorage, userStorage);
-        FilmController filmController1 = new FilmController(filmStorage, filmService);
+        FilmController filmController1 = new FilmController(filmService);
         Film film1 = Film.builder()
                 .id(4)
                 .name("Человек паук 2")

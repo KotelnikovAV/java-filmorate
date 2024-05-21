@@ -2,56 +2,42 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
 import java.util.Collection;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmStorage filmStorage;
-    private final FilmService filmServiceImp;
+    private final FilmService filmService;
 
-    public FilmController(FilmStorage filmStorage, FilmService filmServiceImp) {
-        this.filmStorage = filmStorage;
-        this.filmServiceImp = filmServiceImp;
+    public FilmController(FilmService filmServiceImp) {
+        this.filmService = filmServiceImp;
     }
 
     @GetMapping
     public Collection<Film> findAll() {
-        return filmStorage.findAll();
-    }
-
-    @GetMapping("/popular")
-    public Collection<Film> getFilms(@RequestParam (defaultValue = "10") int count) {
-        return filmServiceImp.getFilms(count);
+        log.info("Получен HTTP-запрос по адресу /films (метод GET). Вызван метод findAll()");
+        return filmService.findAll();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Film create(@Valid @RequestBody Film film) {
-        return filmStorage.create(film);
+        log.info("Получен HTTP-запрос по адресу /films (метод Post). "
+                + "Вызван метод create(@Valid @RequestBody Film film)");
+        return filmService.create(film);
     }
 
     @PutMapping
     public Film update(@Valid @RequestBody Film newFilm) {
-        return filmStorage.update(newFilm);
-    }
-
-    @PutMapping("/{id}/like/{userId}")
-    public Film addLike(@PathVariable long id,
-                        @PathVariable long userId) {
-        return filmServiceImp.addLike(id, userId);
-    }
-
-    @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteLike(@PathVariable long id,
-                           @PathVariable long userId) {
-        return filmServiceImp.deleteLike(id, userId);
+        log.info("Получен HTTP-запрос по адресу /films (метод Put). "
+                + "Вызван метод update(@Valid @RequestBody Film newFilm)");
+        return filmService.update(newFilm);
     }
 }

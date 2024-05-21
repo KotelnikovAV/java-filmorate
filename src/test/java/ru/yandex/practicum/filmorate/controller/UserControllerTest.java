@@ -99,7 +99,7 @@ class UserControllerTest {
     public void checkUpdateNotValidIdFilm() {
         UserStorage userStorage = new InMemoryUserStorage();
         UserService userService = new UserServiceImp(userStorage);
-        UserController userController1 = new UserController(userStorage, userService);
+        UserController userController1 = new UserController(userService);
         User user1 = User.builder()
                 .id(4)
                 .name("Андрей")
