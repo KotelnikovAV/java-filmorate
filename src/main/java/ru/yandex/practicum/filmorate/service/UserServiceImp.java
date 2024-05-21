@@ -47,10 +47,10 @@ public class UserServiceImp implements UserService {
         List<Long> userFriends = user.getFriends();
         List<Long> friendFriends = friend.getFriends();
 
-        if (!userFriends.contains(friendId)) {
+        /*if (!userFriends.contains(friendId)) {
             log.info("Данный пользователь отсутствует в друзьях");
             throw new NotFoundException(friend.getName() + " отсутствует у вас в друзьях.");
-        } // тесты в постмане рассчитывают на то, что в этом месте нет исключения, но мне кажется, что оно должно быть
+        } тесты в постмане рассчитывают на то, что в этом месте нет исключения, но мне кажется, что оно должно быть*/
 
         userFriends.remove(friendId);
         friendFriends.remove(id);
