@@ -12,6 +12,8 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.service.UserServiceImp;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.time.LocalDate;
 
@@ -42,7 +44,7 @@ class UserControllerTest {
         this.mockMvc.perform(post("/users")
                 .content(mapper.writeValueAsString(user1))
                 .contentType(MediaType.APPLICATION_JSON)
-                .characterEncoding("utf-8")).andExpect(status().isOk());
+                .characterEncoding("utf-8")).andExpect(status().is2xxSuccessful());
     }
 
     @Test
@@ -95,7 +97,8 @@ class UserControllerTest {
 
     @Test
     public void checkUpdateNotValidIdFilm() {
-        UserService userService = new UserServiceImp();
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserServiceImp(userStorage);
         UserController userController1 = new UserController(userService);
         User user1 = User.builder()
                 .id(4)
