@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -15,6 +16,7 @@ import java.util.List;
 public class UserServiceImp implements UserService {
     private final UserStorage userStorage;
 
+    @Autowired
     public UserServiceImp(UserStorage userStorage) {
         this.userStorage = userStorage;
     }
@@ -47,10 +49,10 @@ public class UserServiceImp implements UserService {
         List<Long> userFriends = user.getFriends();
         List<Long> friendFriends = friend.getFriends();
 
-        /*if (!userFriends.contains(friendId)) {
+        if (!userFriends.contains(friendId)) {
             log.info("Данный пользователь отсутствует в друзьях");
             throw new NotFoundException(friend.getName() + " отсутствует у вас в друзьях.");
-        } тесты в постмане рассчитывают на то, что в этом месте нет исключения, но мне кажется, что оно должно быть*/
+        }
 
         userFriends.remove(friendId);
         friendFriends.remove(id);
