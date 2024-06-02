@@ -36,4 +36,6 @@ UNION
 SELECT outgoing_request_user_id AS user_id  
 FROM adding_friends  
 WHERE incoming_request_user_id = 4 -- id пользователя  
-      AND confimation = 1*
+      AND confimation = 1*  
+
+Нахождение общих друзей пользователей возьмет на себя сервер. Сервер получит список всех друзей одного пользователя, список друзей другого пользователя, сравнит их и выдаст результат.
