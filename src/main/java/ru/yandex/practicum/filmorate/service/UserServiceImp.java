@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -25,6 +26,12 @@ public class UserServiceImp implements UserService {
     public User addFriend(long id, long friendId) {
         log.info("Начало процесса добавления друга");
         log.debug("Значения переменных при добавлении друга id и friendId: " + id + ", " + friendId);
+
+        if (id == friendId) {
+            log.info("Ошибка: значения id и friendId при добавлении в друзья совпадают");
+            throw new ValidationException("Вы не можете добавить самого себя в друзья.");
+        }
+
         List<Long> friends = userStorage.getUser(id).getFriends();
         User user = userStorage.getUser(id);
         User friend = userStorage.getUser(friendId);
@@ -44,6 +51,12 @@ public class UserServiceImp implements UserService {
     public User deleteFriend(long id, long friendId) {
         log.info("Начало процесса удаления друга");
         log.debug("Значения переменных при удалении друга id и friendId: " + id + ", " + friendId);
+
+        if (id == friendId) {
+            log.info("Ошибка: значения id и friendId при удалении совпадают");
+            throw new ValidationException("Вы не можете удалить самого себя из друзей.");
+        }
+
         User user = userStorage.getUser(id);
         User friend = userStorage.getUser(friendId);
         List<Long> userFriends = user.getFriends();
@@ -64,6 +77,12 @@ public class UserServiceImp implements UserService {
     public List<User> getMutualFriends(long id, long otherId) {
         log.info("Начало процесса получения списка общих друзей");
         log.debug("Значения переменных при получении списка общих друзей id и otherId: " + id + ", " + otherId);
+
+        if (id == otherId) {
+            log.info("Ошибка: значения id и otherId при поиске общих друзей совпадают");
+            throw new ValidationException("Вы не можете искать общих друзей с самим собой.");
+        }
+
         List<Long> userFriends = userStorage.getUser(id).getFriends();
         User otherUser = userStorage.getUser(otherId);
         List<Long> otherUserFriends = otherUser.getFriends();
