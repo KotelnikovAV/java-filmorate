@@ -1,4 +1,4 @@
-![DB filmorate](https://github.com/KotelnikovAV/java-filmorate/assets/155972005/5bc5e4b2-9579-4633-b68f-64a78c16f227)
+![Untitled](https://github.com/KotelnikovAV/java-filmorate/assets/155972005/c86c91e4-541f-4b5b-803d-88820d616e71)
 
 # Описание ER-диаграммы к приложению filmorate.
 ## Структура базы данных к приложению filmorate.
