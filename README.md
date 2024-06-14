@@ -1,11 +1,10 @@
-![Untitled](https://github.com/KotelnikovAV/java-filmorate/assets/155972005/c86c91e4-541f-4b5b-803d-88820d616e71)
+![Untitled (1)](https://github.com/KotelnikovAV/java-filmorate/assets/155972005/7e4ed072-c617-463e-a9eb-9c37831aaa4f)
 
 # Описание ER-диаграммы к приложению filmorate.
 ## Структура базы данных к приложению filmorate.
 База данных (далее БД) к приложению filmorate состоит из следующих таблиц: 
 - films (таблица хранения фильмов);
 - users (таблица хранения пользователей);
-- genre (таблица хранения жанров фильмов);
 - films_like (таблица хранения лайков фильмов);
 - adding_friends (таблица хранения друзей).
 
