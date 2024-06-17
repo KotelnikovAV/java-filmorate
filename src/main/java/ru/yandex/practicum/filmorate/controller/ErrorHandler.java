@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
+import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.ErrorResponse;
@@ -34,6 +35,13 @@ public class ErrorHandler {
     public ErrorResponse handleNotValidationData(ValidationException e) {
         log.warn("Возникло исключение ValidationException. " + e.getMessage());
         return new ErrorResponse("Введены некорректные данные", e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleInternalServerException(InternalServerException e) {
+        log.warn("Возникло исключение InternalServerException. " + e.getMessage());
+        return new ErrorResponse("Ошибка взаимодействия с БД", e.getMessage());
     }
 
     @ExceptionHandler

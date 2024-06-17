@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.inmemory;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -12,5 +12,5 @@ public interface FilmStorage {
 
     Film update(Film newFilm);
 
-    Film getFilm(long filmId);
+    Film getFilm(int filmId);
 }

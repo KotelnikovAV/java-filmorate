@@ -3,12 +3,14 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.inmemory.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.inmemory.UserStorage;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -27,12 +29,12 @@ public class FilmServiceImp implements FilmService {
     }
 
     @Override
-    public Film addLike(long filmId, long userId) {
+    public FilmDto addLike(int filmId, int userId) {
         log.info("Начало процесса добавление лайка");
         log.debug("Значение переменных при добавлении лайка filmId и userId: " + filmId + ", " + userId);
         Film film = filmStorage.getFilm(filmId);
         User user = userStorage.getUser(userId);
-        List<Long> likes = film.getLikes();
+        List<Integer> likes = film.getLikes();
 
         if (likes.contains(userId)) {
             log.info("Пользователь уже поставил лайк");
@@ -42,16 +44,16 @@ public class FilmServiceImp implements FilmService {
 
         likes.add(userId);
         log.info("Лайк добавлен");
-        return film;
+        return FilmMapper.mapToFilmDto(film, null, null);
     }
 
     @Override
-    public Film deleteLike(long filmId, long userId) {
+    public FilmDto deleteLike(int filmId, int userId) {
         log.info("Начало процесса удаления лайка");
         log.debug("Значение переменных при удалении лайка filmId и userId: " + filmId + ", " + userId);
         Film film = filmStorage.getFilm(filmId);
         User user = userStorage.getUser(userId);
-        List<Long> likes = film.getLikes();
+        List<Integer> likes = film.getLikes();
 
         if (!likes.contains(userId)) {
             log.info("Пользователь не ставил лайк этому фильму");
@@ -61,11 +63,11 @@ public class FilmServiceImp implements FilmService {
 
         likes.remove(userId);
         log.info("Лайк удален");
-        return film;
+        return FilmMapper.mapToFilmDto(film, null, null);
     }
 
     @Override
-    public List<Film> getFilms(int count) {
+    public List<FilmDto> getFilms(int count) {
         log.info("Начало процесса получения списка фильмов");
         log.debug("Значение переменной count: " + count);
         List<Film> films = filmStorage.findAll()
@@ -74,26 +76,32 @@ public class FilmServiceImp implements FilmService {
                 .limit(count)
                 .toList();
         log.info("Список сформирован");
-        return films;
+        return films
+                .stream()
+                .map(film -> FilmMapper.mapToFilmDto(film,null,null))
+                .toList();
     }
 
     @Override
-    public Film create(Film film) {
-        return filmStorage.create(film);
+    public FilmDto create(FilmDto film) {
+        return FilmMapper.mapToFilmDto(filmStorage.create(FilmMapper.mapToFilm(film)), null, null);
     }
 
     @Override
-    public Film update(Film newFilm) {
-        return filmStorage.update(newFilm);
+    public FilmDto update(FilmDto newFilm) {
+        return FilmMapper.mapToFilmDto(filmStorage.create(FilmMapper.mapToFilm(newFilm)), null, null);
     }
 
     @Override
-    public Film getFilm(long filmId) {
-        return filmStorage.getFilm(filmId);
+    public FilmDto getFilm(int filmId) {
+        return FilmMapper.mapToFilmDto(filmStorage.getFilm(filmId), null, null);
     }
 
     @Override
-    public Collection<Film> findAll() {
-        return filmStorage.findAll();
+    public Collection<FilmDto> findAll() {
+        return filmStorage.findAll()
+                .stream()
+                .map(film -> FilmMapper.mapToFilmDto(film,null,null))
+                .toList();
     }
 }

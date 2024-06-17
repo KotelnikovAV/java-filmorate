@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import java.util.*;
 @Component
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
-    private final Map<Long, User> users = new HashMap<>();
+    private final Map<Integer, User> users = new HashMap<>();
 
     @Override
     public Collection<User> findAll() {
@@ -55,7 +55,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUser(long id) {
+    public User getUser(int id) {
         if (!users.containsKey(id)) {
             log.info("Пользователя с таким id не существует");
             throw new NotFoundException("Пользователя с id = " + id + " не существует");
@@ -63,11 +63,11 @@ public class InMemoryUserStorage implements UserStorage {
         return users.get(id);
     }
 
-    private long getNextId() {
-        long currentMaxId = users.keySet()
+    private int getNextId() {
+        int currentMaxId = users.keySet()
                 .stream()
-                .max(Comparator.comparingLong(id -> id))
-                .orElse(0L);
+                .max(Comparator.comparingInt(id -> id))
+                .orElse(0);
         return ++currentMaxId;
     }
 }

@@ -2,24 +2,25 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.inmemory.UserStorage;
+import ru.yandex.practicum.filmorate.storage.indb.UserRepository;
 
 import java.util.Collection;
 import java.util.List;
 
 @Service
 @Slf4j
-public class UserServiceImp implements UserService {
-    private final UserStorage userStorage;
+@Primary
+public class UserServiceImpForDb implements UserService {
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImp(UserStorage userStorage) {
-        this.userStorage = userStorage;
+    public UserServiceImpForDb(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -32,19 +33,7 @@ public class UserServiceImp implements UserService {
             throw new ValidationException("Вы не можете добавить самого себя в друзья.");
         }
 
-        List<Integer> friends = userStorage.getUser(id).getFriends();
-        User user = userStorage.getUser(id);
-        User friend = userStorage.getUser(friendId);
-
-        if (friends.contains(friendId)) {
-            log.info("Данный пользователь уже есть в друзьях");
-            throw new DuplicatedDataException(friend.getName() + " уже есть у вас в друзьях.");
-        }
-
-        friends.add(friendId);
-        friend.getFriends().add(id);
-        log.info("Друг добавлен");
-        return user;
+        return userRepository.addFriend(id, friendId);
     }
 
     @Override
@@ -57,20 +46,7 @@ public class UserServiceImp implements UserService {
             throw new ValidationException("Вы не можете удалить самого себя из друзей.");
         }
 
-        User user = userStorage.getUser(id);
-        User friend = userStorage.getUser(friendId);
-        List<Integer> userFriends = user.getFriends();
-        List<Integer> friendFriends = friend.getFriends();
-
-        if (!userFriends.contains(friendId)) {
-            log.info("Данный пользователь отсутствует в друзьях");
-            throw new NotFoundException(friend.getName() + " отсутствует у вас в друзьях.");
-        }
-
-        userFriends.remove(friendId);
-        friendFriends.remove(id);
-        log.info("Друг удален");
-        return user;
+        return userRepository.deleteFriend(id, friendId);
     }
 
     @Override
@@ -83,46 +59,60 @@ public class UserServiceImp implements UserService {
             throw new ValidationException("Вы не можете искать общих друзей с самим собой.");
         }
 
-        List<Integer> userFriends = userStorage.getUser(id).getFriends();
-        User otherUser = userStorage.getUser(otherId);
-        List<Integer> otherUserFriends = otherUser.getFriends();
-        List<Integer> mutualFriends = userFriends.stream().filter(otherUserFriends::contains).toList();
+        List<User> userFriends = userRepository.findFriends(id);
+        List<Integer> otherUserFriends = userRepository.findFriends(otherId)
+                .stream()
+                .map(User::getId)
+                .toList();
+        List<User> mutualFriends = userFriends
+                .stream()
+                .filter(user -> otherUserFriends.contains(user.getId()))
+                .toList();
 
         if (mutualFriends.isEmpty()) {
             log.info("У пользователей нет общих друзей");
-            throw new NotFoundException("У вас с пользователем " + otherUser.getName() + " нет общих друзей.");
+            throw new NotFoundException("У вас с данным пользователем нет общих друзей.");
         }
 
-        log.info("Список общих друзей получен");
-        return mutualFriends.stream().map(userStorage::getUser).toList();
+        return mutualFriends;
     }
 
     @Override
     public List<User> getAllFriends(int id) {
         log.info("Начало процесса получения списка всех друзей");
         log.debug("Значения переменной при получении списка всех друзей id: " + id);
-        List<Integer> friends = userStorage.getUser(id).getFriends();
-        log.info("Список всех друзей получен");
-        return friends.stream().map(userStorage::getUser).toList();
+        return userRepository.findFriends(id);
     }
 
     @Override
     public Collection<User> findAll() {
-        return userStorage.findAll();
+        log.info("Начало процесса получения списка всех пользователей");
+        return userRepository.findAll();
     }
 
     @Override
     public User create(User user) {
-        return userStorage.create(user);
+        log.info("Начало процесса создания пользователя");
+
+        if ((user.getName() == null) || (user.getName().isBlank())) {
+            user.setName(user.getLogin());
+        }
+        return userRepository.create(user);
     }
 
     @Override
     public User update(User newUser) {
-        return userStorage.update(newUser);
+        log.info("Начало процесса обновления пользователя");
+
+        if (newUser.getName() == null || newUser.getName().isBlank()) {
+            newUser.setName(newUser.getLogin());
+        }
+        return userRepository.update(newUser);
     }
 
     @Override
     public User getUser(int id) {
-       return userStorage.getUser(id);
+        log.info("Начало процесса получения пользователя с id = " + id);
+        return userRepository.getUser(id);
     }
 }

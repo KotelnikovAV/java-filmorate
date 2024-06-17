@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface UserService {
 
-    User addFriend(long id, long friendId);
+    User addFriend(int id, int friendId);
 
-    User deleteFriend(long id, long friendId);
+    User deleteFriend(int id, int friendId);
 
-    List<User> getMutualFriends(long id, long otherId);
+    List<User> getMutualFriends(int id, int otherId);
 
-    List<User> getAllFriends(long id);
+    List<User> getAllFriends(int id);
 
     Collection<User> findAll();
 
@@ -21,5 +21,5 @@ public interface UserService {
 
     User update(User newUser);
 
-    User getUser(long id);
+    User getUser(int id);
 }

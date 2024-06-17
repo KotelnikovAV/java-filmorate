@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -10,7 +12,7 @@ import java.util.List;
 @EqualsAndHashCode(of = {"id"})
 @Builder
 public class User {
-    private long id;
+    private int id;
     @NotNull
     @Email
     private String email;
@@ -20,5 +22,5 @@ public class User {
     private String name;
     @PastOrPresent
     private LocalDate birthday;
-    private List<Long> friends;
+    private List<Integer> friends;
 }

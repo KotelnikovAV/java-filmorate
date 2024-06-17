@@ -30,14 +30,14 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@Valid @RequestBody User user) {
-        log.info("Получен HTTP-запрос по адресу /users (метод Post). "
+        log.info("Получен HTTP-запрос по адресу /users (метод POST). "
                 + "Вызван метод create(@Valid @RequestBody User user)");
         return userService.create(user);
     }
 
     @PutMapping
     public User update(@Valid @RequestBody User newUser) {
-        log.info("Получен HTTP-запрос по адресу /users (метод Put). "
+        log.info("Получен HTTP-запрос по адресу /users (метод PUT). "
                 + "Вызван метод update(@Valid @RequestBody User newUser)");
         return userService.update(newUser);
     }
