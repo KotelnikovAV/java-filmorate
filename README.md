@@ -1,4 +1,4 @@
-![ER-диаграмма.png](ER-%E4%E8%E0%E3%F0%E0%EC%EC%E0.png)
+![ER-диаграмма](https://github.com/KotelnikovAV/java-filmorate/assets/155972005/bc1f6170-7f68-46bc-af01-85c41ce84c62)
 
 # Описание ER-диаграммы к приложению filmorate.
 ## Структура базы данных к приложению filmorate.
