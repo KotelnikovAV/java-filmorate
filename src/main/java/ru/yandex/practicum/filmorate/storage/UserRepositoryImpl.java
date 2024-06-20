@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.indb;
+package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,20 +11,18 @@ import ru.yandex.practicum.filmorate.model.Query;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.Date;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class UserRepositoryImp implements UserRepository {
-
+public class UserRepositoryImpl implements UserRepository {
     private final JdbcTemplate jdbc;
     private final RowMapper<User> mapper;
 
     @Override
-    public Collection<User> findAll() {
+    public List<User> findAll() {
         log.info("Отправка запроса FIND_ALL_USERS");
         return jdbc.query(Query.FIND_ALL_USERS.getQuery(), mapper);
     }
@@ -70,7 +68,7 @@ public class UserRepositoryImp implements UserRepository {
     }
 
     @Override
-    public List<User> findFriends(int id) {
+    public List<User> getAllFriendsById(int id) {
         log.info("Отправка запроса FIND_FRIEND");
         checkUsers(id);
         List<Integer> idFriends = jdbc.queryForList(Query.FIND_FRIEND.getQuery(), Integer.class, id, id);
@@ -105,7 +103,7 @@ public class UserRepositoryImp implements UserRepository {
             }
 
             log.info("Заявка принята");
-            return getUserWithIdFriends(id);
+            return getUser(id);
         }
 
         log.info("Отправка запроса ADD_FRIEND");
@@ -116,7 +114,7 @@ public class UserRepositoryImp implements UserRepository {
         }
 
         log.info("Заявка отправлена");
-        return getUserWithIdFriends(id);
+        return getUser(id);
     }
 
     @Override
@@ -126,18 +124,7 @@ public class UserRepositoryImp implements UserRepository {
         checkUsers(friendId);
         jdbc.update(Query.DELETE_FRIEND.getQuery(), id, friendId);
         log.info("Пользователь удален из друзей");
-        return getUserWithIdFriends(id);
-    }
-
-    private User getUserWithIdFriends(int id) {
-        log.info("Начало процесса получения списка id друзей для пользователя");
-        List<Integer> friends = findFriends(id)
-                .stream()
-                .map(User::getId)
-                .toList();
-        User user = getUser(id);
-        user.setFriends(friends);
-        return user;
+        return getUser(id);
     }
 
     private void checkUsers(int id) {

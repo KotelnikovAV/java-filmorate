@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.indb;
+package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,23 +8,22 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Query;
 
 import java.sql.Date;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class FilmRepositoryImp implements FilmRepository {
-
+public class FilmRepositoryImpl implements FilmRepository {
     private final JdbcTemplate jdbc;
     private final RowMapper<Film> mapperFilm;
 
     @Override
-    public Collection<Film> findAll() {
+    public List<Film> findAll() {
         log.info("Отправка запроса FIND_ALL_FILMS");
         return jdbc.query(Query.FIND_ALL_FILMS.getQuery(), mapperFilm);
     }
@@ -32,6 +31,7 @@ public class FilmRepositoryImp implements FilmRepository {
     @Override
     public Film create(Film film) {
         log.info("Отправка запроса INSERT_FILM");
+
         int id = BaseDbStorage.insert(
                 jdbc,
                 Query.INSERT_FILM.getQuery(),
@@ -39,8 +39,8 @@ public class FilmRepositoryImp implements FilmRepository {
                 film.getDescription(),
                 Date.valueOf(film.getReleaseDate()),
                 film.getDuration(),
-                film.getGenre(),
-                film.getMpa()
+                convertGenresToString(film.getGenre()),
+                film.getMpa().getId()
         );
         film.setId(id);
         log.info("Фильм добавлен с id = " + id);
@@ -56,8 +56,8 @@ public class FilmRepositoryImp implements FilmRepository {
                 newFilm.getDescription(),
                 Date.valueOf(newFilm.getReleaseDate()),
                 newFilm.getDuration(),
-                newFilm.getGenre(),
-                newFilm.getMpa(),
+                convertGenresToString(newFilm.getGenre()),
+                newFilm.getMpa().getId(),
                 newFilm.getId()
         );
 
@@ -70,18 +70,17 @@ public class FilmRepositoryImp implements FilmRepository {
     }
 
     @Override
-    public Film getFilm(int filmId) {
+    public Film getFilmById(int filmId) {
         log.info("Отправка запроса FIND_FILM_BY_ID");
         return jdbc.queryForObject(Query.FIND_FILM_BY_ID.getQuery(), mapperFilm, filmId);
     }
 
     @Override
-    public List<Film> findPopularFilms(int count) {
+    public List<Film> getPopularFilms(int count) {
         log.info("Отправка запроса FIND_POPULAR_FILMS");
-        List<Film> film = jdbc.query(Query.FIND_POPULAR_FILMS.getQuery(), mapperFilm, count);
-        return film
-                .stream()
-                .peek(film1 -> film1.setLikes(getListLikes(film1)))
+        List<Integer> idPopularFilms = jdbc.queryForList(Query.FIND_POPULAR_FILMS.getQuery(), Integer.class, count);
+        return idPopularFilms.stream()
+                .map(this::getFilmById)
                 .toList();
     }
 
@@ -106,11 +105,8 @@ public class FilmRepositoryImp implements FilmRepository {
             throw new InternalServerException("Не удалось поставить лайк");
         }
 
-        List<Integer> likesFilm = jdbc.queryForList(Query.GET_LIKES.getQuery(), Integer.class, filmId);
-        Film film = getFilm(filmId);
-        film.setLikes(likesFilm);
         log.info("Лайк поставлен");
-        return film;
+        return getFilmById(filmId);
     }
 
     @Override
@@ -122,15 +118,28 @@ public class FilmRepositoryImp implements FilmRepository {
             throw new InternalServerException("Данный пользователь лайк не ставил");
         }
 
-        List<Integer> likesFilm = jdbc.queryForList(Query.GET_LIKES.getQuery(), Integer.class, filmId);
-        Film film = getFilm(filmId);
-        film.setLikes(likesFilm);
         log.info("Лайк удален");
-        return film;
+        return getFilmById(filmId);
     }
 
-    private List<Integer> getListLikes(Film film) {
+    @Override
+    public List<Integer> getListLikes(Film film) {
         log.info("Отправка запроса FIND_LIST_LIKES");
         return jdbc.queryForList(Query.FIND_LIST_LIKES.getQuery(), Integer.class, film.getId());
+    }
+
+    private String convertGenresToString (List<Genre> genres) {
+        StringBuilder stringBuilder = new StringBuilder();
+        String prefix = "";
+
+        if (genres != null) {
+            for (Genre genre : genres) {
+                stringBuilder.append(prefix);
+                prefix = ", ";
+                stringBuilder.append(genre.getId());
+            }
+        }
+
+        return stringBuilder.toString();
     }
 }

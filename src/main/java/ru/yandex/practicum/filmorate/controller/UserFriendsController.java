@@ -1,35 +1,30 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserFriendsController {
     private final UserService userService;
 
-    @Autowired
-    public UserFriendsController(UserService userService) {
-        this.userService = userService;
-    }
-
     @GetMapping("/{id}/friends")
-    public Collection<User> getAllFriends(@PathVariable int id) {
+    public List<UserDto> getAllFriends(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /users/{id}/friends (метод GET). "
-                + "Вызван метод getAllFriends(@PathVariable int id)");
+                + "Вызван метод getAllFriendsById(@PathVariable int id)");
         log.debug("Полученная переменная пути id = " + id);
-        return userService.getAllFriends(id);
+        return userService.getAllFriendsById(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> getMutualFriends(@PathVariable int id,
-                                             @PathVariable int otherId) {
+    public List<UserDto> getMutualFriends(@PathVariable int id, @PathVariable int otherId) {
         log.info("Получен HTTP-запрос по адресу /users/{id}/friends/common/{otherId} (метод GET). "
                 + "Вызван метод getMutualFriends(@PathVariable int id, @PathVariable int otherId)");
         log.debug("Полученные переменные пути при Put запросе id = " + id + ", otherId = " + otherId);
@@ -37,8 +32,7 @@ public class UserFriendsController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public User addFriend(@PathVariable int id,
-                          @PathVariable int friendId) {
+    public UserDto addFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info("Получен HTTP-запрос по адресу /users/{id}/friends/{friendId} (метод PUT). "
                 + "Вызван метод addFriend(@PathVariable int id, @PathVariable int friendId)");
         log.debug("Полученные переменные пути при Put запросе id = " + id + ", friendId = " + friendId);
@@ -46,8 +40,7 @@ public class UserFriendsController {
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public User deleteFriend(@PathVariable int id,
-                             @PathVariable int friendId) {
+    public UserDto deleteFriend(@PathVariable int id, @PathVariable int friendId) {
         log.info("Получен HTTP-запрос по адресу /users/{id}/friends/{friendId} (метод DELETE). "
                 + "Вызван метод deleteFriend(@PathVariable int id, @PathVariable int friendId)");
         log.debug("Полученные переменные пути при Delete запросе id = " + id + ", friendId = " + friendId);

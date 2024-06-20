@@ -1,50 +1,61 @@
 package ru.yandex.practicum.filmorate.mapper;
 
-import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.dto.FilmDto;
+import lombok.experimental.UtilityClass;
+import ru.yandex.practicum.filmorate.dto.RequestFilmDto;
+import ru.yandex.practicum.filmorate.dto.RequestGenreDto;
+import ru.yandex.practicum.filmorate.dto.ResponseFilmDto;
+import ru.yandex.practicum.filmorate.dto.ResponseGenreDto;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
-@NoArgsConstructor
+@UtilityClass
 public class FilmMapper {
 
-    public static Film mapToFilm(FilmDto filmDto) {
-        List<Genre> idGenres = filmDto.getGenres();
-        StringBuilder genre = new StringBuilder();
-        String prefix = "";
+    public Film mapToFilm(RequestFilmDto requestFilmDto) {
+        LinkedHashSet<RequestGenreDto> requestGenreDto = requestFilmDto.getGenres();
+        List<Genre> genres = new ArrayList<>();
 
-        if (idGenres != null) {
-            for (Genre idGenre : idGenres) {
-                genre.append(prefix);
-                prefix = ", ";
-                genre.append(idGenre.getId());
-            }
+        if (requestGenreDto != null) {
+            genres = requestGenreDto
+                    .stream()
+                    .map(GenreMapper::mapToGenre)
+                    .toList();
         }
 
         return Film.builder()
-                .id(filmDto.getId())
-                .name(filmDto.getName())
-                .description(filmDto.getDescription())
-                .releaseDate(filmDto.getReleaseDate())
-                .duration(filmDto.getDuration())
-                .genre(genre.toString())
-                .mpa(filmDto.getMpa().getId())
+                .id(requestFilmDto.getId())
+                .name(requestFilmDto.getName())
+                .description(requestFilmDto.getDescription())
+                .releaseDate(requestFilmDto.getReleaseDate())
+                .duration(requestFilmDto.getDuration())
+                .genre(genres)
+                .mpa(MpaMapper.mapToMpa(requestFilmDto.getMpa()))
                 .build();
     }
 
-    public static FilmDto mapToFilmDto(Film film, List<Genre> genres, Mpa mpa) {
-        return FilmDto.builder()
+    public ResponseFilmDto mapToResponseFilmDto(Film film, List<Integer> likes) {
+        List<Genre> genres = film.getGenre();
+        List<ResponseGenreDto> responseGenreDto = new ArrayList<>();
+
+        if (genres != null) {
+            responseGenreDto = genres.stream()
+                    .map(GenreMapper::mapToResponseGenreDto)
+                    .toList();
+        }
+
+        return ResponseFilmDto.builder()
                 .id(film.getId())
                 .name(film.getName())
                 .description(film.getDescription())
                 .releaseDate(film.getReleaseDate())
                 .duration(film.getDuration())
-                .genres(genres)
-                .mpa(mpa)
-                .likes(film.getLikes())
+                .genres(responseGenreDto)
+                .mpa(MpaMapper.mapToResponseMpaDto(film.getMpa()))
+                .likes(likes)
                 .build();
     }
 }

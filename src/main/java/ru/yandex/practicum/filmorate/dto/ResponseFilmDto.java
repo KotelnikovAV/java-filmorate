@@ -5,15 +5,13 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
 @Builder
-public class FilmDto {
+public class ResponseFilmDto {
     private int id;
     @NotBlank
     private String name;
@@ -22,7 +20,7 @@ public class FilmDto {
     private LocalDate releaseDate;
     @Positive
     private int duration;
-    private List<Genre> genres;
-    private Mpa mpa;
+    private List<ResponseGenreDto> genres;
+    private ResponseMpaDto mpa;
     private List<Integer> likes;
 }

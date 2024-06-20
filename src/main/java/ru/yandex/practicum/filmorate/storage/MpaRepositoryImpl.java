@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.indb;
+package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class MpaRepositoryImp implements MpaRepository {
-
+public class MpaRepositoryImpl implements MpaRepository {
     private final JdbcTemplate jdbc;
     private final RowMapper<Mpa> mapperMpa;
 

@@ -1,23 +1,24 @@
-package ru.yandex.practicum.filmorate.storage.indb;
+package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface FilmRepository {
 
-    Collection<Film> findAll();
+    List<Film> findAll();
 
     Film create(Film film);
 
     Film update(Film newFilm);
 
-    Film getFilm(int filmId);
+    Film getFilmById(int filmId);
 
-    List<Film> findPopularFilms(int count);
+    List<Film> getPopularFilms(int count);
 
     Film addLike(int filmId, int userId);
 
     Film deleteLike(int filmId, int userId);
+
+    List<Integer> getListLikes(Film film);
 }

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.indb;
+package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +17,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Slf4j
-public class GenreRepositoryImp implements GenreRepository {
-
+public class GenreRepositoryImpl implements GenreRepository {
     private final JdbcTemplate jdbc;
     private final RowMapper<Genre> mapperGenre;
 
@@ -54,10 +53,7 @@ public class GenreRepositoryImp implements GenreRepository {
         if (listId != null && !listId.isEmpty()) {
             String[] idGenres = listId.split(", ");
             for (String idGenre : idGenres) {
-                Genre genre = getGenre(Integer.parseInt(idGenre));
-                if (!genres.contains(genre)) {
-                    genres.add(genre);
-                }
+                genres.add(getGenre(Integer.parseInt(idGenre)));
             }
         }
         return genres;

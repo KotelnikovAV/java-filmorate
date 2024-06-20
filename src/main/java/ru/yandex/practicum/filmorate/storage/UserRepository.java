@@ -1,13 +1,12 @@
-package ru.yandex.practicum.filmorate.storage.indb;
+package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface UserRepository {
 
-    Collection<User> findAll();
+    List<User> findAll();
 
     User create(User user);
 
@@ -15,7 +14,7 @@ public interface UserRepository {
 
     User getUser(int id);
 
-    List<User> findFriends(int id);
+    List<User> getAllFriendsById(int id);
 
     User addFriend(int id, int friendId);
 

@@ -1,16 +1,15 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
-@EqualsAndHashCode(of = {"id"})
 @Builder
-public class User {
+public class UserDto {
     private int id;
     @NotNull
     @Email
@@ -21,4 +20,5 @@ public class User {
     private String name;
     @PastOrPresent
     private LocalDate birthday;
+    private List<Integer> friends;
 }

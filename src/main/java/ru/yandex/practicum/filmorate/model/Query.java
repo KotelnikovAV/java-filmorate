@@ -20,13 +20,14 @@ public enum Query {
             "WHERE outgoing_request_user_id = ? AND incoming_request_user_id = ?"),
     DELETE_FRIEND("DELETE FROM adding_friends WHERE outgoing_request_user_id = ? " +
             "AND incoming_request_user_id = ?"),
-    FIND_ALL_FILMS("SELECT * FROM films"),
-    FIND_FILM_BY_ID("SELECT * FROM films WHERE id = ?"),
+    FIND_ALL_FILMS("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +
+            "m.name AS mpa_name FROM films AS f INNER JOIN mpa as m ON f.mpa_id = m.id"),
+    FIND_FILM_BY_ID("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +
+            "m.name AS mpa_name FROM films AS f INNER JOIN mpa as m ON f.mpa_id = m.id WHERE f.id = ?"),
     INSERT_FILM("INSERT INTO films(name, description, releaseDate, duration, " +
             "genre, mpa_id) VALUES (?, ?, ?, ?, ?, ?)"),
     UPDATE_FILM("UPDATE films SET name = ?, description = ?, releaseDate = ?, duration = ?, genre = ?, mpa_id = ? WHERE id = ?"),
-    FIND_POPULAR_FILMS("SELECT f.* FROM films_like AS fl INNER JOIN FILMS AS f ON fl.film_id = f.id " +
-            "GROUP BY film_id ORDER BY COUNT(user_id) DESC LIMIT ?;"),
+    FIND_POPULAR_FILMS("SELECT film_id FROM films_like GROUP BY film_id ORDER BY COUNT(user_id) DESC LIMIT ?"),
     FIND_LIST_LIKES("SELECT user_id FROM films_like WHERE film_id = ?"),
     ADD_LIKE("INSERT INTO films_like(film_id, user_id) VALUES (?, ?)"),
     GET_LIKES("SELECT user_id FROM films_like WHERE film_id = ?"),

@@ -40,7 +40,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleInternalServerException(InternalServerException e) {
-        log.warn("Возникло исключение InternalServerException. " + e.getMessage());
+        log.error("Возникло исключение InternalServerException. " + e.getMessage());
         return new ErrorResponse("Ошибка взаимодействия с БД", e.getMessage());
     }
 

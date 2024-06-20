@@ -3,7 +3,9 @@ CREATE TABLE IF NOT EXISTS users (
     email varchar NOT NULL,
     login varchar NOT NULL,
     name varchar,
-    birthday date NOT NULL
+    birthday date NOT NULL,
+    CONSTRAINT uq_email UNIQUE(email),
+    CONSTRAINT uq_login UNIQUE(login)
 );
 
 CREATE TABLE IF NOT EXISTS mpa (
