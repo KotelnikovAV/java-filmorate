@@ -10,7 +10,7 @@ import java.util.List;
 @UtilityClass
 public class UserMapper {
 
-    public User mapToUser (UserDto userDto) {
+    public User mapToUser(UserDto userDto) {
         return User.builder()
                 .id(userDto.getId())
                 .email(userDto.getEmail())
@@ -20,7 +20,7 @@ public class UserMapper {
                 .build();
     }
 
-    public UserDto mapToUserDto (User user, List<User> friends) {
+    public UserDto mapToUserDto(User user, List<User> friends) {
         List<Integer> idFriends = new ArrayList<>();
         if (friends != null) {
             idFriends = friends

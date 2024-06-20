@@ -128,7 +128,7 @@ public class FilmRepositoryImpl implements FilmRepository {
         return jdbc.queryForList(Query.FIND_LIST_LIKES.getQuery(), Integer.class, film.getId());
     }
 
-    private String convertGenresToString (List<Genre> genres) {
+    private String convertGenresToString(List<Genre> genres) {
         StringBuilder stringBuilder = new StringBuilder();
         String prefix = "";
 
