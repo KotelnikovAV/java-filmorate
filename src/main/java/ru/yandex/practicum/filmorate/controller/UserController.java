@@ -1,44 +1,40 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
     @GetMapping
-    public Collection<User> findAll() {
+    public List<UserDto> findAll() {
         log.info("Получен HTTP-запрос по адресу /users (метод GET). Вызван метод findAll()");
         return userService.findAll();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public User create(@Valid @RequestBody User user) {
-        log.info("Получен HTTP-запрос по адресу /users (метод Post). "
-                + "Вызван метод create(@Valid @RequestBody User user)");
-        return userService.create(user);
+    public UserDto create(@Valid @RequestBody UserDto userDto) {
+        log.info("Получен HTTP-запрос по адресу /users (метод POST). "
+                + "Вызван метод create(@Valid @RequestBody UserDto userDto)");
+        return userService.create(userDto);
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User newUser) {
-        log.info("Получен HTTP-запрос по адресу /users (метод Put). "
-                + "Вызван метод update(@Valid @RequestBody User newUser)");
-        return userService.update(newUser);
+    public UserDto update(@Valid @RequestBody UserDto newUserDto) {
+        log.info("Получен HTTP-запрос по адресу /users (метод PUT). "
+                + "Вызван метод update(@Valid @RequestBody UserDto newUserDto)");
+        return userService.update(newUserDto);
     }
 }
