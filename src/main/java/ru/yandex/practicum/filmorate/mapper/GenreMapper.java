@@ -1,22 +1,21 @@
 package ru.yandex.practicum.filmorate.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.yandex.practicum.filmorate.dto.RequestGenreDto;
-import ru.yandex.practicum.filmorate.dto.ResponseGenreDto;
+import ru.yandex.practicum.filmorate.dto.GenreDto;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 
 @UtilityClass
 public class GenreMapper {
 
-    public Genre mapToGenre(RequestGenreDto requestGenreDto) {
+    public Genre mapToGenre(GenreDto genreDto) {
         return Genre.builder()
-                .id(requestGenreDto.getId())
+                .id(genreDto.getId())
                 .build();
     }
 
-    public ResponseGenreDto mapToResponseGenreDto(Genre genre) {
-        return ResponseGenreDto.builder()
+    public GenreDto mapToGenreDto(Genre genre) {
+        return GenreDto.builder()
                 .id(genre.getId())
                 .name(genre.getName())
                 .build();

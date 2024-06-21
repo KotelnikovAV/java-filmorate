@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.dto.ResponseFilmDto;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
@@ -16,7 +16,7 @@ public class FilmLikeController {
     private final FilmService filmService;
 
     @GetMapping("/popular")
-    public Collection<ResponseFilmDto> getFilms(@RequestParam(defaultValue = "10") int count) {
+    public Collection<FilmDto> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         log.info("Получен HTTP-запрос по адресу /films/popular (метод GET). "
                 + "Вызван метод getPopularFilms(@RequestParam(defaultValue = \"10\") int count)");
         log.debug("Полученный параметр запроса count = " + count);
@@ -24,7 +24,7 @@ public class FilmLikeController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public ResponseFilmDto addLike(@PathVariable int id, @PathVariable int userId) {
+    public FilmDto addLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен HTTP-запрос по адресу /films/{id}/like/{userId} (метод PUT). Вызван метод "
                 + "addLike(@PathVariable int id, @PathVariable int userId)");
         log.debug("Полученные переменные пути при Put запросе id = " + id + ", userId = " + userId);
@@ -32,7 +32,7 @@ public class FilmLikeController {
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public ResponseFilmDto deleteLike(@PathVariable int id, @PathVariable int userId) {
+    public FilmDto deleteLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен HTTP-запрос по адресу /films/{id}/like/{userId} (метод DELETE). Вызван метод "
                 + "deleteLike(@PathVariable int id, @PathVariable int userId)");
         log.debug("Полученные переменные пути при Delete запросе id = " + id + ", userId = " + userId);

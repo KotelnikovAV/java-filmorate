@@ -5,11 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.dto.RequestFilmDto;
-import ru.yandex.practicum.filmorate.dto.ResponseFilmDto;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.util.Collection;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -19,13 +18,13 @@ public class FilmController {
     private final FilmService filmService;
 
     @GetMapping
-    public Collection<ResponseFilmDto> findAll() {
+    public List<FilmDto> findAll() {
         log.info("Получен HTTP-запрос по адресу /films (метод GET). Вызван метод findAll()");
         return filmService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseFilmDto getFilmById(@PathVariable int id) {
+    public FilmDto getFilmById(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /films/{id} (метод GET). "
                 + "Вызван метод getFilmById(@PathVariable int id)");
         return filmService.getFilmById(id);
@@ -33,16 +32,16 @@ public class FilmController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseFilmDto create(@Valid @RequestBody RequestFilmDto requestFilmDto) {
+    public FilmDto create(@Valid @RequestBody FilmDto filmDto) {
         log.info("Получен HTTP-запрос по адресу /films (метод POST). "
-                + "Вызван метод create(@Valid @RequestBody RequestFilmDto requestFilmDto)");
-        return filmService.create(requestFilmDto);
+                + "Вызван метод create(@Valid @RequestBody FilmDto requestFilmDto)");
+        return filmService.create(filmDto);
     }
 
     @PutMapping
-    public ResponseFilmDto update(@Valid @RequestBody RequestFilmDto requestFilmDto) {
+    public FilmDto update(@Valid @RequestBody FilmDto filmDto) {
         log.info("Получен HTTP-запрос по адресу /films (метод PUT). "
-                + "Вызван метод update(@Valid @RequestBody RequestFilmDto requestFilmDto)");
-        return filmService.update(requestFilmDto);
+                + "Вызван метод update(@Valid @RequestBody FilmDto requestFilmDto)");
+        return filmService.update(filmDto);
     }
 }

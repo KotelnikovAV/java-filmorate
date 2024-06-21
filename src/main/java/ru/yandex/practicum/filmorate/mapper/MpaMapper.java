@@ -1,21 +1,20 @@
 package ru.yandex.practicum.filmorate.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.yandex.practicum.filmorate.dto.RequestMpaDto;
-import ru.yandex.practicum.filmorate.dto.ResponseMpaDto;
+import ru.yandex.practicum.filmorate.dto.MpaDto;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 @UtilityClass
 public class MpaMapper {
 
-    public Mpa mapToMpa(RequestMpaDto requestMpaDto) {
+    public Mpa mapToMpa(MpaDto mpaDto) {
         return Mpa.builder()
-                .id(requestMpaDto.getId())
+                .id(mpaDto.getId())
                 .build();
     }
 
-    public ResponseMpaDto mapToResponseMpaDto(Mpa mpa) {
-        return ResponseMpaDto.builder()
+    public MpaDto mapToMpaDto(Mpa mpa) {
+        return MpaDto.builder()
                 .id(mpa.getId())
                 .name(mpa.getName())
                 .build();

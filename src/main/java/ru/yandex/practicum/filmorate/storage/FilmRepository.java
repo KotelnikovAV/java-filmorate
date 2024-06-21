@@ -13,12 +13,4 @@ public interface FilmRepository {
     Film update(Film newFilm);
 
     Film getFilmById(int filmId);
-
-    List<Film> getPopularFilms(int count);
-
-    Film addLike(int filmId, int userId);
-
-    Film deleteLike(int filmId, int userId);
-
-    List<Integer> getListLikes(Film film);
 }

@@ -13,10 +13,4 @@ public interface UserRepository {
     User update(User newUser);
 
     User getUser(int id);
-
-    List<User> getAllFriendsById(int id);
-
-    User addFriend(int id, int friendId);
-
-    User deleteFriend(int id, int friendId);
 }

@@ -4,9 +4,6 @@ import lombok.experimental.UtilityClass;
 import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @UtilityClass
 public class UserMapper {
 
@@ -20,21 +17,13 @@ public class UserMapper {
                 .build();
     }
 
-    public UserDto mapToUserDto(User user, List<User> friends) {
-        List<Integer> idFriends = new ArrayList<>();
-        if (friends != null) {
-            idFriends = friends
-                    .stream()
-                    .map(User::getId)
-                    .toList();
-        }
-        return UserDto.builder()
+    public UserDto mapToUserDto(User user) {
+       return UserDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .login(user.getLogin())
                 .name(user.getName())
                 .birthday(user.getBirthday())
-                .friends(idFriends)
                 .build();
     }
 }

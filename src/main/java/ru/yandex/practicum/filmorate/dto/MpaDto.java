@@ -6,9 +6,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ResponseMpaDto {
+public class MpaDto {
     @NotNull
     private int id;
-    @NotNull
     private String name;
 }

@@ -3,14 +3,14 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dto.RequestFilmDto;
-import ru.yandex.practicum.filmorate.dto.ResponseFilmDto;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmRepository;
 import ru.yandex.practicum.filmorate.storage.GenreRepository;
+import ru.yandex.practicum.filmorate.storage.LikesRepository;
 import ru.yandex.practicum.filmorate.storage.MpaRepository;
 
 import java.time.LocalDate;
@@ -25,37 +25,38 @@ public class FilmServiceImpl implements FilmService {
     private final FilmRepository filmRepository;
     private final MpaRepository mpaRepository;
     private final GenreRepository genreRepository;
+    private final LikesRepository likesRepository;
 
     @Override
-    public ResponseFilmDto addLike(int filmId, int userId) {
+    public FilmDto addLike(int filmId, int userId) {
         log.info("Начало процесса добавление лайка");
         log.debug("Значение переменных при добавлении лайка filmId и userId: " + filmId + ", " + userId);
-        Film film = filmRepository.addLike(filmId, userId);
-        return FilmMapper.mapToResponseFilmDto(film, filmRepository.getListLikes(film));
+        Film film = likesRepository.addLike(filmId, userId);
+        return FilmMapper.mapToFilmDto(film);
     }
 
     @Override
-    public ResponseFilmDto deleteLike(int filmId, int userId) {
+    public FilmDto deleteLike(int filmId, int userId) {
         log.info("Начало процесса удаления лайка");
         log.debug("Значение переменных при удалении лайка filmId и userId: " + filmId + ", " + userId);
-        Film film = filmRepository.deleteLike(filmId, userId);
-        return FilmMapper.mapToResponseFilmDto(film, filmRepository.getListLikes(film));
+        Film film = likesRepository.deleteLike(filmId, userId);
+        return FilmMapper.mapToFilmDto(film);
     }
 
     @Override
-    public List<ResponseFilmDto> getPopularFilms(int count) {
+    public List<FilmDto> getPopularFilms(int count) {
         log.info("Начало процесса получения списка фильмов");
         log.debug("Значение переменной count: " + count);
-        List<Film> popularFilms = filmRepository.getPopularFilms(count);
+        List<Film> popularFilms = likesRepository.getPopularFilms(count);
         log.info("Список сформирован");
         return popularFilms
                 .stream()
-                .map(film -> FilmMapper.mapToResponseFilmDto(film, filmRepository.getListLikes(film)))
+                .map(FilmMapper::mapToFilmDto)
                 .toList();
     }
 
     @Override
-    public ResponseFilmDto create(RequestFilmDto film) {
+    public FilmDto create(FilmDto film) {
         log.info("Начало процесса создания фильма");
 
         try {
@@ -78,11 +79,11 @@ public class FilmServiceImpl implements FilmService {
         }
 
         Film cratedFilm = filmRepository.create(FilmMapper.mapToFilm(film));
-        return FilmMapper.mapToResponseFilmDto(cratedFilm, null);
+        return FilmMapper.mapToFilmDto(cratedFilm);
     }
 
     @Override
-    public ResponseFilmDto update(RequestFilmDto newFilm) {
+    public FilmDto update(FilmDto newFilm) {
         log.info("Начало процесса обновления фильма");
         try {
             if (newFilm.getMpa() != null) {
@@ -104,22 +105,22 @@ public class FilmServiceImpl implements FilmService {
         }
 
         Film film = filmRepository.update(FilmMapper.mapToFilm(newFilm));
-        return FilmMapper.mapToResponseFilmDto(film, filmRepository.getListLikes(film));
+        return FilmMapper.mapToFilmDto(film);
     }
 
     @Override
-    public ResponseFilmDto getFilmById(int filmId) {
+    public FilmDto getFilmById(int filmId) {
         log.info("Начало процесса получения фильма по filmId = " + filmId);
         Film film = filmRepository.getFilmById(filmId);
-        return FilmMapper.mapToResponseFilmDto(film, filmRepository.getListLikes(film));
+        return FilmMapper.mapToFilmDto(film);
     }
 
     @Override
-    public List<ResponseFilmDto> findAll() {
+    public List<FilmDto> findAll() {
         log.info("Начало процесса получения всех фильмов");
         return filmRepository.findAll()
                 .stream()
-                .map(film -> FilmMapper.mapToResponseFilmDto(film, filmRepository.getListLikes(film)))
+                .map(FilmMapper::mapToFilmDto)
                 .toList();
     }
 }

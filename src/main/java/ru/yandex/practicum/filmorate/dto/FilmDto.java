@@ -7,11 +7,11 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.LinkedHashSet;
 
 @Data
 @Builder
-public class ResponseFilmDto {
+public class FilmDto {
     private int id;
     @NotBlank
     private String name;
@@ -20,7 +20,6 @@ public class ResponseFilmDto {
     private LocalDate releaseDate;
     @Positive
     private int duration;
-    private List<ResponseGenreDto> genres;
-    private ResponseMpaDto mpa;
-    private List<Integer> likes;
+    private LinkedHashSet<GenreDto> genres;
+    private MpaDto mpa;
 }
