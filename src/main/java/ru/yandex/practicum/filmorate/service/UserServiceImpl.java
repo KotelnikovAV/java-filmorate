@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FriendsRepository;
 import ru.yandex.practicum.filmorate.storage.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,11 +26,12 @@ public class UserServiceImpl implements UserService {
         log.debug("Значения переменных при добавлении друга id и friendId: " + id + ", " + friendId);
 
         if (id == friendId) {
-            log.info("Ошибка: значения id и friendId при добавлении в друзья совпадают");
             throw new ValidationException("Вы не можете добавить самого себя в друзья.");
         }
 
-        return UserMapper.mapToUserDto(friendsRepository.addFriend(id, friendId));
+        User user = friendsRepository.addFriend(id, friendId);
+        log.info("Заявка успешно отправлена");
+        return UserMapper.mapToUserDto(user);
     }
 
     @Override
@@ -40,11 +40,12 @@ public class UserServiceImpl implements UserService {
         log.debug("Значения переменных при удалении друга id и friendId: " + id + ", " + friendId);
 
         if (id == friendId) {
-            log.info("Ошибка: значения id и friendId при удалении совпадают");
             throw new ValidationException("Вы не можете удалить самого себя из друзей.");
         }
 
-        return UserMapper.mapToUserDto(friendsRepository.deleteFriend(id, friendId));
+        User user = friendsRepository.deleteFriend(id, friendId);
+        log.info("Пользователь удален из друзей");
+        return UserMapper.mapToUserDto(user);
     }
 
     @Override
@@ -53,13 +54,13 @@ public class UserServiceImpl implements UserService {
         log.debug("Значения переменных при получении списка общих друзей id и otherId: " + id + ", " + otherId);
 
         if (id == otherId) {
-            log.info("Ошибка: значения id и otherId при поиске общих друзей совпадают");
             throw new ValidationException("Вы не можете искать общих друзей с самим собой.");
         }
 
         List<User> userFriends = friendsRepository.getAllFriendsById(id);
         List<User> otherUserFriends = friendsRepository.getAllFriendsById(id);
-        List<User> mutualFriends = new ArrayList<>();
+        List<User> mutualFriends;
+
         if (userFriends != null && otherUserFriends != null) {
             List<Integer> otherUserFriendsId = friendsRepository.getAllFriendsById(otherId)
                     .stream()
@@ -74,8 +75,8 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("У вас с данным пользователем нет общих друзей.");
         }
 
-        return mutualFriends
-                .stream()
+        log.info("Список общих друзей получен");
+        return mutualFriends.stream()
                 .map(UserMapper::mapToUserDto)
                 .toList();
     }
@@ -84,8 +85,9 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getAllFriendsById(int id) {
         log.info("Начало процесса получения списка всех друзей");
         log.debug("Значения переменной при получении списка всех друзей id: " + id);
-        return friendsRepository.getAllFriendsById(id)
-                .stream()
+        List<User> friends = friendsRepository.getAllFriendsById(id);
+        log.info("Список всех друзей получен");
+        return friends.stream()
                 .map(UserMapper::mapToUserDto)
                 .toList();
     }
@@ -93,7 +95,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> findAll() {
         log.info("Начало процесса получения списка всех пользователей");
-        return userRepository.findAll().stream()
+        List<User> users = userRepository.findAll();
+        log.info("Список всех пользователей получен");
+        return users.stream()
                 .map(UserMapper::mapToUserDto)
                 .toList();
     }
@@ -106,7 +110,9 @@ public class UserServiceImpl implements UserService {
             userDto.setName(userDto.getLogin());
         }
 
-        return UserMapper.mapToUserDto(userRepository.create(UserMapper.mapToUser(userDto)));
+        User user = userRepository.create(UserMapper.mapToUser(userDto));
+        log.info("Пользователь создан");
+        return UserMapper.mapToUserDto(user);
     }
 
     @Override
@@ -116,12 +122,16 @@ public class UserServiceImpl implements UserService {
         if (newUserDto.getName() == null || newUserDto.getName().isBlank()) {
             newUserDto.setName(newUserDto.getLogin());
         }
-        return UserMapper.mapToUserDto(userRepository.update(UserMapper.mapToUser(newUserDto)));
+
+        User user = userRepository.update(UserMapper.mapToUser(newUserDto));
+        log.info("Пользователь обновлен");
+        return UserMapper.mapToUserDto(user);
     }
 
     @Override
     public UserDto getUser(int id) {
         log.info("Начало процесса получения пользователя с id = " + id);
-        return UserMapper.mapToUserDto(userRepository.getUser(id));
+        User user = userRepository.getUser(id);
+        return UserMapper.mapToUserDto(user);
     }
 }

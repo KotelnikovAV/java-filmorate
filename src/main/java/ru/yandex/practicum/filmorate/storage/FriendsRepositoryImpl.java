@@ -65,7 +65,6 @@ public class FriendsRepositoryImpl implements FriendsRepository {
             throw new InternalServerException("Не удалось добавить пользователя в друзья");
         }
 
-        log.info("Заявка отправлена");
         return userRepository.getUser(id);
     }
 
@@ -75,7 +74,6 @@ public class FriendsRepositoryImpl implements FriendsRepository {
         checkUsers(id);
         checkUsers(friendId);
         jdbc.update(Query.DELETE_FRIEND.getQuery(), id, friendId);
-        log.info("Пользователь удален из друзей");
         return userRepository.getUser(id);
     }
 

@@ -49,7 +49,6 @@ public class LikesRepositoryImpl implements LikesRepository {
             throw new InternalServerException("Не удалось поставить лайк");
         }
 
-        log.info("Лайк поставлен");
         return filmRepository.getFilmById(filmId);
     }
 
@@ -62,7 +61,6 @@ public class LikesRepositoryImpl implements LikesRepository {
             throw new InternalServerException("Данный пользователь лайк не ставил");
         }
 
-        log.info("Лайк удален");
         return filmRepository.getFilmById(filmId);
     }
 

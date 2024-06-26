@@ -37,11 +37,11 @@ public class GenreRepositoryImpl implements GenreRepository {
     @Override
     public void checkGenre(int id) throws NotFoundException {
         log.info("Отправка запроса CHECK_GENRE");
-        Optional<Integer> haveMpa = Optional.ofNullable(jdbc.queryForObject(Query.CHECK_GENRE.getQuery(),
+        Optional<Integer> countGenre = Optional.ofNullable(jdbc.queryForObject(Query.CHECK_GENRE.getQuery(),
                 Integer.class, id));
-        if (haveMpa.isEmpty()) {
+        if (countGenre.isEmpty()) {
             throw new InternalServerException("Ошибка добавления в друзья");
-        } else if (haveMpa.get() == 0) {
+        } else if (countGenre.get() == 0) {
             throw new NotFoundException("Такого жанра нет");
         }
     }
@@ -50,12 +50,14 @@ public class GenreRepositoryImpl implements GenreRepository {
     public List<Genre> getListGenre(String listId) {
         log.info("Начало процесса получения списка жанров для фильма");
         List<Genre> genres = new ArrayList<>();
+
         if (listId != null && !listId.isEmpty()) {
             String[] idGenres = listId.split(", ");
             for (String idGenre : idGenres) {
                 genres.add(getGenre(Integer.parseInt(idGenre)));
             }
         }
+
         return genres;
     }
 }

@@ -41,7 +41,6 @@ public class FilmRepositoryImpl implements FilmRepository {
                 film.getMpa().getId()
         );
         film.setId(id);
-        log.info("Фильм добавлен с id = " + id);
         return film;
     }
 
@@ -63,7 +62,6 @@ public class FilmRepositoryImpl implements FilmRepository {
             throw new NotFoundException("Такого фильма нет");
         }
 
-        log.info("Фильм обновлен");
         return newFilm;
     }
 

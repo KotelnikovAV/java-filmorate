@@ -37,7 +37,6 @@ public class UserRepositoryImpl implements UserRepository {
                 Date.valueOf(user.getBirthday())
         );
         user.setId(id);
-        log.info("Пользователь создан с id = " + id);
         return user;
     }
 
@@ -52,10 +51,11 @@ public class UserRepositoryImpl implements UserRepository {
                 Date.valueOf(newUser.getBirthday()),
                 newUser.getId()
         );
+
         if (rowsUpdated == 0) {
             throw new NotFoundException("Такого пользователя нет");
         }
-        log.info("Пользователь обновлен");
+
         return newUser;
     }
 

@@ -21,8 +21,8 @@ public class GenreServiceImpl implements GenreService {
     public List<GenreDto> getAllGenres() {
         log.info("Начало процесса получения всех жанров");
         List<Genre> genres = genreRepository.getAllGenres();
-        return genres
-                .stream()
+        log.info("Список всех жанров получен");
+        return genres.stream()
                 .map(GenreMapper::mapToGenreDto)
                 .toList();
     }
@@ -30,6 +30,8 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public GenreDto getGenre(int id) {
         log.info("Начало процесса получения жанра по id = " + id);
-        return GenreMapper.mapToGenreDto(genreRepository.getGenre(id));
+        Genre genre = genreRepository.getGenre(id);
+        log.info("Жанр получен");
+        return GenreMapper.mapToGenreDto(genre);
     }
 }

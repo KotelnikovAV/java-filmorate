@@ -21,8 +21,8 @@ public class MpaServiceImpl implements MpaService {
     public List<MpaDto> getAllMpa() {
         log.info("Начало процесса получения всех рейтингов");
         List<Mpa> mpa =  mpaRepository.getAllMpa();
-        return mpa
-                .stream()
+        log.info("Список всех рейтингов получен");
+        return mpa.stream()
                 .map(MpaMapper::mapToMpaDto)
                 .toList();
     }
@@ -30,6 +30,8 @@ public class MpaServiceImpl implements MpaService {
     @Override
     public MpaDto getMpa(int id) {
         log.info("Начало процесса получения рейтинга по id = " + id);
-        return MpaMapper.mapToMpaDto(mpaRepository.getMpa(id));
+        Mpa mpa = mpaRepository.getMpa(id);
+        log.info("Рейтинг получен");
+        return MpaMapper.mapToMpaDto(mpa);
     }
 }

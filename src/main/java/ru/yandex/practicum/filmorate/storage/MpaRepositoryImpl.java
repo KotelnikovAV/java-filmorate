@@ -36,11 +36,11 @@ public class MpaRepositoryImpl implements MpaRepository {
     @Override
     public void checkMpa(int id) throws NotFoundException {
         log.info("Отправка запроса CHECK_MPA");
-        Optional<Integer> haveMpa = Optional.ofNullable(jdbc.queryForObject(Query.CHECK_MPA.getQuery(),
+        Optional<Integer> countMpa = Optional.ofNullable(jdbc.queryForObject(Query.CHECK_MPA.getQuery(),
                 Integer.class, id));
-        if (haveMpa.isEmpty()) {
+        if (countMpa.isEmpty()) {
             throw new InternalServerException("Ошибка проверки наличия рейтинга");
-        } else if (haveMpa.get() == 0) {
+        } else if (countMpa.get() == 0) {
             throw new NotFoundException("Такого рейтинга нет");
         }
     }
