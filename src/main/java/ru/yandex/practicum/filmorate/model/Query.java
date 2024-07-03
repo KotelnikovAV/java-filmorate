@@ -73,7 +73,13 @@ public enum Query {
             "WHERE id = ?"),
     UPDATE_USER("UPDATE users " +
             "SET email = ?, login = ?, name = ?, birthday = ? " +
-            "WHERE id = ?");
+            "WHERE id = ?"),
+    FIND_POPULAR_FILMS_BY_TITLE("SELECT f.id " +
+            "FROM films AS f " +
+            "LEFT JOIN films_like AS fl ON f.id = fl.films_id " +
+            "WHERE f.name LIKE '%?%' " +
+            "GROUP BY f.id " +
+            "ORDER BY COUNT(user_id) DESC");
 
     private final String query;
 

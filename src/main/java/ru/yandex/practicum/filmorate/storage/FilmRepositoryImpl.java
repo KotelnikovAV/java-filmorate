@@ -71,6 +71,12 @@ public class FilmRepositoryImpl implements FilmRepository {
         return jdbc.queryForObject(Query.FIND_FILM_BY_ID.getQuery(), mapperFilm, filmId);
     }
 
+    @Override
+    public List<Film> getPopularFilmsByTitle(String query) {
+        //        TODO log
+        return jdbc.query(Query.FIND_POPULAR_FILMS_BY_TITLE.getQuery(), mapperFilm, query);
+    }
+
     private String convertGenresToString(List<Genre> genres) {
         StringBuilder stringBuilder = new StringBuilder();
         String prefix = "";

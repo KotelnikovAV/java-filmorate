@@ -19,4 +19,6 @@ public interface FilmService {
     FilmDto update(FilmDto newFilm);
 
     FilmDto getFilmById(int filmId);
+
+    List<FilmDto> getPopularFilmsByTitle(String query);
 }

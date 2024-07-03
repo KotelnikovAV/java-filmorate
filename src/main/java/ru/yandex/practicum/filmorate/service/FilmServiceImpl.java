@@ -120,6 +120,15 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
+    public List<FilmDto> getPopularFilmsByTitle(String query) {
+//        TODO log
+        return filmRepository.getPopularFilmsByTitle(query)
+                .stream()
+                .map(FilmMapper::mapToFilmDto)
+                .toList();
+    }
+
+    @Override
     public List<FilmDto> findAll() {
         log.info("Начало процесса получения всех фильмов");
         List<FilmDto> films = filmRepository.findAll()

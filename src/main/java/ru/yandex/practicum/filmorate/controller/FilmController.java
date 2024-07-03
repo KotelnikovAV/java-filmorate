@@ -13,7 +13,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/films")
+@RequestMapping("films")
 public class FilmController {
     private final FilmService filmService;
 
@@ -23,7 +23,7 @@ public class FilmController {
         return filmService.findAll();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public FilmDto getFilmById(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /films/{id} (метод GET). "
                 + "Вызван метод getFilmById(@PathVariable int id)");
@@ -43,5 +43,12 @@ public class FilmController {
         log.info("Получен HTTP-запрос по адресу /films (метод PUT). "
                 + "Вызван метод update(@Valid @RequestBody FilmDto requestFilmDto)");
         return filmService.update(filmDto);
+    }
+
+    @GetMapping("search")
+    public List<FilmDto> getFilmsByTittle(@RequestParam String query) {
+        log.info("Получен HTTP-запрос по адресу /films/search (метод GET). "
+                + "Вызван метод getFilmsByQuery()");
+        return filmService.getPopularFilmsByTitle(query);
     }
 }
