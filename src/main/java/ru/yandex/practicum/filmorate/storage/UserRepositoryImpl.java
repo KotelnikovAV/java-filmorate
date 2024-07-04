@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -11,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -60,8 +62,20 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User getUser(int id) {
+    public Optional<User> getUser(int id) {
         log.info("Отправка запроса FIND_USERS_BY_ID");
-        return jdbc.queryForObject(Query.FIND_USERS_BY_ID.getQuery(), mapper, id);
+        try {
+            User user = jdbc.queryForObject(Query.FIND_USERS_BY_ID.getQuery(), mapper, id);
+            return Optional.ofNullable(user);
+        } catch (EmptyResultDataAccessException ignored) {
+            return Optional.empty();
+
+        }
+    }
+
+    @Override
+    public void delete(int id) {
+        jdbc.update(Query.DELETE_MUTUAL_FRIEND.getQuery(), id, id);
+        jdbc.update(Query.DELETE_USER.getQuery(), id);
     }
 }

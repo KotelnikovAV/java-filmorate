@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,7 @@ import ru.yandex.practicum.filmorate.model.Query;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -66,9 +68,21 @@ public class FilmRepositoryImpl implements FilmRepository {
     }
 
     @Override
-    public Film getFilmById(int filmId) {
-        log.info("Отправка запроса FIND_FILM_BY_ID");
-        return jdbc.queryForObject(Query.FIND_FILM_BY_ID.getQuery(), mapperFilm, filmId);
+    public void delete(int filmId) {
+        log.info("Отправка запроса DELETE_FILM");
+        jdbc.update(Query.DELETE_FILMS_LIKE.getQuery(), filmId);
+        jdbc.update(Query.DELETE_FILM.getQuery(), filmId);
+    }
+
+    @Override
+    public Optional<Film> getFilmById(int filmId) {
+        log.info("Отправка запроса GET_FILM_BY_ID");
+        try {
+            Film film = jdbc.queryForObject(Query.FIND_FILM_BY_ID.getQuery(), mapperFilm, filmId);
+            return Optional.ofNullable(film);
+        } catch (EmptyResultDataAccessException ignored) {
+            return Optional.empty();
+        }
     }
 
     private String convertGenresToString(List<Genre> genres) {

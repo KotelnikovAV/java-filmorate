@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FilmRepository {
 
@@ -12,5 +13,7 @@ public interface FilmRepository {
 
     Film update(Film newFilm);
 
-    Film getFilmById(int filmId);
+    Optional<Film> getFilmById(int filmId);
+
+    void delete(int filmId);
 }

@@ -114,9 +114,25 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public FilmDto getFilmById(int filmId) {
         log.info("Начало процесса получения фильма по filmId = " + filmId);
-        Film film = filmRepository.getFilmById(filmId);
+        Film film = filmRepository.getFilmById(filmId).orElseThrow(() -> {
+            log.error("Фильма с id {}, нет",filmId);
+            return new NotFoundException("Фильм с id " + filmId + " отсутсвует.");
+        });
         log.info("Фильм получен");
         return FilmMapper.mapToFilmDto(film);
+    }
+
+    @Override
+    public void delete(int filmId) {
+        log.info("Начало процесса удаления фильма пол filmId = " + filmId);
+        log.info("Проверка наличия фильма с id {}",filmId);
+        Film film = filmRepository.getFilmById(filmId).orElseThrow(() -> {
+            log.error("Фильма с id {}, нет",filmId);
+            return new NotFoundException("Фильм с id " + filmId + " отсутсвует.");
+        });
+
+        filmRepository.delete(filmId);
+        log.info("Фильм успешно удален.");
     }
 
     @Override

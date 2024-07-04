@@ -22,18 +22,18 @@ public class FriendsRepositoryImpl implements FriendsRepository {
     @Override
     public List<User> getAllFriendsById(int id) {
         log.info("Отправка запроса FIND_FRIEND");
-        checkUsers(id);
+        checkAndReturnUser(id);
         List<Integer> idFriends = jdbc.queryForList(Query.FIND_FRIEND.getQuery(), Integer.class, id, id);
         return idFriends
                 .stream()
-                .map(userRepository::getUser)
+                .map(this::checkAndReturnUser)
                 .toList();
     }
 
     @Override
     public User addFriend(int id, int friendId) {
-        checkUsers(id);
-        checkUsers(friendId);
+        checkAndReturnUser(id);
+        checkAndReturnUser(friendId);
         log.info("Начало проверки на наличие ранее отправленной заявки");
         Optional<Integer> count1 = Optional.ofNullable(jdbc.queryForObject(Query.CHECKING_AVAILABILITY_USER.getQuery(),
                 Integer.class, id, friendId));
@@ -55,7 +55,7 @@ public class FriendsRepositoryImpl implements FriendsRepository {
             }
 
             log.info("Заявка принята");
-            return userRepository.getUser(id);
+            return checkAndReturnUser(id);
         }
 
         log.info("Отправка запроса ADD_FRIEND");
@@ -65,26 +65,22 @@ public class FriendsRepositoryImpl implements FriendsRepository {
             throw new InternalServerException("Не удалось добавить пользователя в друзья");
         }
 
-        return userRepository.getUser(id);
+        return checkAndReturnUser(id);
     }
 
     @Override
     public User deleteFriend(int id, int friendId) {
         log.info("Отправка запроса DELETE_FRIEND");
-        checkUsers(id);
-        checkUsers(friendId);
+        checkAndReturnUser(id);
+        checkAndReturnUser(friendId);
         jdbc.update(Query.DELETE_FRIEND.getQuery(), id, friendId);
-        return userRepository.getUser(id);
+        return checkAndReturnUser(id);
     }
 
-    private void checkUsers(int id) {
-        log.info("Начало проверки на наличие пользователей в БД");
-        Optional<Integer> haveUser = Optional.ofNullable(jdbc.queryForObject(Query.CHECK_USER.getQuery(),
-                Integer.class, id));
-        if (haveUser.isEmpty()) {
-            throw new InternalServerException("Ошибка добавления в друзья");
-        } else if (haveUser.get() == 0) {
-            throw new NotFoundException("Такого пользователя нет");
-        }
+    private User checkAndReturnUser(int id) {
+        return userRepository.getUser(id).orElseThrow(() -> {
+            log.error("Пользователя с id {} нет", id);
+            return new NotFoundException("Пользователя с id " + id + " нет");
+        });
     }
 }

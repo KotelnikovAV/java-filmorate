@@ -19,9 +19,6 @@ public enum Query {
     CHECK_MPA("SELECT COUNT(id) " +
             "FROM mpa " +
             "WHERE id = ?"),
-    CHECK_USER("SELECT COUNT(id) " +
-            "FROM users " +
-            "WHERE id = ?"),
     DELETE_FRIEND("DELETE FROM adding_friends " +
             "WHERE outgoing_request_user_id = ? AND incoming_request_user_id = ?"),
     DELETE_LIKE("DELETE FROM films_like WHERE user_id = ?"),
@@ -73,7 +70,16 @@ public enum Query {
             "WHERE id = ?"),
     UPDATE_USER("UPDATE users " +
             "SET email = ?, login = ?, name = ?, birthday = ? " +
-            "WHERE id = ?");
+            "WHERE id = ?"),
+    DELETE_FILM("DELETE FROM films " +
+            "WHERE id = ?"),
+    DELETE_FILMS_LIKE("DELETE FROM films_like " +
+            "WHERE film_id = ?;"),
+    DELETE_USER("DELETE FROM users " +
+            "WHERE id = ?"),
+    DELETE_MUTUAL_FRIEND("DELETE FROM adding_friends " +
+                                 "WHERE (outgoing_request_user_id = ? OR incoming_request_user_id = ?) AND " +
+             " confirmation = TRUE"),;
 
     private final String query;
 
