@@ -2,12 +2,14 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmRepository;
 import ru.yandex.practicum.filmorate.storage.GenreRepository;
 import ru.yandex.practicum.filmorate.storage.LikesRepository;
@@ -15,6 +17,7 @@ import ru.yandex.practicum.filmorate.storage.MpaRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -50,7 +53,7 @@ public class FilmServiceImpl implements FilmService {
         log.info("Начало процесса получения списка популярных фильмов");
         log.debug("Значение переменной count: " + count);
         List<Film> popularFilms = likesRepository.getPopularFilms(count);
-        log.info("Список популярных фильмов получен");
+        log.info("Список популярных фильмов получен {}", popularFilms.size());
         return popularFilms.stream()
                 .map(FilmMapper::mapToFilmDto)
                 .toList();
@@ -114,9 +117,9 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public FilmDto getFilmById(int filmId) {
         log.info("Начало процесса получения фильма по filmId = " + filmId);
-        Film film = filmRepository.getFilmById(filmId).orElseThrow(() -> {
-            log.error("Фильма с id {}, нет",filmId);
-            return new NotFoundException("Фильм с id " + filmId + " отсутсвует.");
+        Film film = checkFilm(filmId).orElseThrow(() -> {
+            log.error("Фильма с id {}, нет", filmId);
+            return new NotFoundException("Фильма с id " + filmId + " нет");
         });
         log.info("Фильм получен");
         return FilmMapper.mapToFilmDto(film);
@@ -124,13 +127,11 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public void delete(int filmId) {
-        log.info("Начало процесса удаления фильма пол filmId = " + filmId);
-        log.info("Проверка наличия фильма с id {}",filmId);
-        Film film = filmRepository.getFilmById(filmId).orElseThrow(() -> {
-            log.error("Фильма с id {}, нет",filmId);
-            return new NotFoundException("Фильм с id " + filmId + " отсутсвует.");
+        log.info("Начало процесса удаления фильма по filmId = " + filmId);
+        checkFilm(filmId).orElseThrow(() -> {
+            log.error("Фильма с id {}, нет", filmId);
+            return new NotFoundException("Фильма с id " + filmId + " нет");
         });
-
         filmRepository.delete(filmId);
         log.info("Фильм успешно удален.");
     }
@@ -144,5 +145,14 @@ public class FilmServiceImpl implements FilmService {
                 .toList();
         log.info("Список всех фильмов получен");
         return films;
+    }
+
+    private Optional<Film> checkFilm(int id) {
+        try {
+            Film film = filmRepository.getFilmById(id);
+            return Optional.ofNullable(film);
+        } catch (EmptyResultDataAccessException ignored) {
+            return Optional.empty();
+        }
     }
 }

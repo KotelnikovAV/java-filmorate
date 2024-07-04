@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -12,6 +13,7 @@ import ru.yandex.practicum.filmorate.storage.FriendsRepository;
 import ru.yandex.practicum.filmorate.storage.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -130,9 +132,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUser(int id) {
-        log.info("Начало процесса получения пользователя с id = {}", id);
-        User user = userRepository.getUser(id).orElseThrow(() -> {
-            log.error("Пользователя с id {} нет", id);
+        log.info("Начало процесса получения пользователя с id = " + id);
+        User user = checkUser(id).orElseThrow(() -> {
+            log.error("Пользователя с id {}, нет", id);
             return new NotFoundException("Пользователя с id " + id + " нет");
         });
         return UserMapper.mapToUserDto(user);
@@ -141,6 +143,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(int id) {
         log.info("Начало процесса удаления пользователя с id = {}", id);
+        checkUser(id);
         userRepository.delete(id);
+    }
+
+    private Optional<User> checkUser(int id) {
+        try {
+            User user = userRepository.getUser(id);
+            return Optional.ofNullable(user);
+        } catch (EmptyResultDataAccessException ignored) {
+            return Optional.empty();
+        }
     }
 }

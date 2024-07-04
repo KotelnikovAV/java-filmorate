@@ -19,6 +19,9 @@ public enum Query {
     CHECK_MPA("SELECT COUNT(id) " +
             "FROM mpa " +
             "WHERE id = ?"),
+    CHECK_USER("SELECT COUNT(id) " +
+            "FROM users " +
+            "WHERE id = ?"),
     DELETE_FRIEND("DELETE FROM adding_friends " +
             "WHERE outgoing_request_user_id = ? AND incoming_request_user_id = ?"),
     DELETE_LIKE("DELETE FROM films_like WHERE user_id = ?"),

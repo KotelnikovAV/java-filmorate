@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.InternalServerException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Query;
 
@@ -25,7 +24,7 @@ public class LikesRepositoryImpl implements LikesRepository {
         log.info("Отправка запроса FIND_POPULAR_FILMS");
         List<Integer> idPopularFilms = jdbc.queryForList(Query.FIND_POPULAR_FILMS.getQuery(), Integer.class, count);
         return idPopularFilms.stream()
-                .map(this::checkAndReturnFilm)
+                .map(filmRepository::getFilmById)
                 .toList();
     }
 
@@ -50,7 +49,7 @@ public class LikesRepositoryImpl implements LikesRepository {
             throw new InternalServerException("Не удалось поставить лайк");
         }
 
-        return checkAndReturnFilm(filmId);
+        return filmRepository.getFilmById(filmId);
     }
 
     @Override
@@ -62,19 +61,12 @@ public class LikesRepositoryImpl implements LikesRepository {
             throw new InternalServerException("Данный пользователь лайк не ставил");
         }
 
-        return checkAndReturnFilm(filmId);
+        return filmRepository.getFilmById(filmId);
     }
 
     @Override
     public List<Integer> getListLikes(Film film) {
         log.info("Отправка запроса FIND_LIST_LIKES");
         return jdbc.queryForList(Query.FIND_LIST_LIKES.getQuery(), Integer.class, film.getId());
-    }
-
-    private Film checkAndReturnFilm(int id) {
-        return filmRepository.getFilmById(id).orElseThrow(() -> {
-            log.error("Фильм с id{} не найден", id);
-            return new NotFoundException("Фильм с id: " + id + " не найден.");
-        });
     }
 }

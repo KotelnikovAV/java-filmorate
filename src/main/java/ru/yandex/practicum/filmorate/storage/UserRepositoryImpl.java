@@ -62,15 +62,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> getUser(int id) {
+    public User getUser(int id) {
         log.info("Отправка запроса FIND_USERS_BY_ID");
-        try {
-            User user = jdbc.queryForObject(Query.FIND_USERS_BY_ID.getQuery(), mapper, id);
-            return Optional.ofNullable(user);
-        } catch (EmptyResultDataAccessException ignored) {
-            return Optional.empty();
-
-        }
+        return jdbc.queryForObject(Query.FIND_USERS_BY_ID.getQuery(), mapper, id);
     }
 
     @Override

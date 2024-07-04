@@ -13,7 +13,7 @@ public interface FilmRepository {
 
     Film update(Film newFilm);
 
-    Optional<Film> getFilmById(int filmId);
+    Film getFilmById(int filmId);
 
     void delete(int filmId);
 }
