@@ -13,4 +13,8 @@ public interface FilmRepository {
     Film update(Film newFilm);
 
     Film getFilmById(int filmId);
+
+    List<Film> getFilmsByDirectorIdSortByYear(int directorId);
+
+    List<Film> getFilmsByDirectorIdSortByLikes(int directorId);
 }
