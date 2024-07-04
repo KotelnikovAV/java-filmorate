@@ -70,7 +70,6 @@ public class FilmRepositoryImpl implements FilmRepository {
     @Override
     public void delete(int filmId) {
         log.info("Отправка запроса DELETE_FILM");
-        jdbc.update(Query.DELETE_FILMS_LIKE.getQuery(), filmId);
         jdbc.update(Query.DELETE_FILM.getQuery(), filmId);
     }
 
