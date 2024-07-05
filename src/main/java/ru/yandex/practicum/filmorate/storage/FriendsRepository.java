@@ -11,6 +11,4 @@ public interface FriendsRepository {
     User addFriend(int id, int friendId);
 
     User deleteFriend(int id, int friendId);
-
-
 }
