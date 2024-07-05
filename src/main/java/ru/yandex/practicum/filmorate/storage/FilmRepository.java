@@ -16,4 +16,9 @@ public interface FilmRepository {
     Film getFilmById(int filmId);
 
     void delete(int filmId);
+  
+    List<Film> getFilmsByDirectorIdSortByYear(int directorId);
+
+    List<Film> getFilmsByDirectorIdSortByLikes(int directorId);
+
 }

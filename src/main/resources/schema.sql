@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS films (
     duration INTEGER NOT NULL,
     genre varchar NOT NULL,
     mpa_id INTEGER REFERENCES mpa (id),
-    director_id INTEGER REFERENCES directors (id),
+    directors varchar,
     CONSTRAINT duration_positive CHECK (duration > 0)
 );
 

@@ -9,10 +9,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmRepository;
-import ru.yandex.practicum.filmorate.storage.GenreRepository;
-import ru.yandex.practicum.filmorate.storage.LikesRepository;
-import ru.yandex.practicum.filmorate.storage.MpaRepository;
+import ru.yandex.practicum.filmorate.storage.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,6 +25,7 @@ public class FilmServiceImpl implements FilmService {
     private final MpaRepository mpaRepository;
     private final GenreRepository genreRepository;
     private final LikesRepository likesRepository;
+    private final DirectorRepository directorRepository;
 
     @Override
     public FilmDto addLike(int filmId, int userId) {
@@ -146,12 +144,37 @@ public class FilmServiceImpl implements FilmService {
         return films;
     }
 
+
     private Optional<Film> checkFilm(int id) {
         try {
             Film film= filmRepository.getFilmById(id);
             return Optional.ofNullable(film);
         } catch (EmptyResultDataAccessException ignored) {
             return Optional.empty();
+          
+    @Override
+    public List<FilmDto> getFilmsByDirectorId(int directorId, String sortBy) {
+        directorRepository.checkDirector(directorId);
+
+        if (sortBy.equals("year")) {
+            log.info("Начало процесса получения фильмов, отсортированных по дате релиза, режиссер которых является " +
+                    "directorId = " + directorId);
+            List<FilmDto> films = filmRepository.getFilmsByDirectorIdSortByYear(directorId).stream()
+                    .map(FilmMapper::mapToFilmDto)
+                    .toList();
+            log.info("Получен список фильмов отсортированных по дате релиза");
+            return films;
+        } else if (sortBy.equals("likes")) {
+            log.info("Начало процесса получения фильмов, отсортированных по лайкам, режиссер которых является " +
+                    "directorId = " + directorId);
+            List<FilmDto> films = filmRepository.getFilmsByDirectorIdSortByLikes(directorId).stream()
+                    .map(FilmMapper::mapToFilmDto)
+                    .toList();
+            log.info("Получен список фильмов отсортированных по лайкам");
+            return films;
+        } else {
+            throw new NotFoundException("Выбран неверный метод сортировки");
+
         }
     }
 }
