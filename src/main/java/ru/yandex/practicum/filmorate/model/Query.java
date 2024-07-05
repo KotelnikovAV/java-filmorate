@@ -24,7 +24,7 @@ public enum Query {
             "WHERE id = ?"),
     DELETE_FRIEND("DELETE FROM adding_friends " +
             "WHERE outgoing_request_user_id = ? AND incoming_request_user_id = ?"),
-    DELETE_LIKE("DELETE FROM films_like WHERE user_id = ?"),
+    DELETE_LIKE("DELETE FROM films_like WHERE film_id = ? AND user_id = ?"),
     FIND_ALL_FILMS("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +
             "m.name AS mpa_name " +
             "FROM films AS f " +

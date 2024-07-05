@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmRepository;
 import ru.yandex.practicum.filmorate.storage.GenreRepository;
 import ru.yandex.practicum.filmorate.storage.LikesRepository;
@@ -117,7 +116,7 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public FilmDto getFilmById(int filmId) {
         log.info("Начало процесса получения фильма по filmId = " + filmId);
-        Film film = checkFilm(filmId).orElseThrow(() -> {
+        Film film =  checkFilm(filmId).orElseThrow(() -> {
             log.error("Фильма с id {}, нет", filmId);
             return new NotFoundException("Фильма с id " + filmId + " нет");
         });
@@ -149,7 +148,7 @@ public class FilmServiceImpl implements FilmService {
 
     private Optional<Film> checkFilm(int id) {
         try {
-            Film film = filmRepository.getFilmById(id);
+            Film film= filmRepository.getFilmById(id);
             return Optional.ofNullable(film);
         } catch (EmptyResultDataAccessException ignored) {
             return Optional.empty();

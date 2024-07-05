@@ -55,7 +55,7 @@ public class LikesRepositoryImpl implements LikesRepository {
     @Override
     public Film deleteLike(int filmId, int userId) {
         log.info("Отправка запроса DELETE_LIKE");
-        int rowsDeleted = jdbc.update(Query.DELETE_LIKE.getQuery(), userId);
+        int rowsDeleted = jdbc.update(Query.DELETE_LIKE.getQuery(),filmId, userId);
 
         if (rowsDeleted == 0) {
             throw new InternalServerException("Данный пользователь лайк не ставил");
