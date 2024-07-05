@@ -56,6 +56,16 @@ public class FilmServiceImpl implements FilmService {
                 .toList();
     }
 
+    //add-common-films
+    public List<FilmDto> getCommonFilms(int userId, int friendId) {
+        log.info("Начало процесса получения списка общих фильмов");
+        log.debug("Значение переменной userID: {}, значение переменной friendId: {}", userId, friendId);
+        List<Film> userFilm = likesRepository.getCommonFilms(userId, friendId);
+        log.info("Список общих фильмов получен");
+        return userFilm.stream().map(FilmMapper::mapToFilmDto).toList();
+
+    }
+
     @Override
     public FilmDto create(FilmDto film) {
         log.info("Начало процесса создания фильма");

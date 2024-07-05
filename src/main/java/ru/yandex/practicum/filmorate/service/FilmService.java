@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import ru.yandex.practicum.filmorate.dto.FilmDto;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface FilmService {
@@ -20,7 +21,11 @@ public interface FilmService {
 
     FilmDto getFilmById(int filmId);
 
+
+    Collection<FilmDto> getCommonFilms(int userId, int friendId);
+
     void delete(int filmId);
 
     List<FilmDto> getFilmsByDirectorId(int directorId, String sortBy);
+  
 }

@@ -55,7 +55,9 @@ public class LikesRepositoryImpl implements LikesRepository {
     @Override
     public Film deleteLike(int filmId, int userId) {
         log.info("Отправка запроса DELETE_LIKE");
-        int rowsDeleted = jdbc.update(Query.DELETE_LIKE.getQuery(),filmId, userId);
+
+        int rowsDeleted = jdbc.update(Query.DELETE_LIKE.getQuery(), filmId, userId);
+
 
         if (rowsDeleted == 0) {
             throw new InternalServerException("Данный пользователь лайк не ставил");
@@ -68,5 +70,24 @@ public class LikesRepositoryImpl implements LikesRepository {
     public List<Integer> getListLikes(Film film) {
         log.info("Отправка запроса FIND_LIST_LIKES");
         return jdbc.queryForList(Query.FIND_LIST_LIKES.getQuery(), Integer.class, film.getId());
+    }
+
+    // add-common-films
+    @Override
+    public List<Film> getCommonFilms(int userId, int friendId) {
+        log.info("Отправка запроса FIND_COMMON_FILMS");
+
+        List<Integer> userFilm = getIdFilmsLikedByUser(userId);
+        List<Integer> friendFilm = getIdFilmsLikedByUser(friendId);
+        userFilm.retainAll(friendFilm);
+
+        return userFilm.stream().map(filmRepository::getFilmById).toList();
+    }
+
+    @Override
+    public List<Integer> getIdFilmsLikedByUser(int userId) {
+        log.info("Отправка запроса FIND_LIST_LIKED_FILMS");
+        List<Integer> likedFilmsId = jdbc.queryForList(Query.FIND_LIST_LIKED_FILMS.getQuery(), Integer.class, userId);
+        return likedFilmsId;
     }
 }

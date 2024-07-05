@@ -38,4 +38,13 @@ public class FilmLikeController {
         log.debug("Полученные переменные пути при Delete запросе id = " + id + ", userId = " + userId);
         return filmService.deleteLike(id, userId);
     }
+
+    // add-common-films
+    @GetMapping("/common")
+    public Collection<FilmDto> getCommonFilms(@RequestParam("userId") int userId, @RequestParam("friendId") int friendId) {
+        log.info("Получен HTTP-запрос по адресу /films/common?userId={userId}&friendId={friendId}. " +
+                "Вызван метод getCommonFilms(@PathVariable int userId, @PathVariable int friendId");
+        log.debug("Полученные переменные при GET - запросе userId = {}, friendId = {}", userId, friendId);
+        return filmService.getCommonFilms(userId, friendId);
+    }
 }
