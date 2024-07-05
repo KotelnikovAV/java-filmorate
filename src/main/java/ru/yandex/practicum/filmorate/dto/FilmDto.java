@@ -22,4 +22,5 @@ public class FilmDto {
     private int duration;
     private LinkedHashSet<GenreDto> genres;
     private MpaDto mpa;
+    private LinkedHashSet<DirectorDto> directors;
 }

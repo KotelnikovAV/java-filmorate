@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.storage.DirectorRepository;
 import ru.yandex.practicum.filmorate.storage.GenreRepository;
 
 import java.sql.ResultSet;
@@ -13,7 +14,7 @@ import java.sql.SQLException;
 @Component
 @RequiredArgsConstructor
 public class FilmRowMapper implements RowMapper<Film> {
-
+    private final DirectorRepository directorRepository;
     private final GenreRepository genreRepository;
 
     @Override
@@ -31,6 +32,7 @@ public class FilmRowMapper implements RowMapper<Film> {
                                 .name(resultSet.getString("mpa_name"))
                                 .build()
                 )
+                .directors(directorRepository.getListDirector(resultSet.getString("directors")))
                 .build();
     }
 }

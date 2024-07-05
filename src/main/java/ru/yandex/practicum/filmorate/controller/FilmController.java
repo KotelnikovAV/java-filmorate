@@ -30,6 +30,12 @@ public class FilmController {
         return filmService.getFilmById(id);
     }
 
+    @GetMapping("/director/{directorId}")
+    public List<FilmDto> getFilmsByDirectorId(@PathVariable int directorId,
+                                               @RequestParam(defaultValue = "year") String sortBy) {
+        return filmService.getFilmsByDirectorId(directorId, sortBy);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FilmDto create(@Valid @RequestBody FilmDto filmDto) {
