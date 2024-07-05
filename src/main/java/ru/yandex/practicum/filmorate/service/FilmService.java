@@ -19,9 +19,8 @@ public interface FilmService {
     FilmDto update(FilmDto newFilm);
 
     FilmDto getFilmById(int filmId);
-  
+
     void delete(int filmId);
 
     List<FilmDto> getFilmsByDirectorId(int directorId, String sortBy);
-
 }
