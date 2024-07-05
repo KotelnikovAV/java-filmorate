@@ -101,6 +101,14 @@ public class FilmRepositoryImpl implements FilmRepository {
     }
 
     @Override
+    public void delete(int filmId) {
+        log.info("Отправка запроса DELETE_FILMS_LIKE");
+        jdbc.update(Query.DELETE_FILMS_LIKE.getQuery(), filmId);
+        log.info("Отправка запроса DELETE_FILM");
+        jdbc.update(Query.DELETE_FILM.getQuery(), filmId);
+    }
+
+    @Override
     public Film getFilmById(int filmId) {
         log.info("Отправка запроса FIND_FILM_BY_ID");
         return jdbc.queryForObject(Query.FIND_FILM_BY_ID.getQuery(), mapperFilm, filmId);

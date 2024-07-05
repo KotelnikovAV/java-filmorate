@@ -29,7 +29,7 @@ public enum Query {
             "WHERE id = ?"),
     DELETE_FRIEND("DELETE FROM adding_friends " +
             "WHERE outgoing_request_user_id = ? AND incoming_request_user_id = ?"),
-    DELETE_LIKE("DELETE FROM films_like WHERE user_id = ?"),
+    DELETE_LIKE("DELETE FROM films_like WHERE film_id = ? AND user_id = ?"),
     FIND_ALL_FILMS("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +
             "m.name AS mpa_name, f.directors " +
             "FROM films AS f " +
@@ -93,6 +93,16 @@ public enum Query {
     UPDATE_USER("UPDATE users " +
             "SET email = ?, login = ?, name = ?, birthday = ? " +
             "WHERE id = ?"),
+
+    DELETE_FILM("DELETE FROM films " +
+            "WHERE id = ?"),
+    DELETE_FILMS_LIKE("DELETE FROM films_like " +
+            "WHERE film_id = ?;"),
+    DELETE_USER("DELETE FROM users " +
+            "WHERE id = ?"),
+    DELETE_MUTUAL_FRIEND("DELETE FROM adding_friends " +
+            "WHERE (outgoing_request_user_id = ? OR incoming_request_user_id = ?) AND " +
+            " confirmation = TRUE"),
     GET_FILMS_BY_DIRECTOR_ID_SORT_BY_YEAR("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
             "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
             "FROM films AS f " +
@@ -108,7 +118,6 @@ public enum Query {
             "WHERE f.directors LIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC");
-
 
     private final String query;
 

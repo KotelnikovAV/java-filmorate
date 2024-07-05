@@ -50,4 +50,11 @@ public class FilmController {
                 + "Вызван метод update(@Valid @RequestBody FilmDto requestFilmDto)");
         return filmService.update(filmDto);
     }
+
+    @DeleteMapping("/{filmId}")
+    public void delete(@PathVariable int filmId) {
+        log.info("Получен HTTP-запрос по адресу /films/{filmId} (метод DELETE). "
+                + "Вызван метод delete(@PathVariable int filmId)");
+        filmService.delete(filmId);
+    }
 }

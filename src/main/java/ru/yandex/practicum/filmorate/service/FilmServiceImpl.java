@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -12,6 +13,7 @@ import ru.yandex.practicum.filmorate.storage.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -112,9 +114,23 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public FilmDto getFilmById(int filmId) {
         log.info("Начало процесса получения фильма по filmId = " + filmId);
-        Film film = filmRepository.getFilmById(filmId);
+        Film film = checkFilm(filmId).orElseThrow(() -> {
+            log.error("Фильма с id {}, нет", filmId);
+            return new NotFoundException("Фильма с id " + filmId + " нет");
+        });
         log.info("Фильм получен");
         return FilmMapper.mapToFilmDto(film);
+    }
+
+    @Override
+    public void delete(int filmId) {
+        log.info("Начало процесса удаления фильма по filmId = " + filmId);
+        checkFilm(filmId).orElseThrow(() -> {
+            log.error("Фильма с id {}, нет", filmId);
+            return new NotFoundException("Фильма с id " + filmId + " нет");
+        });
+        filmRepository.delete(filmId);
+        log.info("Фильм успешно удален.");
     }
 
     @Override
@@ -126,6 +142,16 @@ public class FilmServiceImpl implements FilmService {
                 .toList();
         log.info("Список всех фильмов получен");
         return films;
+    }
+
+
+    private Optional<Film> checkFilm(int id) {
+        try {
+            Film film = filmRepository.getFilmById(id);
+            return Optional.ofNullable(film);
+        } catch (EmptyResultDataAccessException ignored) {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -150,6 +176,7 @@ public class FilmServiceImpl implements FilmService {
             return films;
         } else {
             throw new NotFoundException("Выбран неверный метод сортировки");
+
         }
     }
 }
