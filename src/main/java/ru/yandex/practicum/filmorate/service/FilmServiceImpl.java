@@ -51,7 +51,7 @@ public class FilmServiceImpl implements FilmService {
     public List<FilmDto> getPopularFilms(int count) {
         log.info("Начало процесса получения списка популярных фильмов");
         log.debug("Значение переменной count: " + count);
-        List<Film> popularFilms = likesRepository.getPopularFilms(count);
+        List<Film> popularFilms = likesRepositoguitry.getPopularFilms(count);
         log.info("Список популярных фильмов получен");
         return popularFilms.stream()
                 .map(FilmMapper::mapToFilmDto)
