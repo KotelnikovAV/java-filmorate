@@ -27,5 +27,4 @@ public interface FilmService {
     void delete(int filmId);
 
     List<FilmDto> getFilmsByDirectorId(int directorId, String sortBy);
-  
 }
