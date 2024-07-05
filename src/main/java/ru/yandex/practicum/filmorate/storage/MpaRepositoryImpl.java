@@ -38,6 +38,7 @@ public class MpaRepositoryImpl implements MpaRepository {
         log.info("Отправка запроса CHECK_MPA");
         Optional<Integer> countMpa = Optional.ofNullable(jdbc.queryForObject(Query.CHECK_MPA.getQuery(),
                 Integer.class, id));
+
         if (countMpa.isEmpty()) {
             throw new InternalServerException("Ошибка проверки наличия рейтинга");
         } else if (countMpa.get() == 0) {
