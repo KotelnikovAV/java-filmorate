@@ -48,7 +48,7 @@ public class FilmController {
     @DeleteMapping("/{filmId}")
     public void delete(@PathVariable int filmId) {
         log.info("Получен HTTP-запрос по адресу /films/{filmId} (метод DELETE). "
-                + "Вызван метод deleteFilmById(@PathVariable int filmId)");
+                + "Вызван метод delete(@PathVariable int filmId)");
         filmService.delete(filmId);
     }
 }

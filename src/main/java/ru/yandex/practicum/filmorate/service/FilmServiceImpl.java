@@ -52,7 +52,7 @@ public class FilmServiceImpl implements FilmService {
         log.info("Начало процесса получения списка популярных фильмов");
         log.debug("Значение переменной count: " + count);
         List<Film> popularFilms = likesRepository.getPopularFilms(count);
-        log.info("Список популярных фильмов получен {}", popularFilms.size());
+        log.info("Список популярных фильмов получен");
         return popularFilms.stream()
                 .map(FilmMapper::mapToFilmDto)
                 .toList();
