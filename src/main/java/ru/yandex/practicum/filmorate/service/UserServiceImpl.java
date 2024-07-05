@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUser(int id) {
-        log.info("Начало процесса получения пользователя с id = " + id);
+        log.info("Начало процесса получения пользователя с id = {}", id);
         User user = checkUser(id).orElseThrow(() -> {
             log.error("Пользователя с id {}, нет", id);
             return new NotFoundException("Пользователя с id " + id + " нет");

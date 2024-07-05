@@ -101,9 +101,8 @@ public enum Query {
     DELETE_USER("DELETE FROM users " +
             "WHERE id = ?"),
     DELETE_MUTUAL_FRIEND("DELETE FROM adding_friends " +
-                                 "WHERE (outgoing_request_user_id = ? OR incoming_request_user_id = ?) AND " +
-             " confirmation = TRUE"),;
-
+            "WHERE (outgoing_request_user_id = ? OR incoming_request_user_id = ?) AND " +
+            " confirmation = TRUE"),
     GET_FILMS_BY_DIRECTOR_ID_SORT_BY_YEAR("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
             "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
             "FROM films AS f " +

@@ -49,7 +49,7 @@ public class FilmServiceImpl implements FilmService {
     public List<FilmDto> getPopularFilms(int count) {
         log.info("Начало процесса получения списка популярных фильмов");
         log.debug("Значение переменной count: " + count);
-        List<Film> popularFilms = likesRepositoguitry.getPopularFilms(count);
+        List<Film> popularFilms = likesRepository.getPopularFilms(count);
         log.info("Список популярных фильмов получен");
         return popularFilms.stream()
                 .map(FilmMapper::mapToFilmDto)
@@ -114,7 +114,7 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public FilmDto getFilmById(int filmId) {
         log.info("Начало процесса получения фильма по filmId = " + filmId);
-        Film film =  checkFilm(filmId).orElseThrow(() -> {
+        Film film = checkFilm(filmId).orElseThrow(() -> {
             log.error("Фильма с id {}, нет", filmId);
             return new NotFoundException("Фильма с id " + filmId + " нет");
         });
@@ -147,11 +147,13 @@ public class FilmServiceImpl implements FilmService {
 
     private Optional<Film> checkFilm(int id) {
         try {
-            Film film= filmRepository.getFilmById(id);
+            Film film = filmRepository.getFilmById(id);
             return Optional.ofNullable(film);
         } catch (EmptyResultDataAccessException ignored) {
             return Optional.empty();
-          
+        }
+    }
+
     @Override
     public List<FilmDto> getFilmsByDirectorId(int directorId, String sortBy) {
         directorRepository.checkDirector(directorId);
