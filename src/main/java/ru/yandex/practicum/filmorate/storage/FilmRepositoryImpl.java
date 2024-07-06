@@ -29,7 +29,7 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public Film create(Film film) {
-        int id = 0;
+        int id;
         log.info("Отправка запроса INSERT_FILM");
 
         if (film.getDirectors() != null) {
@@ -64,7 +64,7 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public Film update(Film newFilm) {
-        int rowsUpdated = 0;
+        int rowsUpdated;
         log.info("Отправка запроса UPDATE_FILM");
 
         if (newFilm.getDirectors() != null) {
