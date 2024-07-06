@@ -135,7 +135,7 @@ public enum Query {
             "m.name AS mpa_name, f.directors " +
             "FROM films AS f " +
             "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
-            "INNER JOIN films_like AS fl ON f.id = fl.film_id " +
+            "LEFT JOIN films_like AS fl ON f.id = fl.film_id " +
             "WHERE f.name LIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
