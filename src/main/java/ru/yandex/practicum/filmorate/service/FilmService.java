@@ -20,6 +20,8 @@ public interface FilmService {
 
     FilmDto getFilmById(int filmId);
 
+    List<FilmDto> getCommonFilms(int userId, int friendId);
+
     void delete(int filmId);
 
     List<FilmDto> getFilmsByDirectorId(int directorId, String sortBy);
