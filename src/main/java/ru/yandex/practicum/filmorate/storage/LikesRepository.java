@@ -13,4 +13,8 @@ public interface LikesRepository {
     Film deleteLike(int filmId, int userId);
 
     List<Integer> getListLikes(Film film);
+
+    List<Film> getCommonFilms(int userId, int friendId);
+
+    List<Integer> getIdFilmsLikedByUser(int userId);
 }
