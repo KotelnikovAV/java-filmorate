@@ -22,7 +22,7 @@ public class FilmRepositoryImpl implements FilmRepository {
     private final RowMapper<Film> mapperFilm;
 
     private static String getSearchString(String query) {
-        return "%" + query + "%";
+        return MessageFormat.format("%{0}%", query);
     }
 
     @Override

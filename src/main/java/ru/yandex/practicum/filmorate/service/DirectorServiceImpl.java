@@ -28,7 +28,7 @@ public class DirectorServiceImpl implements DirectorService {
 
     @Override
     public DirectorDto getDirector(int directorId) {
-        log.info("Начало процесса получения режиссёра по id = " + directorId);
+        log.info("Начало процесса получения режиссёра по id = {}", directorId);
         Director director = directorRepository.getDirector(directorId);
         log.info("Режиссёр получен");
         return DirectorMapper.mapToDirectorDto(director);
