@@ -193,12 +193,12 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<FilmDto> getPopularFilmsBySearchParam(String query, List<String> settingsList) {
+    public List<FilmDto> getPopularFilmsBySearchParam(String query, List<String> searchSettingsList) {
         log.info("Начало процесса получения списка популярных фильмов по названию");
-        log.debug("Значение переменной query: {}, settingsList: {}", query, settingsList);
+        log.debug("Значение переменной query: {}, searchSettingsList: {}", query, searchSettingsList);
         ArrayList<SearchParams> searchParams = new ArrayList<>();
-        for (String s : settingsList) {
-            searchParams.add(SearchParams.valueOf(s.toUpperCase()));
+        for (String searchSetting : searchSettingsList) {
+            searchParams.add(SearchParams.valueOf(searchSetting.toUpperCase()));
         }
         if (searchParams.size() == 2) {
             return filmRepository.getPopularFilmsByTitleAndDirector(query)
@@ -210,11 +210,13 @@ public class FilmServiceImpl implements FilmService {
                     .stream()
                     .map(FilmMapper::mapToFilmDto)
                     .toList();
-        } else {
+        } else if (searchParams.getFirst().equals(SearchParams.DIRECTOR)) {
             return filmRepository.getPopularFilmsByDirector(query)
                     .stream()
                     .map(FilmMapper::mapToFilmDto)
                     .toList();
+        } else {
+            throw new NotFoundException("Выбран неверный параметр поиска");
         }
     }
 }

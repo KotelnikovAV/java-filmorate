@@ -12,6 +12,8 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Query;
 
 import java.sql.Date;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -20,6 +22,7 @@ import java.util.List;
 public class FilmRepositoryImpl implements FilmRepository {
     private final JdbcTemplate jdbc;
     private final RowMapper<Film> mapperFilm;
+    private final RowMapper<Director> directorRowMapper;
 
     private static String getSearchString(String query) {
         return MessageFormat.format("%{0}%", query);
@@ -140,14 +143,23 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public List<Film> getPopularFilmsByDirector(String query) {
-        log.info("Отправка запроса FIND_POPULAR_FILMS_BY_DIRECTOR");
-        return jdbc.query(Query.FIND_POPULAR_FILMS_BY_DIRECTOR.getQuery(), mapperFilm, getSearchString(query));
+        log.info("Отправка запроса FIND_DIRECTOR_LIST_BY_NAME");
+        List<Director> directorList = jdbc.query(Query.FIND_DIRECTOR_LIST_BY_NAME.getQuery(),
+                directorRowMapper,
+                getSearchString(query));
+        List<Film> filmList = new ArrayList<>();
+
+        directorList.forEach(director -> filmList.addAll(jdbc.query(Query.GET_FILMS_BY_DIRECTOR_ID_SORT_BY_LIKES.getQuery(),
+                mapperFilm,
+                String.valueOf(director.getId()))));
+
+        return filmList;
     }
 
     @Override
     public List<Film> getPopularFilmsByTitleAndDirector(String query) {
         log.info("Отправка запроса FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR");
-        return jdbc.query(Query.FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR.getQuery(), mapperFilm, getSearchString(query));
+        return jdbc.query(Query.FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR.getQuery(), mapperFilm, query, query);
     }
 
     private String convertGenresToString(List<Genre> genres) {
