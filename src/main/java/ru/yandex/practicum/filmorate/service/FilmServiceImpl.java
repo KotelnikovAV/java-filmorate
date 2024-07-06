@@ -182,7 +182,8 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<FilmDto> getPopularFilmsByTitle(String query) {
-//        TODO log
+        log.info("Начало процесса получения списка популярных фильмов по названию");
+        log.debug("Значение переменной count: {}", query);
         return filmRepository.getPopularFilmsByTitle(query)
                 .stream()
                 .map(FilmMapper::mapToFilmDto)

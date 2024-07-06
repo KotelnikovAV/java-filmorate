@@ -60,9 +60,8 @@ public class FilmController {
 
     @GetMapping("search")
     public List<FilmDto> getFilmsByTittle(@RequestParam String query) {
-//        TODO log
         log.info("Получен HTTP-запрос по адресу films/search (метод GET). "
-                + "Вызван метод getFilmsByQuery()");
+                + "Вызван метод getFilmsByTittle(@RequestParam String query)");
         return filmService.getPopularFilmsByTitle(query);
     }
 }

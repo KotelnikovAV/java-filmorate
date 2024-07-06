@@ -130,7 +130,7 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public List<Film> getPopularFilmsByTitle(String query) {
-        //        TODO log
+        log.info("Отправка запроса FIND_POPULAR_FILMS_BY_TITLE");
         return jdbc.query(Query.FIND_POPULAR_FILMS_BY_TITLE.getQuery(), mapperFilm, query);
     }
 
