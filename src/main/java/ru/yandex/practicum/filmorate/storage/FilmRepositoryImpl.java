@@ -134,6 +134,18 @@ public class FilmRepositoryImpl implements FilmRepository {
         return jdbc.query(Query.FIND_POPULAR_FILMS_BY_TITLE.getQuery(), mapperFilm, query);
     }
 
+    @Override
+    public List<Film> getPopularFilmsByDirector(String query) {
+        log.info("Отправка запроса FIND_POPULAR_FILMS_BY_DIRECTOR");
+        return jdbc.query(Query.FIND_POPULAR_FILMS_BY_DIRECTOR.getQuery(), mapperFilm, query);
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByTitleAndDirector(String query) {
+        log.info("Отправка запроса FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR");
+        return jdbc.query(Query.FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR.getQuery(), mapperFilm, query);
+    }
+
     private String convertGenresToString(List<Genre> genres) {
         StringBuilder stringBuilder = new StringBuilder();
         String prefix = "";

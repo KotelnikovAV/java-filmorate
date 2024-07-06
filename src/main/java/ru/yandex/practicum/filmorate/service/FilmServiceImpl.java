@@ -9,9 +9,11 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.SearchParams;
 import ru.yandex.practicum.filmorate.storage.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -181,12 +183,28 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<FilmDto> getPopularFilmsByTitle(String query) {
+    public List<FilmDto> getPopularFilmsBySearchParam(String query, List<String> settingsList) {
         log.info("Начало процесса получения списка популярных фильмов по названию");
-        log.debug("Значение переменной count: {}", query);
-        return filmRepository.getPopularFilmsByTitle(query)
-                .stream()
-                .map(FilmMapper::mapToFilmDto)
-                .toList();
+        log.debug("Значение переменной query: {}, settingsList: {}", query, settingsList);
+        ArrayList<SearchParams> searchParams = new ArrayList<>();
+        for (String s : settingsList) {
+            searchParams.add(SearchParams.valueOf(s.toUpperCase()));
+        }
+        if (searchParams.size() == 2) {
+            return filmRepository.getPopularFilmsByTitleAndDirector(query)
+                    .stream()
+                    .map(FilmMapper::mapToFilmDto)
+                    .toList();
+        } else if (searchParams.getFirst().equals(SearchParams.TITLE)) {
+            return filmRepository.getPopularFilmsByTitle(query)
+                    .stream()
+                    .map(FilmMapper::mapToFilmDto)
+                    .toList();
+        } else {
+            return filmRepository.getPopularFilmsByDirector(query)
+                    .stream()
+                    .map(FilmMapper::mapToFilmDto)
+                    .toList();
+        }
     }
 }

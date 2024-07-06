@@ -125,6 +125,22 @@ public enum Query {
             "INNER JOIN films_like AS fl ON f.id = fl.film_id " +
             "WHERE f.name LIKE ? " +
             "GROUP BY f.id " +
+            "ORDER BY COUNT(fl.user_id) DESC"),
+    FIND_POPULAR_FILMS_BY_DIRECTOR("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
+            "m.id, AS mpa_id, m.name AS mpa_name, f.directors " +
+            "FROM films AS f " +
+            "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
+            "INNER JOIN films_like AS fl ON f.id = fl.film_id " +
+            "WHERE f.directors LIKE ? " +
+            "GROUP BY f.id " +
+            "ORDER BY COUNT(fl.user_id) DESC"),
+    FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
+            "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
+            "FROM films AS f " +
+            "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
+            "INNER JOIN films_like AS fl ON f.id = fl.film_id " +
+            "WHERE f.name OR f.directors LIKE ? " +
+            "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC");
 
     private final String query;

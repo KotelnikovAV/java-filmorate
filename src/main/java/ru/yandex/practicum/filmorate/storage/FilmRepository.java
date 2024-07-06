@@ -20,5 +20,9 @@ public interface FilmRepository {
 
     List<Film> getFilmsByDirectorIdSortByLikes(int directorId);
 
+    List<Film> getPopularFilmsByTitleAndDirector(String query);
+
     List<Film> getPopularFilmsByTitle(String query);
+
+    List<Film> getPopularFilmsByDirector(String query);
 }
