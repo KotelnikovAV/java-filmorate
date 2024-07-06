@@ -55,9 +55,7 @@ public class LikesRepositoryImpl implements LikesRepository {
     @Override
     public Film deleteLike(int filmId, int userId) {
         log.info("Отправка запроса DELETE_LIKE");
-
         int rowsDeleted = jdbc.update(Query.DELETE_LIKE.getQuery(), filmId, userId);
-
 
         if (rowsDeleted == 0) {
             throw new InternalServerException("Данный пользователь лайк не ставил");
@@ -72,7 +70,6 @@ public class LikesRepositoryImpl implements LikesRepository {
         return jdbc.queryForList(Query.FIND_LIST_LIKES.getQuery(), Integer.class, film.getId());
     }
 
-    // add-common-films
     @Override
     public List<Film> getCommonFilms(int userId, int friendId) {
         log.info("Отправка запроса FIND_COMMON_FILMS");
@@ -87,7 +84,6 @@ public class LikesRepositoryImpl implements LikesRepository {
     @Override
     public List<Integer> getIdFilmsLikedByUser(int userId) {
         log.info("Отправка запроса FIND_LIST_LIKED_FILMS");
-        List<Integer> likedFilmsId = jdbc.queryForList(Query.FIND_LIST_LIKED_FILMS.getQuery(), Integer.class, userId);
-        return likedFilmsId;
+        return jdbc.queryForList(Query.FIND_LIST_LIKED_FILMS.getQuery(), Integer.class, userId);
     }
 }
