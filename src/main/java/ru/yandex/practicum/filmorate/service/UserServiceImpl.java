@@ -5,13 +5,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.UserDto;
+import ru.yandex.practicum.filmorate.dto.UserEventDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.mapper.UserEventMapper;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
+import ru.yandex.practicum.filmorate.model.EventType;
+import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.UserEvent;
 import ru.yandex.practicum.filmorate.storage.FriendsRepository;
+import ru.yandex.practicum.filmorate.storage.UserEventRepository;
 import ru.yandex.practicum.filmorate.storage.UserRepository;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +28,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final FriendsRepository friendsRepository;
+    private final UserEventRepository userEventRepository;
 
     @Override
     public UserDto addFriend(int id, int friendId) {
@@ -33,6 +41,16 @@ public class UserServiceImpl implements UserService {
 
         User user = friendsRepository.addFriend(id, friendId);
         log.info("Заявка успешно отправлена");
+
+        log.info("Создание UserEvent добавление в друзья");
+        userEventRepository.createUserEvent(UserEvent.builder()
+                .userId(id)
+                .entityId(friendId)
+                .eventType(EventType.FRIEND)
+                .operation(Operation.ADD)
+                .timestamp(Instant.now())
+                .build());
+
         return UserMapper.mapToUserDto(user);
     }
 
@@ -47,6 +65,16 @@ public class UserServiceImpl implements UserService {
 
         User user = friendsRepository.deleteFriend(id, friendId);
         log.info("Пользователь удален из друзей");
+
+        log.info("Создание UserEvent удаление из  друзей");
+        userEventRepository.createUserEvent(UserEvent.builder()
+                .userId(id)
+                .entityId(friendId)
+                .eventType(EventType.FRIEND)
+                .operation(Operation.REMOVE)
+                .timestamp(Instant.now())
+                .build());
+
         return UserMapper.mapToUserDto(user);
     }
 
@@ -154,5 +182,14 @@ public class UserServiceImpl implements UserService {
         } catch (EmptyResultDataAccessException ignored) {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<UserEventDto> getAllUserEvents(int userId) {
+        log.info("Начало процесса получения UserEvent");
+        List<UserEvent> userEvents = userEventRepository.getAllUserEvents(userId);
+        return userEvents.stream()
+                .map(UserEventMapper::mapToUserEventDto)
+                .toList();
     }
 }

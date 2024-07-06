@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import ru.yandex.practicum.filmorate.dto.UserDto;
+import ru.yandex.practicum.filmorate.dto.UserEventDto;
 
 import java.util.List;
 
@@ -23,4 +24,6 @@ public interface UserService {
     UserDto getUser(int id);
 
     void delete(int id);
+
+    List<UserEventDto> getAllUserEvents(int userId);
 }

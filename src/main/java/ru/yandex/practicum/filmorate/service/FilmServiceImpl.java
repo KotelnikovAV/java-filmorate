@@ -5,12 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.dto.UserEventDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.mapper.UserEventMapper;
+import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Operation;
+import ru.yandex.practicum.filmorate.model.UserEvent;
 import ru.yandex.practicum.filmorate.storage.*;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +32,7 @@ public class FilmServiceImpl implements FilmService {
     private final GenreRepository genreRepository;
     private final LikesRepository likesRepository;
     private final DirectorRepository directorRepository;
+    private final UserEventRepository userEventRepository;
 
     @Override
     public FilmDto addLike(int filmId, int userId) {
@@ -33,6 +40,16 @@ public class FilmServiceImpl implements FilmService {
         log.debug("Значение переменных при добавлении лайка filmId и userId: " + filmId + ", " + userId);
         Film film = likesRepository.addLike(filmId, userId);
         log.info("Лайк поставлен");
+
+        log.info("Создание UserEvent добавление лайка");
+        userEventRepository.createUserEvent(UserEvent.builder()
+                .userId(userId)
+                .entityId(filmId)
+                .eventType(EventType.LIKE)
+                .operation(Operation.ADD)
+                .timestamp(Instant.now())
+                .build());
+
         return FilmMapper.mapToFilmDto(film);
     }
 
@@ -42,6 +59,16 @@ public class FilmServiceImpl implements FilmService {
         log.debug("Значение переменных при удалении лайка filmId и userId: " + filmId + ", " + userId);
         Film film = likesRepository.deleteLike(filmId, userId);
         log.info("Лайк удален");
+
+        log.info("Создание UserEvent удаление лайка");
+        userEventRepository.createUserEvent(UserEvent.builder()
+                .userId(userId)
+                .entityId(filmId)
+                .eventType(EventType.LIKE)
+                .operation(Operation.REMOVE)
+                .timestamp(Instant.now())
+                .build());
+
         return FilmMapper.mapToFilmDto(film);
     }
 

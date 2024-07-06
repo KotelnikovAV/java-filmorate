@@ -130,7 +130,14 @@ public enum Query {
             "INNER JOIN films_like AS fl ON f.id = fl.film_id " +
             "WHERE f.directors LIKE ? " +
             "GROUP BY f.id " +
-            "ORDER BY COUNT(fl.user_id) DESC");
+            "ORDER BY COUNT(fl.user_id) DESC"),
+    INSERT_USER_EVENT("INSERT INTO users_events(user_id, event_type, operation, entity_id, timestamp) " +
+            " VALUES (?, ?, ?, ?, ?)"),
+    INSERT_USERS_EVENTS_TABLE("INSERT INTO users_events_table( user_id, user_events_id) VALUES (?, ?)"),
+    GET_USERS_EVENTS("SELECT ue.* " +
+            "FROM users_events_table AS uet " +
+            "JOIN users_events AS ue ON uet.user_events_id = ue.id " +
+            "WHERE uet.user_id = ?");
 
     private final String query;
 
