@@ -30,7 +30,7 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public FilmDto addLike(int filmId, int userId) {
         log.info("Начало процесса добавление лайка");
-        log.debug("Значение переменных при добавлении лайка filmId и userId: " + filmId + ", " + userId);
+        log.debug("Значение переменных при добавлении лайка filmId и userId: {}, {}", filmId, userId);
         Film film = likesRepository.addLike(filmId, userId);
         log.info("Лайк поставлен");
         return FilmMapper.mapToFilmDto(film);
@@ -39,7 +39,7 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public FilmDto deleteLike(int filmId, int userId) {
         log.info("Начало процесса удаления лайка");
-        log.debug("Значение переменных при удалении лайка filmId и userId: " + filmId + ", " + userId);
+        log.debug("Значение переменных при удалении лайка filmId и userId: {}, {}", filmId, userId);
         Film film = likesRepository.deleteLike(filmId, userId);
         log.info("Лайк удален");
         return FilmMapper.mapToFilmDto(film);
@@ -48,7 +48,7 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public List<FilmDto> getPopularFilms(int count) {
         log.info("Начало процесса получения списка популярных фильмов");
-        log.debug("Значение переменной count: " + count);
+        log.debug("Значение переменной count: {}", count);
         List<Film> popularFilms = likesRepository.getPopularFilms(count);
         log.info("Список популярных фильмов получен");
         return popularFilms.stream()
@@ -113,7 +113,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public FilmDto getFilmById(int filmId) {
-        log.info("Начало процесса получения фильма по filmId = " + filmId);
+        log.info("Начало процесса получения фильма по filmId = {}", filmId);
         Film film = checkFilm(filmId).orElseThrow(() -> {
             log.error("Фильма с id {}, нет", filmId);
             return new NotFoundException("Фильма с id " + filmId + " нет");
@@ -124,7 +124,7 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public void delete(int filmId) {
-        log.info("Начало процесса удаления фильма по filmId = " + filmId);
+        log.info("Начало процесса удаления фильма по filmId = {}", filmId);
         checkFilm(filmId).orElseThrow(() -> {
             log.error("Фильма с id {}, нет", filmId);
             return new NotFoundException("Фильма с id " + filmId + " нет");
@@ -159,16 +159,16 @@ public class FilmServiceImpl implements FilmService {
         directorRepository.checkDirector(directorId);
 
         if (sortBy.equals("year")) {
-            log.info("Начало процесса получения фильмов, отсортированных по дате релиза, режиссер которых является " +
-                    "directorId = " + directorId);
+            log.info("Начало процесса получения фильмов, отсортированных по дате релиза, режиссер которых является directorId = {}",
+                    directorId);
             List<FilmDto> films = filmRepository.getFilmsByDirectorIdSortByYear(directorId).stream()
                     .map(FilmMapper::mapToFilmDto)
                     .toList();
             log.info("Получен список фильмов отсортированных по дате релиза");
             return films;
         } else if (sortBy.equals("likes")) {
-            log.info("Начало процесса получения фильмов, отсортированных по лайкам, режиссер которых является " +
-                    "directorId = " + directorId);
+            log.info("Начало процесса получения фильмов, отсортированных по лайкам, режиссер которых является directorId = {}",
+                    directorId);
             List<FilmDto> films = filmRepository.getFilmsByDirectorIdSortByLikes(directorId).stream()
                     .map(FilmMapper::mapToFilmDto)
                     .toList();
