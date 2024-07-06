@@ -30,6 +30,12 @@ public class FilmController {
         return filmService.getFilmById(id);
     }
 
+    @GetMapping("director/{directorId}")
+    public List<FilmDto> getFilmsByDirectorId(@PathVariable int directorId,
+                                               @RequestParam(defaultValue = "year") String sortBy) {
+        return filmService.getFilmsByDirectorId(directorId, sortBy);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FilmDto create(@Valid @RequestBody FilmDto filmDto) {
@@ -45,9 +51,17 @@ public class FilmController {
         return filmService.update(filmDto);
     }
 
+    @DeleteMapping("{filmId}")
+    public void delete(@PathVariable int filmId) {
+        log.info("Получен HTTP-запрос по адресу /films/{filmId} (метод DELETE). "
+                + "Вызван метод delete(@PathVariable int filmId)");
+        filmService.delete(filmId);
+    }
+
     @GetMapping("search")
     public List<FilmDto> getFilmsByTittle(@RequestParam String query) {
-        log.info("Получен HTTP-запрос по адресу /films/search (метод GET). "
+//        TODO log
+        log.info("Получен HTTP-запрос по адресу films/search (метод GET). "
                 + "Вызван метод getFilmsByQuery()");
         return filmService.getPopularFilmsByTitle(query);
     }

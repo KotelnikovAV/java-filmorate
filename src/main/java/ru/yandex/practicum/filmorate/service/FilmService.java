@@ -20,5 +20,9 @@ public interface FilmService {
 
     FilmDto getFilmById(int filmId);
 
+    void delete(int filmId);
+
+    List<FilmDto> getFilmsByDirectorId(int directorId, String sortBy);
+
     List<FilmDto> getPopularFilmsByTitle(String query);
 }
