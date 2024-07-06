@@ -21,6 +21,10 @@ public class FilmRepositoryImpl implements FilmRepository {
     private final JdbcTemplate jdbc;
     private final RowMapper<Film> mapperFilm;
 
+    private static String getSearchString(String query) {
+        return "%" + query + "%";
+    }
+
     @Override
     public List<Film> findAll() {
         log.info("Отправка запроса FIND_ALL_FILMS");
@@ -132,10 +136,6 @@ public class FilmRepositoryImpl implements FilmRepository {
     public List<Film> getPopularFilmsByTitle(String query) {
         log.info("Отправка запроса FIND_POPULAR_FILMS_BY_TITLE");
         return jdbc.query(Query.FIND_POPULAR_FILMS_BY_TITLE.getQuery(), mapperFilm, getSearchString(query));
-    }
-
-    private static String getSearchString(String query) {
-        return "%" + query + "%";
     }
 
     @Override

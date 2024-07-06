@@ -24,7 +24,7 @@ public class UserMapper {
 
     public UserDto mapToUserDto(User user) {
         log.info("Начало преобразования User в UserDto");
-        UserDto userDto =  UserDto.builder()
+        UserDto userDto = UserDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .login(user.getLogin())

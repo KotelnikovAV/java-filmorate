@@ -38,7 +38,7 @@ public class FilmMapper {
         }
 
 
-        Film film =  Film.builder()
+        Film film = Film.builder()
                 .id(filmDto.getId())
                 .name(filmDto.getName())
                 .description(filmDto.getDescription())
