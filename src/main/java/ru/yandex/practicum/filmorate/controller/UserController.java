@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.UserDto;
-import ru.yandex.practicum.filmorate.dto.UserEventDto;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
@@ -52,13 +51,5 @@ public class UserController {
         log.info("Получен HTTP-запрос по адресу /users/{userId} (метод GET). " +
                 " Вызван метод getUser(@PathVariable int userId)");
         return userService.getUser(userId);
-    }
-
-
-    @GetMapping("/{id}/feed")
-    public List<UserEventDto> getUserEvents(@PathVariable int id) {
-        log.info("Получен HTTP-запрос по адресу /users/{id}/feed (метод GET). "
-                + "Вызван метод getUserEvents(@PathVariable int id)");
-        return userService.getUserEvents(id);
     }
 }
