@@ -17,4 +17,6 @@ public interface LikesRepository {
     List<Film> getCommonFilms(int userId, int friendId);
 
     List<Integer> getIdFilmsLikedByUser(int userId);
+    //add-recommendations
+    List<Integer> getAllUserWhoLikedFilms();
 }
