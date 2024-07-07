@@ -75,7 +75,7 @@ public class LikesRepositoryImpl implements LikesRepository {
     // add-common-films
     @Override
     public List<Film> getCommonFilms(int userId, int friendId) {
-        log.info("Отправка запроса FIND_COMMON_FILMS");
+        log.info("Запущен метод getCommonFilms, переданы userId = {}, friendId = {}", userId, friendId);
 
         List<Integer> userFilm = getIdFilmsLikedByUser(userId);
         List<Integer> friendFilm = getIdFilmsLikedByUser(friendId);

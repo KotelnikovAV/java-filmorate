@@ -80,6 +80,7 @@ public class UserRepositoryImpl implements UserRepository {
     //add-recommendations
     @Override
     public List<Film> getRecommendationsFilms(int userId) {
+        log.info("Запущен метод getRecommendationsFilms для пользователя userId = {}", userId);
         List<Film> recommendationsFilms = findRecommendationsId(userId)
                 .stream()
                 .map(filmRepository::getFilmById)
@@ -90,7 +91,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<Integer> findRecommendationsId(int userId) {
-
+        log.info("Запущен вспомогательный метод findRecommendationsId, для поиска id фильмов для рекоммендаций.");
         List<Integer> userLikedFilms = likesRepository.getIdFilmsLikedByUser(userId);
         List<Integer> userIds = likesRepository.getAllUserWhoLikedFilms();
 
@@ -113,6 +114,9 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     private int getSizeCommonFilmsList(int userId, int anotherId) {
+        log.debug("Запущен вспомогателный метод getSizeCommonFilmsList, " +
+                "для получения размера списка общих фильмов для пользователей " +
+                "userId = {} и anotherId = {}", userId, anotherId);
         List<Integer> userFilm = likesRepository.getIdFilmsLikedByUser(userId);
         List<Integer> friendFilm = likesRepository.getIdFilmsLikedByUser(anotherId);
 
