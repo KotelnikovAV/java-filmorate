@@ -20,7 +20,7 @@ import java.util.List;
 public class UserRepositoryImpl implements UserRepository {
     private final JdbcTemplate jdbc;
     private final RowMapper<User> mapper;
-    private final FilmRepository filmRepository; //add-recommendations
+    private final FilmRepository filmRepository;
     private final LikesRepository likesRepository;
 
     @Override
