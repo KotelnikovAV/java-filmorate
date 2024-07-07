@@ -18,7 +18,7 @@ public class BaseDbStorage {
                 ps.setObject(idx + 1, params[idx]);
             }
             return ps;
-            }, keyHolder);
+        }, keyHolder);
 
         Integer id = keyHolder.getKeyAs(Integer.class);
 

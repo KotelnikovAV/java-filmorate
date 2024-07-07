@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.mapper.UserEventMapper;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Operation;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.UserEvent;
 import ru.yandex.practicum.filmorate.storage.FriendsRepository;
@@ -173,6 +174,11 @@ public class UserServiceImpl implements UserService {
         log.info("Начало процесса удаления пользователя с id = {}", id);
         checkUser(id);
         userRepository.delete(id);
+    }
+
+    @Override
+    public List<Film> getRecommendationsFilms(int userId) {
+        return userRepository.getRecommendationsFilms(userId);
     }
 
     private Optional<User> checkUser(int id) {

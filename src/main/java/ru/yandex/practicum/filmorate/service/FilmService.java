@@ -26,4 +26,6 @@ public interface FilmService {
     void delete(int filmId);
 
     List<FilmDto> getFilmsByDirectorId(int directorId, String sortBy);
+
+    List<FilmDto> getPopularFilmsBySearchParam(String query, List<String> searchParams);
 }

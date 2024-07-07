@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Query;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -19,6 +20,8 @@ import java.util.List;
 public class UserRepositoryImpl implements UserRepository {
     private final JdbcTemplate jdbc;
     private final RowMapper<User> mapper;
+    private final FilmRepository filmRepository;
+    private final LikesRepository likesRepository;
 
     @Override
     public List<User> findAll() {
@@ -72,5 +75,59 @@ public class UserRepositoryImpl implements UserRepository {
         jdbc.update(Query.DELETE_MUTUAL_FRIEND.getQuery(), id, id);
         log.info("Отправка запроса DELETE_USER");
         jdbc.update(Query.DELETE_USER.getQuery(), id);
+    }
+
+    //add-recommendations
+    @Override
+    public List<Film> getRecommendationsFilms(int userId) {
+        log.info("Запущен метод getRecommendationsFilms для пользователя userId = {}", userId);
+
+        List<Film> recommendationsFilms = findRecommendationsId(userId)
+                .stream()
+                .map(filmRepository::getFilmById)
+                .toList();
+
+        return recommendationsFilms;
+    }
+
+    @Override
+    public List<Integer> findRecommendationsId(int userId) {
+        log.info("Запущен вспомогательный метод findRecommendationsId, для поиска id фильмов для рекоммендаций.");
+
+        List<Integer> userLikedFilms = likesRepository.getIdFilmsLikedByUser(userId);
+        List<Integer> userIds = likesRepository.getAllUserWhoLikedFilms();
+
+        int minLength = getSizeCommonFilmsList(userId, userIds.getFirst());
+        int anotherUserId = userId;
+
+        for (Integer id : userIds) {
+            if (minLength < getSizeCommonFilmsList(userId, id)) {
+                minLength = getSizeCommonFilmsList(userId, id);
+                anotherUserId = id;
+            }
+        }
+
+        List<Integer> anotherUserList = likesRepository.getIdFilmsLikedByUser(anotherUserId);
+        anotherUserList.removeAll(userLikedFilms);
+
+        List<Integer> recommendationsId = anotherUserList;
+
+        return recommendationsId;
+    }
+
+    private int getSizeCommonFilmsList(int userId, int anotherId) {
+        log.debug("Запущен вспомогателный метод getSizeCommonFilmsList, " +
+                "для получения размера списка общих фильмов для пользователей " +
+                "userId = {} и anotherId = {}", userId, anotherId);
+
+        List<Integer> userFilm = likesRepository.getIdFilmsLikedByUser(userId);
+        List<Integer> friendFilm = likesRepository.getIdFilmsLikedByUser(anotherId);
+
+        if (friendFilm.size() > userFilm.size()) {
+            friendFilm.retainAll(userFilm);
+            return friendFilm.size();
+        } else {
+            return 0;
+        }
     }
 }
