@@ -149,7 +149,8 @@ public class FilmRepositoryImpl implements FilmRepository {
                 getSearchString(query));
         List<Film> filmList = new ArrayList<>();
 
-        directorList.forEach(director -> filmList.addAll(jdbc.query(Query.GET_FILMS_BY_DIRECTOR_ID_SORT_BY_LIKES.getQuery(),
+        directorList.forEach(director -> filmList.addAll(jdbc.query(
+                Query.GET_ALL_FILMS_BY_DIRECTOR_ID_SORT_BY_LIKES.getQuery(),
                 mapperFilm,
                 String.valueOf(director.getId()))));
 
@@ -158,8 +159,13 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public List<Film> getPopularFilmsByTitleAndDirector(String query) {
-        log.info("Отправка запроса FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR");
-        return jdbc.query(Query.FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR.getQuery(), mapperFilm, query, query);
+        List<Film> popularFilmsByDirector = getPopularFilmsByDirector(query);
+        List<Film> popularFilmsByTitle = getPopularFilmsByTitle(query);
+        List<Film> filmList = new ArrayList<>();
+        filmList.addAll(popularFilmsByTitle);
+        filmList.addAll(popularFilmsByDirector);
+
+        return filmList;
     }
 
     private String convertGenresToString(List<Genre> genres) {
