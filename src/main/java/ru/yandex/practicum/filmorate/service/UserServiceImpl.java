@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FriendsRepository;
 import ru.yandex.practicum.filmorate.storage.UserRepository;
@@ -145,6 +146,11 @@ public class UserServiceImpl implements UserService {
         log.info("Начало процесса удаления пользователя с id = {}", id);
         checkUser(id);
         userRepository.delete(id);
+    }
+    //add-recommendations
+    @Override
+    public List<Film> getRecommendationsFilms(int userId) {
+        return userRepository.getRecommendationsFilms(userId);
     }
 
     private Optional<User> checkUser(int id) {

@@ -130,7 +130,10 @@ public enum Query {
             "INNER JOIN films_like AS fl ON f.id = fl.film_id " +
             "WHERE f.directors LIKE ? " +
             "GROUP BY f.id " +
-            "ORDER BY COUNT(fl.user_id) DESC");
+            "ORDER BY COUNT(fl.user_id) DESC"),
+    //add-recommendation
+    GET_USERS_ID_FROM_FILMS_LIKE ("SELECT DISTINCT user_id FROM films_like");
+
 
     private final String query;
 
