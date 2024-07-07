@@ -27,5 +27,5 @@ public interface FilmService {
 
     List<FilmDto> getFilmsByDirectorId(int directorId, String sortBy);
 
-    List<FilmDto> getPopularFilmsBySearchParam(String query, List<String> settingsList);
+    List<FilmDto> getPopularFilmsBySearchParam(String query, List<String> searchParams);
 }

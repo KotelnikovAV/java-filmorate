@@ -14,7 +14,6 @@ import ru.yandex.practicum.filmorate.model.SearchParams;
 import ru.yandex.practicum.filmorate.storage.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -224,30 +223,37 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<FilmDto> getPopularFilmsBySearchParam(String query, List<String> searchSettingsList) {
-        log.info("Начало процесса получения списка популярных фильмов по названию");
-        log.debug("Значение переменной query: {}, searchSettingsList: {}", query, searchSettingsList);
-        ArrayList<SearchParams> searchParams = new ArrayList<>();
-        for (String searchSetting : searchSettingsList) {
-            searchParams.add(SearchParams.valueOf(searchSetting.toUpperCase()));
-        }
-        if (searchParams.size() == 2) {
+    public List<FilmDto> getPopularFilmsBySearchParam(String query, List<String> searchParams) {
+        log.debug("Значение переменной query: {}, searchParams: {}", query, searchParams);
+
+        List<SearchParams> searchSettings = searchParams
+                .stream()
+                .map(searchSetting -> SearchParams.valueOf(searchSetting.toUpperCase()))
+                .toList();
+
+        if (searchSettings.size() == 2) {
+            log.info("Начало процесса получения списка популярных фильмов по названию фильма и имени режиссера");
             return filmRepository.getPopularFilmsByTitleAndDirector(query)
                     .stream()
                     .map(FilmMapper::mapToFilmDto)
                     .toList();
-        } else if (searchParams.getFirst().equals(SearchParams.TITLE)) {
+        } else if (searchSettings.getFirst().equals(SearchParams.TITLE)) {
+            log.info("Начало процесса получения списка популярных фильмов по названию");
             return filmRepository.getPopularFilmsByTitle(query)
                     .stream()
                     .map(FilmMapper::mapToFilmDto)
                     .toList();
-        } else if (searchParams.getFirst().equals(SearchParams.DIRECTOR)) {
+        } else if (searchSettings.getFirst().equals(SearchParams.DIRECTOR)) {
+            log.info("Начало процесса получения списка популярных фильмов по имени режиссера");
             return filmRepository.getPopularFilmsByDirector(query)
                     .stream()
                     .map(FilmMapper::mapToFilmDto)
                     .toList();
         } else {
-            throw new NotFoundException("Выбран неверный параметр поиска");
+            throw new NotFoundException(String.format("Выбран неверный параметр поиска: %s,\nДоступные параметры: %s, %s",
+                    query,
+                    SearchParams.DIRECTOR,
+                    SearchParams.TITLE));
         }
     }
 }
