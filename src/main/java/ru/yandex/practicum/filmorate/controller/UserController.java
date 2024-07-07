@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.UserDto;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.List;
@@ -51,5 +52,12 @@ public class UserController {
         log.info("Получен HTTP-запрос по адресу /users/{userId} (метод GET). " +
                 " Вызван метод getUser(@PathVariable int userId)");
         return userService.getUser(userId);
+    }
+
+    @GetMapping("/{userId}/recommendations")
+    public List<Film> getRecommendations(@PathVariable int userId) {
+        log.info("Получен HTTP-запрос по адресу /users/{userId}/recommendations (метод GET). " +
+                " Вызван метод getRecommendations(@PathVariable int userId)");
+        return userService.getRecommendationsFilms(userId);
     }
 }
