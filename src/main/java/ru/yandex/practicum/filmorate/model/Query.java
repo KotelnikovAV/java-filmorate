@@ -50,10 +50,12 @@ public enum Query {
     FIND_LIST_LIKES("SELECT user_id " +
             "FROM films_like " +
             "WHERE film_id = ?"),
-    FIND_POPULAR_FILMS("SELECT film_id " +
-            "FROM films_like " +
-            "GROUP BY film_id " +
-            "ORDER BY COUNT(user_id) DESC " +
+    FIND_POPULAR_FILMS("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +
+            "m.name AS mpa_name, f.directors " +
+            "FROM films AS f " +
+            "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
+            "LEFT JOIN (SELECT film_id, COUNT(user_id) AS likes_count FROM films_like GROUP BY film_id) AS fl ON f.id = fl.film_id " +
+            "ORDER BY fl.likes_count DESC " +
             "LIMIT ?"),
     FIND_USERS_BY_ID("SELECT * " +
             "FROM users " +
@@ -128,7 +130,7 @@ public enum Query {
             "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
             "FROM films AS f " +
             "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
-            "INNER JOIN films_like AS fl ON f.id = fl.film_id " +
+            "LEFT JOIN films_like AS fl ON f.id = fl.film_id " +
             "WHERE f.directors LIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
