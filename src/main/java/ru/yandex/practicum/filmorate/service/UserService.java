@@ -26,7 +26,6 @@ public interface UserService {
 
     void delete(int id);
 
-    // add-recommendations
     List<Film> getRecommendationsFilms(int userId);
 
 }

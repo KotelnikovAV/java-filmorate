@@ -131,7 +131,6 @@ public enum Query {
             "WHERE f.directors LIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
-    //add-recommendation
     GET_USERS_ID_FROM_FILMS_LIKE("SELECT DISTINCT user_id FROM films_like");
 
 

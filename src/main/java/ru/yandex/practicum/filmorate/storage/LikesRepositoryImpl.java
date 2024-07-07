@@ -91,10 +91,8 @@ public class LikesRepositoryImpl implements LikesRepository {
         return likedFilmsId;
     }
 
-    //add-recommendations
     public List<Integer> getAllUserWhoLikedFilms() {
         log.info("Отправка запроса GET_USERS_ID_FROM_FILMS_LIKE");
-        List<Integer> usersId = jdbc.queryForList(Query.GET_USERS_ID_FROM_FILMS_LIKE.getQuery(), Integer.class);
-        return usersId;
+        return jdbc.queryForList(Query.GET_USERS_ID_FROM_FILMS_LIKE.getQuery(), Integer.class);
     }
 }

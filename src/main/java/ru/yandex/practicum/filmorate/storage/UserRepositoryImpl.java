@@ -97,13 +97,13 @@ public class UserRepositoryImpl implements UserRepository {
         List<Integer> userLikedFilms = likesRepository.getIdFilmsLikedByUser(userId);
         List<Integer> userIds = likesRepository.getAllUserWhoLikedFilms();
 
-        int minLength = getSizeCommonFilmsList(userId, userIds.get(0));
+        int minLength = getSizeCommonFilmsList(userId, userIds.getFirst());
         int anotherUserId = userId;
 
-        for (Integer i : userIds) {
-            if (minLength < getSizeCommonFilmsList(userId, i)) {
-                minLength = getSizeCommonFilmsList(userId, i);
-                anotherUserId = i;
+        for (Integer id : userIds) {
+            if (minLength < getSizeCommonFilmsList(userId, id)) {
+                minLength = getSizeCommonFilmsList(userId, id);
+                anotherUserId = id;
             }
         }
 

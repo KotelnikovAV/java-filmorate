@@ -148,7 +148,6 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(id);
     }
 
-    //add-recommendations
     @Override
     public List<Film> getRecommendationsFilms(int userId) {
         return userRepository.getRecommendationsFilms(userId);

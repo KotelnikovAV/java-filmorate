@@ -54,11 +54,10 @@ public class UserController {
         return userService.getUser(userId);
     }
 
-    //add-recommendations
     @GetMapping("/{userId}/recommendations")
     public List<Film> getRecommendations(@PathVariable int userId) {
         log.info("Получен HTTP-запрос по адресу /users/{userId}/recommendations (метод GET). " +
-                " Вызван метод findRecommendations(@PathVariable int userId)");
+                " Вызван метод getRecommendations(@PathVariable int userId)");
         return userService.getRecommendationsFilms(userId);
     }
 }

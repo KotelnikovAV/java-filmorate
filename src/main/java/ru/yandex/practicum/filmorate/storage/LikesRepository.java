@@ -18,6 +18,5 @@ public interface LikesRepository {
 
     List<Integer> getIdFilmsLikedByUser(int userId);
 
-    //add-recommendations
     List<Integer> getAllUserWhoLikedFilms();
 }
