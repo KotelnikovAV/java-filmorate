@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.*;
 
 import java.time.LocalDate;
@@ -46,17 +47,47 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<FilmDto> getPopularFilms(int count) {
+    public List<FilmDto> getPopularFilms(int count, Optional<Integer> genreId, Optional<Integer> year) {
         log.info("Начало процесса получения списка популярных фильмов");
-        log.debug("Значение переменной count: " + count);
-        List<Film> popularFilms = likesRepository.getPopularFilms(count);
-        log.info("Список популярных фильмов получен");
+        log.debug("Значение переменной count: {} ", count);
+        List<Film> popularFilms;
+
+        if (genreId.isPresent() && year.isPresent()) {
+            log.info("Сортировка по genreId: {}, year: {}", genreId.get(), year.get());
+            popularFilms = likesRepository.getPopularFilms(Integer.MAX_VALUE)
+                    .stream()
+                    .filter(film -> film.getGenre()
+                            .stream()
+                            .map(Genre::getId)
+                            .toList().contains(genreId.get()))
+                    .filter(filmDto -> filmDto.getReleaseDate().getYear() == year.get())
+                    .limit(count)
+                    .toList();
+        } else if (genreId.isEmpty() && year.isPresent()) {
+            log.info("Сортировка по year: {}", year.get());
+            popularFilms = likesRepository.getPopularFilms(Integer.MAX_VALUE).stream()
+                    .filter(filmDto -> filmDto.getReleaseDate().getYear() == year.get())
+                    .limit(count)
+                    .toList();
+        } else if (genreId.isPresent()) {
+            log.info("Сортировка по genreId: {}", genreId.get());
+            popularFilms = likesRepository.getPopularFilms(Integer.MAX_VALUE)
+                    .stream()
+                    .filter(film -> film.getGenre()
+                            .stream()
+                            .map(Genre::getId)
+                            .toList().contains(genreId.get()))
+                    .limit(count)
+                    .toList();
+        } else {
+            popularFilms = likesRepository.getPopularFilms(count);
+        }
+
         return popularFilms.stream()
                 .map(FilmMapper::mapToFilmDto)
                 .toList();
     }
 
-    //add-common-films
     public List<FilmDto> getCommonFilms(int userId, int friendId) {
         log.info("Начало процесса получения списка общих фильмов");
         log.debug("Значение переменной userID: {}, значение переменной friendId: {}", userId, friendId);
