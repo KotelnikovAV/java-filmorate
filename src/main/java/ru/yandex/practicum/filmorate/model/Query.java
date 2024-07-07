@@ -123,6 +123,7 @@ public enum Query {
             "WHERE f.directors LIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY f.releaseDate"),
+
     GET_FILMS_BY_DIRECTOR_ID_SORT_BY_LIKES("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
             "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
             "FROM films AS f " +
@@ -131,8 +132,29 @@ public enum Query {
             "WHERE f.directors LIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
-    GET_USERS_ID_FROM_FILMS_LIKE("SELECT DISTINCT user_id FROM films_like");
+    GET_USERS_ID_FROM_FILMS_LIKE("SELECT DISTINCT user_id FROM films_like"),
 
+    GET_ALL_FILMS_BY_DIRECTOR_ID_SORT_BY_LIKES("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
+            "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
+            "FROM films AS f " +
+            "JOIN mpa AS m ON f.mpa_id = m.id " +
+            "LEFT JOIN films_like AS fl ON f.id = fl.film_id " +
+            "WHERE f.directors LIKE ? " +
+            "GROUP BY f.id " +
+            "ORDER BY COUNT(fl.user_id) DESC"),
+
+    FIND_POPULAR_FILMS_BY_TITLE("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +
+            "m.name AS mpa_name, f.directors " +
+            "FROM films AS f " +
+            "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
+            "LEFT JOIN films_like AS fl ON f.id = fl.film_id " +
+            "WHERE f.name LIKE ? " +
+            "GROUP BY f.id " +
+            "ORDER BY COUNT(fl.user_id) DESC"),
+
+    FIND_DIRECTOR_LIST_BY_NAME("SELECT * " +
+            "FROM directors " +
+            "WHERE directors.name LIKE ? ");
 
     private final String query;
 

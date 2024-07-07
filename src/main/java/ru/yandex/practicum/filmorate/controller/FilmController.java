@@ -13,7 +13,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/films")
+@RequestMapping("films")
 public class FilmController {
     private final FilmService filmService;
 
@@ -23,16 +23,16 @@ public class FilmController {
         return filmService.findAll();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public FilmDto getFilmById(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /films/{id} (метод GET). "
                 + "Вызван метод getFilmById(@PathVariable int id)");
         return filmService.getFilmById(id);
     }
 
-    @GetMapping("/director/{directorId}")
+    @GetMapping("director/{directorId}")
     public List<FilmDto> getFilmsByDirectorId(@PathVariable int directorId,
-                                               @RequestParam(defaultValue = "year") String sortBy) {
+                                              @RequestParam(defaultValue = "year") String sortBy) {
         return filmService.getFilmsByDirectorId(directorId, sortBy);
     }
 
@@ -51,10 +51,17 @@ public class FilmController {
         return filmService.update(filmDto);
     }
 
-    @DeleteMapping("/{filmId}")
+    @DeleteMapping("{filmId}")
     public void delete(@PathVariable int filmId) {
         log.info("Получен HTTP-запрос по адресу /films/{filmId} (метод DELETE). "
                 + "Вызван метод delete(@PathVariable int filmId)");
         filmService.delete(filmId);
+    }
+
+    @GetMapping("search")
+    public List<FilmDto> getPopularFilmsBySearchParam(@RequestParam String query, @RequestParam("by") List<String> searchParams) {
+        log.info("Получен HTTP-запрос по адресу films/search (метод GET)." +
+                " Вызван метод getPopularFilmsBySearchParam(@RequestParam String query, @RequestParam List<String> searchParams)");
+        return filmService.getPopularFilmsBySearchParam(query, searchParams);
     }
 }

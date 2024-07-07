@@ -12,6 +12,8 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Query;
 
 import java.sql.Date;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -20,6 +22,11 @@ import java.util.List;
 public class FilmRepositoryImpl implements FilmRepository {
     private final JdbcTemplate jdbc;
     private final RowMapper<Film> mapperFilm;
+    private final RowMapper<Director> directorRowMapper;
+
+    private static String getSearchString(String query) {
+        return MessageFormat.format("%{0}%", query);
+    }
 
     @Override
     public List<Film> findAll() {
@@ -29,7 +36,7 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public Film create(Film film) {
-        int id = 0;
+        int id;
         log.info("Отправка запроса INSERT_FILM");
 
         if (film.getDirectors() != null) {
@@ -64,7 +71,7 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public Film update(Film newFilm) {
-        int rowsUpdated = 0;
+        int rowsUpdated;
         log.info("Отправка запроса UPDATE_FILM");
 
         if (newFilm.getDirectors() != null) {
@@ -126,6 +133,39 @@ public class FilmRepositoryImpl implements FilmRepository {
         log.info("Отправка запроса GET_FILMS_BY_DIRECTOR_ID_SORT_BY_LIKES");
         return jdbc.query(Query.GET_FILMS_BY_DIRECTOR_ID_SORT_BY_LIKES.getQuery(), mapperFilm,
                 String.valueOf(directorId));
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByTitle(String query) {
+        log.info("Отправка запроса FIND_POPULAR_FILMS_BY_TITLE");
+        return jdbc.query(Query.FIND_POPULAR_FILMS_BY_TITLE.getQuery(), mapperFilm, getSearchString(query));
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByDirector(String query) {
+        log.info("Отправка запроса FIND_DIRECTOR_LIST_BY_NAME");
+        List<Director> directorList = jdbc.query(Query.FIND_DIRECTOR_LIST_BY_NAME.getQuery(),
+                directorRowMapper,
+                getSearchString(query));
+        List<Film> filmList = new ArrayList<>();
+
+        directorList.forEach(director -> filmList.addAll(jdbc.query(
+                Query.GET_ALL_FILMS_BY_DIRECTOR_ID_SORT_BY_LIKES.getQuery(),
+                mapperFilm,
+                String.valueOf(director.getId()))));
+
+        return filmList;
+    }
+
+    @Override
+    public List<Film> getPopularFilmsByTitleAndDirector(String query) {
+        List<Film> popularFilmsByDirector = getPopularFilmsByDirector(query);
+        List<Film> popularFilmsByTitle = getPopularFilmsByTitle(query);
+        List<Film> filmList = new ArrayList<>();
+        filmList.addAll(popularFilmsByTitle);
+        filmList.addAll(popularFilmsByDirector);
+
+        return filmList;
     }
 
     private String convertGenresToString(List<Genre> genres) {

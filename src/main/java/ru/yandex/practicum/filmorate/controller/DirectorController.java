@@ -12,7 +12,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/directors")
+@RequestMapping("directors")
 public class DirectorController {
     private final DirectorService directorService;
 
@@ -35,13 +35,13 @@ public class DirectorController {
         return directorService.getAllDirectors();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public DirectorDto getDirector(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /directors/{id} (метод GET). Вызван метод getDirector(id)");
         return directorService.getDirector(id);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public void delete(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /directors/{id} (метод DELETE). Вызван метод delete(id)");
         directorService.delete(id);
