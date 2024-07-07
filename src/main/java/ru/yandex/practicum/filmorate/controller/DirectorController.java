@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,13 +19,13 @@ public class DirectorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DirectorDto create(@RequestBody DirectorDto director) {
+    public DirectorDto create(@Valid @RequestBody DirectorDto director) {
         log.info("Получен HTTP-запрос по адресу /directors (метод POST). Вызван метод create(director)");
         return directorService.create(director);
     }
 
     @PutMapping
-    public DirectorDto update(@RequestBody DirectorDto newDirector) {
+    public DirectorDto update(@Valid @RequestBody DirectorDto newDirector) {
         log.info("Получен HTTP-запрос по адресу /directors (метод PUT). Вызван метод update(newDirector)");
         return directorService.update(newDirector);
     }

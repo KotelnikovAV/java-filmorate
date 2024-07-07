@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -15,17 +16,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class LikesRepositoryImpl implements LikesRepository {
-
     private final JdbcTemplate jdbc;
     private final FilmRepository filmRepository;
+    private final RowMapper<Film> filmRowMapper;
 
     @Override
     public List<Film> getPopularFilms(int count) {
         log.info("Отправка запроса FIND_POPULAR_FILMS");
-        List<Integer> idPopularFilms = jdbc.queryForList(Query.FIND_POPULAR_FILMS.getQuery(), Integer.class, count);
-        return idPopularFilms.stream()
-                .map(filmRepository::getFilmById)
-                .toList();
+        return jdbc.query(Query.FIND_POPULAR_FILMS.getQuery(), filmRowMapper, count);
     }
 
     @Override
@@ -38,9 +36,7 @@ public class LikesRepositoryImpl implements LikesRepository {
             throw new InternalServerException("Не удалось поставить лайк");
         }
 
-        if (count.get() > 0) {
-            throw new InternalServerException("Данный пользователь уже поставил лайк");
-        }
+
 
         log.info("Отправка запроса ADD_LIKE");
         int rowsCreated = jdbc.update(Query.ADD_LIKE.getQuery(), filmId, userId);
