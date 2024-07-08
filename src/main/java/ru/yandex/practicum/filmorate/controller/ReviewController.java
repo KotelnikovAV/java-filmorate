@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/reviews")
@@ -16,7 +15,7 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public Optional<Review> addReview(@Valid @RequestBody Review review) {
+    public Review addReview(@Valid @RequestBody Review review) {
         return reviewService.add(review);
     }
 
@@ -31,7 +30,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Review> getReviewById(@PathVariable int id) {
+    public Review getReviewById(@PathVariable int id) {
         return reviewService.findById(id);
     }
 

@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.storage.ReviewRepository;
 import ru.yandex.practicum.filmorate.model.Review;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -14,12 +13,12 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository storage;
 
     @Override
-    public Optional<Review> add(Review review) {
+    public Review add(Review review) {
         return storage.add(review);
     }
 
     @Override
-    public Optional<Review> findById(int id) {
+    public Review findById(int id) {
         return storage.findById(id);
     }
 

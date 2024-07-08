@@ -1,10 +1,11 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.Positive;
 import lombok.Data;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+
+import javax.annotation.Nonnegative;
 
 @Data
 public class Review {
@@ -17,11 +18,13 @@ public class Review {
     @NotNull
     private Boolean isPositive;
 
-    @Positive
-    private int userId;
+    @NotNull
+    @Nonnegative
+    private Integer userId;
 
-    @Positive
-    private int filmId;
+    @NotNull
+    @Nonnegative
+    private Integer filmId;
 
     private int useful;
 }
