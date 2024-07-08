@@ -2,6 +2,8 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.ReviewDto;
+import ru.yandex.practicum.filmorate.mapper.ReviewMapper;
 import ru.yandex.practicum.filmorate.storage.ReviewRepository;
 import ru.yandex.practicum.filmorate.model.Review;
 
@@ -13,18 +15,23 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository storage;
 
     @Override
-    public Review add(Review review) {
-        return storage.add(review);
+    public ReviewDto add(ReviewDto review) {
+        //return storage.add(review);
+        Review cratedReview = storage.add(ReviewMapper.mapToReview(review));
+        return ReviewMapper.mapToReviewDto(cratedReview);
     }
 
     @Override
-    public Review findById(int id) {
-        return storage.findById(id);
+    public ReviewDto findById(int id) {
+        //return storage.findById(id);
+        return ReviewMapper.mapToReviewDto(storage.findById(id));
     }
 
     @Override
-    public Review update(Review review) {
-        return storage.update(review);
+    public ReviewDto update(ReviewDto review) {
+        //return storage.update(review);
+        Review cratedReview = storage.update(ReviewMapper.mapToReview(review));
+        return ReviewMapper.mapToReviewDto(cratedReview);
     }
 
     @Override
@@ -33,8 +40,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<Review> findAll(int filmId, int count) {
-        return storage.findAll(filmId, count);
+    public List<ReviewDto> findAll(int filmId, int count) {
+        //return storage.findAll(filmId, count);
+        List<Review> reviewDtoList = storage.findAll(filmId, count);
+        return reviewDtoList.stream()
+                .map(ReviewMapper::mapToReviewDto)
+                .toList();
     }
 
     @Override

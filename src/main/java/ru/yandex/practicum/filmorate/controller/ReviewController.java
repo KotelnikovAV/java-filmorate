@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.dto.ReviewDto;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 
 import java.util.List;
@@ -15,12 +15,12 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public Review addReview(@Valid @RequestBody Review review) {
-        return reviewService.add(review);
+    public ReviewDto addReview(@Valid @RequestBody ReviewDto reviewDto) {
+        return reviewService.add(reviewDto);
     }
 
     @PutMapping
-    public Review updateReview(@Valid @RequestBody Review review) {
+    public ReviewDto updateReview(@Valid @RequestBody ReviewDto review) {
         return reviewService.update(review);
     }
 
@@ -30,13 +30,13 @@ public class ReviewController {
     }
 
     @GetMapping("/{id}")
-    public Review getReviewById(@PathVariable int id) {
+    public ReviewDto getReviewById(@PathVariable int id) {
         return reviewService.findById(id);
     }
 
     @GetMapping
-    public List<Review> getReviews(@RequestParam(required = false) int filmId,
-                                   @RequestParam(defaultValue = "10", required = false) int count) {
+    public List<ReviewDto> getReviews(@RequestParam(required = false) int filmId,
+                                      @RequestParam(defaultValue = "10", required = false) int count) {
         return reviewService.findAll(filmId, count);
     }
 
