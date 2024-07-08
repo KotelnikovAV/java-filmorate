@@ -1,16 +1,13 @@
 package ru.yandex.practicum.filmorate.dto;
 
-
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-public class GenreDto {
-    @NotNull
-    @Positive
+public class DirectorDto {
     private int id;
+    @NotBlank
     private String name;
 }

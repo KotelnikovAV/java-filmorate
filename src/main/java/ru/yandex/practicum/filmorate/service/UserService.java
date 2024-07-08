@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.service;
 
 import ru.yandex.practicum.filmorate.dto.UserDto;
+import ru.yandex.practicum.filmorate.model.Film;
+
 
 import java.util.List;
 
@@ -21,4 +23,9 @@ public interface UserService {
     UserDto update(UserDto newUserDto);
 
     UserDto getUser(int id);
+
+    void delete(int id);
+
+    List<Film> getRecommendationsFilms(int userId);
+
 }

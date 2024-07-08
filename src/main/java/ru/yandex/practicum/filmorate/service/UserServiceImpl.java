@@ -2,16 +2,19 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FriendsRepository;
 import ru.yandex.practicum.filmorate.storage.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -23,7 +26,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto addFriend(int id, int friendId) {
         log.info("Начало процесса добавления друга");
-        log.debug("Значения переменных при добавлении друга id и friendId: " + id + ", " + friendId);
+        log.debug("Значения переменных при добавлении друга id и friendId: {}, {}", id, friendId);
 
         if (id == friendId) {
             throw new ValidationException("Вы не можете добавить самого себя в друзья.");
@@ -37,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto deleteFriend(int id, int friendId) {
         log.info("Начало процесса удаления друга");
-        log.debug("Значения переменных при удалении друга id и friendId: " + id + ", " + friendId);
+        log.debug("Значения переменных при удалении друга id и friendId: {}, {}", id, friendId);
 
         if (id == friendId) {
             throw new ValidationException("Вы не можете удалить самого себя из друзей.");
@@ -51,7 +54,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getMutualFriends(int id, int otherId) {
         log.info("Начало процесса получения списка общих друзей");
-        log.debug("Значения переменных при получении списка общих друзей id и otherId: " + id + ", " + otherId);
+        log.debug("Значения переменных при получении списка общих друзей id и otherId: {}, {}", id, otherId);
 
         if (id == otherId) {
             throw new ValidationException("Вы не можете искать общих друзей с самим собой.");
@@ -84,7 +87,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllFriendsById(int id) {
         log.info("Начало процесса получения списка всех друзей");
-        log.debug("Значения переменной при получении списка всех друзей id: " + id);
+        log.debug("Значения переменной при получении списка всех друзей id: {}", id);
         List<User> friends = friendsRepository.getAllFriendsById(id);
         log.info("Список всех друзей получен");
         return friends.stream()
@@ -130,8 +133,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUser(int id) {
-        log.info("Начало процесса получения пользователя с id = " + id);
-        User user = userRepository.getUser(id);
+        log.info("Начало процесса получения пользователя с id = {}", id);
+        User user = checkUser(id).orElseThrow(() -> {
+            log.error("Пользователя с id {}, нет", id);
+            return new NotFoundException("Пользователя с id " + id + " нет");
+        });
         return UserMapper.mapToUserDto(user);
+    }
+
+    @Override
+    public void delete(int id) {
+        log.info("Начало процесса удаления пользователя с id = {}", id);
+        checkUser(id);
+        userRepository.delete(id);
+    }
+
+    @Override
+    public List<Film> getRecommendationsFilms(int userId) {
+        return userRepository.getRecommendationsFilms(userId);
+    }
+
+    private Optional<User> checkUser(int id) {
+        try {
+            User user = userRepository.getUser(id);
+            return Optional.ofNullable(user);
+        } catch (EmptyResultDataAccessException ignored) {
+            return Optional.empty();
+        }
     }
 }

@@ -2,19 +2,20 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmRepository;
-import ru.yandex.practicum.filmorate.storage.GenreRepository;
-import ru.yandex.practicum.filmorate.storage.LikesRepository;
-import ru.yandex.practicum.filmorate.storage.MpaRepository;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.SearchParams;
+import ru.yandex.practicum.filmorate.storage.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -26,11 +27,12 @@ public class FilmServiceImpl implements FilmService {
     private final MpaRepository mpaRepository;
     private final GenreRepository genreRepository;
     private final LikesRepository likesRepository;
+    private final DirectorRepository directorRepository;
 
     @Override
     public FilmDto addLike(int filmId, int userId) {
         log.info("Начало процесса добавление лайка");
-        log.debug("Значение переменных при добавлении лайка filmId и userId: " + filmId + ", " + userId);
+        log.debug("Значение переменных при добавлении лайка filmId и userId: {}, {}", filmId, userId);
         Film film = likesRepository.addLike(filmId, userId);
         log.info("Лайк поставлен");
         return FilmMapper.mapToFilmDto(film);
@@ -39,21 +41,61 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public FilmDto deleteLike(int filmId, int userId) {
         log.info("Начало процесса удаления лайка");
-        log.debug("Значение переменных при удалении лайка filmId и userId: " + filmId + ", " + userId);
+        log.debug("Значение переменных при удалении лайка filmId и userId: {}, {}", filmId, userId);
         Film film = likesRepository.deleteLike(filmId, userId);
         log.info("Лайк удален");
         return FilmMapper.mapToFilmDto(film);
     }
 
     @Override
-    public List<FilmDto> getPopularFilms(int count) {
+    public List<FilmDto> getPopularFilms(int count, Optional<Integer> genreId, Optional<Integer> year) {
         log.info("Начало процесса получения списка популярных фильмов");
-        log.debug("Значение переменной count: " + count);
-        List<Film> popularFilms = likesRepository.getPopularFilms(count);
-        log.info("Список популярных фильмов получен");
+        log.debug("Значение переменной count: {} ", count);
+        List<Film> popularFilms;
+
+        if (genreId.isPresent() && year.isPresent()) {
+            log.info("Сортировка по genreId: {}, year: {}", genreId.get(), year.get());
+            popularFilms = likesRepository.getPopularFilms(Integer.MAX_VALUE)
+                    .stream()
+                    .filter(film -> film.getGenre()
+                            .stream()
+                            .map(Genre::getId)
+                            .toList().contains(genreId.get()))
+                    .filter(filmDto -> filmDto.getReleaseDate().getYear() == year.get())
+                    .limit(count)
+                    .toList();
+        } else if (genreId.isEmpty() && year.isPresent()) {
+            log.info("Сортировка по year: {}", year.get());
+            popularFilms = likesRepository.getPopularFilms(Integer.MAX_VALUE).stream()
+                    .filter(filmDto -> filmDto.getReleaseDate().getYear() == year.get())
+                    .limit(count)
+                    .toList();
+        } else if (genreId.isPresent()) {
+            log.info("Сортировка по genreId: {}", genreId.get());
+            popularFilms = likesRepository.getPopularFilms(Integer.MAX_VALUE)
+                    .stream()
+                    .filter(film -> film.getGenre()
+                            .stream()
+                            .map(Genre::getId)
+                            .toList().contains(genreId.get()))
+                    .limit(count)
+                    .toList();
+        } else {
+            popularFilms = likesRepository.getPopularFilms(count);
+        }
+
         return popularFilms.stream()
                 .map(FilmMapper::mapToFilmDto)
                 .toList();
+    }
+
+    public List<FilmDto> getCommonFilms(int userId, int friendId) {
+        log.info("Начало процесса получения списка общих фильмов");
+        log.debug("Значение переменной userID: {}, значение переменной friendId: {}", userId, friendId);
+        List<Film> userFilm = likesRepository.getCommonFilms(userId, friendId);
+        log.info("Список общих фильмов получен");
+        return userFilm.stream().map(FilmMapper::mapToFilmDto).toList();
+
     }
 
     @Override
@@ -113,10 +155,24 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public FilmDto getFilmById(int filmId) {
-        log.info("Начало процесса получения фильма по filmId = " + filmId);
-        Film film = filmRepository.getFilmById(filmId);
+        log.info("Начало процесса получения фильма по filmId = {}", filmId);
+        Film film = checkFilm(filmId).orElseThrow(() -> {
+            log.error("Фильма с id {}, нет", filmId);
+            return new NotFoundException("Фильма с id " + filmId + " нет");
+        });
         log.info("Фильм получен");
         return FilmMapper.mapToFilmDto(film);
+    }
+
+    @Override
+    public void delete(int filmId) {
+        log.info("Начало процесса удаления фильма по filmId = {}", filmId);
+        checkFilm(filmId).orElseThrow(() -> {
+            log.error("Фильма с id {}, нет", filmId);
+            return new NotFoundException("Фильма с id " + filmId + " нет");
+        });
+        filmRepository.delete(filmId);
+        log.info("Фильм успешно удален.");
     }
 
     @Override
@@ -128,5 +184,76 @@ public class FilmServiceImpl implements FilmService {
                 .toList();
         log.info("Список всех фильмов получен");
         return films;
+    }
+
+
+    private Optional<Film> checkFilm(int id) {
+        try {
+            Film film = filmRepository.getFilmById(id);
+            return Optional.ofNullable(film);
+        } catch (EmptyResultDataAccessException ignored) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<FilmDto> getFilmsByDirectorId(int directorId, String sortBy) {
+        directorRepository.checkDirector(directorId);
+
+        if (sortBy.equals("year")) {
+            log.info("Начало процесса получения фильмов, отсортированных по дате релиза, режиссер которых является directorId = {}",
+                    directorId);
+            List<FilmDto> films = filmRepository.getFilmsByDirectorIdSortByYear(directorId).stream()
+                    .map(FilmMapper::mapToFilmDto)
+                    .toList();
+            log.info("Получен список фильмов отсортированных по дате релиза");
+            return films;
+        } else if (sortBy.equals("likes")) {
+            log.info("Начало процесса получения фильмов, отсортированных по лайкам, режиссер которых является directorId = {}",
+                    directorId);
+            List<FilmDto> films = filmRepository.getFilmsByDirectorIdSortByLikes(directorId).stream()
+                    .map(FilmMapper::mapToFilmDto)
+                    .toList();
+            log.info("Получен список фильмов отсортированных по лайкам");
+            return films;
+        } else {
+            throw new NotFoundException("Выбран неверный метод сортировки");
+
+        }
+    }
+
+    @Override
+    public List<FilmDto> getPopularFilmsBySearchParam(String query, List<String> searchParams) {
+        log.debug("Значение переменной query: {}, searchParams: {}", query, searchParams);
+
+        List<SearchParams> searchSettings = searchParams
+                .stream()
+                .map(searchSetting -> SearchParams.valueOf(searchSetting.toUpperCase()))
+                .toList();
+
+        if (searchSettings.size() == 2) {
+            log.info("Начало процесса получения списка популярных фильмов по названию фильма и имени режиссера");
+            return filmRepository.getPopularFilmsByTitleAndDirector(query)
+                    .stream()
+                    .map(FilmMapper::mapToFilmDto)
+                    .toList();
+        } else if (searchSettings.getFirst().equals(SearchParams.TITLE)) {
+            log.info("Начало процесса получения списка популярных фильмов по названию");
+            return filmRepository.getPopularFilmsByTitle(query)
+                    .stream()
+                    .map(FilmMapper::mapToFilmDto)
+                    .toList();
+        } else if (searchSettings.getFirst().equals(SearchParams.DIRECTOR)) {
+            log.info("Начало процесса получения списка популярных фильмов по имени режиссера");
+            return filmRepository.getPopularFilmsByDirector(query)
+                    .stream()
+                    .map(FilmMapper::mapToFilmDto)
+                    .toList();
+        } else {
+            throw new NotFoundException(String.format("Выбран неверный параметр поиска: %s,\nДоступные параметры: %s, %s",
+                    query,
+                    SearchParams.DIRECTOR,
+                    SearchParams.TITLE));
+        }
     }
 }
