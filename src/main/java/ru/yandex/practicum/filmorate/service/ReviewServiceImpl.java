@@ -16,20 +16,17 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewDto add(ReviewDto review) {
-        //return storage.add(review);
         Review cratedReview = storage.add(ReviewMapper.mapToReview(review));
         return ReviewMapper.mapToReviewDto(cratedReview);
     }
 
     @Override
     public ReviewDto findById(int id) {
-        //return storage.findById(id);
         return ReviewMapper.mapToReviewDto(storage.findById(id));
     }
 
     @Override
     public ReviewDto update(ReviewDto review) {
-        //return storage.update(review);
         Review cratedReview = storage.update(ReviewMapper.mapToReview(review));
         return ReviewMapper.mapToReviewDto(cratedReview);
     }
