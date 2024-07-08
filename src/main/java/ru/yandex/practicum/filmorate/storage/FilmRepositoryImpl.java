@@ -162,8 +162,8 @@ public class FilmRepositoryImpl implements FilmRepository {
         List<Film> popularFilmsByDirector = getPopularFilmsByDirector(query);
         List<Film> popularFilmsByTitle = getPopularFilmsByTitle(query);
         List<Film> filmList = new ArrayList<>();
-        filmList.addAll(popularFilmsByTitle);
         filmList.addAll(popularFilmsByDirector);
+        filmList.addAll(popularFilmsByTitle);
 
         return filmList;
     }
