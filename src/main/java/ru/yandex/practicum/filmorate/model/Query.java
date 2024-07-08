@@ -104,7 +104,7 @@ public enum Query {
     GET_REVIEWS("SELECT * FROM reviews WHERE films_id = ? ORDER BY useful DESC LIMIT ?"),
     LIKE_REVIEW("UPDATE reviews SET useful = useful + 1 WHERE review_id = ?"),
     REMOVE_LIKE("UPDATE reviews SET useful = useful - 1 WHERE review_id = ?"),
-    DISLIKE_REVIEW("UPDATE reviews SET useful = useful - 2 WHERE review_id = ?");
+    DISLIKE_REVIEW("UPDATE reviews SET useful = useful - 2 WHERE review_id = ?"),
 
 
     FIND_LIST_LIKED_FILMS("SELECT film_id " +
