@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.mapper.UserEventMapper;
 import ru.yandex.practicum.filmorate.model.Query;
 import ru.yandex.practicum.filmorate.model.UserEvent;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -29,7 +28,7 @@ public class UserEventRepositoryImpl implements UserEventRepository {
                 userEvent.getEventType().name(),
                 userEvent.getOperation().name(),
                 userEvent.getEntityId(),
-                Timestamp.from(userEvent.getTimestamp())
+                LocalDateTime.from(userEvent.getTimestamp())
         );
         userEvent.setEventId(id);
 

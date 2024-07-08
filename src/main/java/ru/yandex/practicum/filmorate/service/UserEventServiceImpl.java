@@ -14,11 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class UserEventServiceImpl implements UserEventService {
-    UserEventRepository userEventRepository;
+    private final UserEventRepository userEventRepository;
 
     @Override
     public List<UserEventDto> getAllUserEvents(int userId) {
-        log.info("Начало процесса получения UserEvent");
+        log.info("Начало процесса получения UserEvent по userId:{}", userId);
         List<UserEvent> userEvents = userEventRepository.getAllUserEvents(userId);
         log.info("Преобразование UserEvent в UserEventDto ");
         return userEvents.stream()

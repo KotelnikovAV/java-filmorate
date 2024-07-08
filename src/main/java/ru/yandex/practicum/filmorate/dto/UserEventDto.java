@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -13,5 +13,5 @@ public class UserEventDto {
     private int entityId;
     private String eventType;
     private String operation;
-    private Instant timestamp;
+    private LocalDate timestamp;
 }

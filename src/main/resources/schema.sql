@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS users_events (
     event_type varchar NOT NULL,
     operation varchar NOT NULL,
     entity_id INTEGER NOT NULL,
-    timestamp TIMESTAMP NOT NULL
+    timestamp DATE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users_events_table (

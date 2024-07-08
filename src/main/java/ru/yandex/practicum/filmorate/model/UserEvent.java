@@ -1,10 +1,9 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -14,5 +13,5 @@ public class UserEvent {
     private int entityId;
     private EventType eventType;
     private Operation operation;
-    private Instant timestamp;
+    private LocalDate timestamp;
 }

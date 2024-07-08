@@ -137,10 +137,8 @@ public enum Query {
     GET_USERS_EVENTS("SELECT ue.* " +
             "FROM users_events_table AS uet " +
             "JOIN users_events AS ue ON uet.user_events_id = ue.id " +
-            "WHERE uet.user_id = ?");
-            "ORDER BY COUNT(fl.user_id) DESC"),
+            "WHERE uet.user_id = ? "),
     GET_USERS_ID_FROM_FILMS_LIKE("SELECT DISTINCT user_id FROM films_like"),
-
     GET_ALL_FILMS_BY_DIRECTOR_ID_SORT_BY_LIKES("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
             "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
             "FROM films AS f " +
@@ -149,7 +147,6 @@ public enum Query {
             "WHERE f.directors LIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
-
     FIND_POPULAR_FILMS_BY_TITLE("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +
             "m.name AS mpa_name, f.directors " +
             "FROM films AS f " +
@@ -158,7 +155,6 @@ public enum Query {
             "WHERE f.name LIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
-
     FIND_DIRECTOR_LIST_BY_NAME("SELECT * " +
             "FROM directors " +
             "WHERE directors.name LIKE ? ");

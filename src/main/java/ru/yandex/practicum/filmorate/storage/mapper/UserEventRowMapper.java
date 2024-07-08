@@ -20,7 +20,7 @@ public class UserEventRowMapper implements RowMapper<UserEvent> {
                 .entityId(resultSet.getInt("entity_id"))
                 .eventType(EventType.valueOf(resultSet.getString("event_type")))
                 .operation(Operation.valueOf(resultSet.getString("operation")))
-                .timestamp(resultSet.getTimestamp("timestamp").toInstant())
+                .timestamp(resultSet.getTimestamp("timestamp").toLocalDateTime().toLocalDate())
                 .build();
     }
 }

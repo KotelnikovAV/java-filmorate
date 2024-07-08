@@ -26,4 +26,6 @@ public interface UserService {
     UserDto getUser(int id);
 
     void delete(int id);
+
+    List<Film> getRecommendationsFilms(int userId);
 }
