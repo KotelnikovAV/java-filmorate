@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.InternalServerException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Query;
 
@@ -37,7 +38,6 @@ public class LikesRepositoryImpl implements LikesRepository {
         }
 
 
-
         log.info("Отправка запроса ADD_LIKE");
         int rowsCreated = jdbc.update(Query.ADD_LIKE.getQuery(), filmId, userId);
 
@@ -54,7 +54,7 @@ public class LikesRepositoryImpl implements LikesRepository {
         int rowsDeleted = jdbc.update(Query.DELETE_LIKE.getQuery(), filmId, userId);
 
         if (rowsDeleted == 0) {
-            throw new InternalServerException("Данный пользователь лайк не ставил");
+            throw new NotFoundException("Данный пользователь лайк не ставил");
         }
 
         return filmRepository.getFilmById(filmId);
