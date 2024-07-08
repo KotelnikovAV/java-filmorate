@@ -17,7 +17,7 @@ import ru.yandex.practicum.filmorate.storage.FriendsRepository;
 import ru.yandex.practicum.filmorate.storage.UserEventRepository;
 import ru.yandex.practicum.filmorate.storage.UserRepository;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
                 .entityId(friendId)
                 .eventType(EventType.FRIEND)
                 .operation(Operation.ADD)
-                .timestamp(LocalDate.now())
+                .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
 
         return UserMapper.mapToUserDto(user);
@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
                 .entityId(friendId)
                 .eventType(EventType.FRIEND)
                 .operation(Operation.REMOVE)
-                .timestamp(LocalDate.now())
+                .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
 
         return UserMapper.mapToUserDto(user);

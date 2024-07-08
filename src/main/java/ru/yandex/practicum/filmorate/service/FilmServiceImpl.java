@@ -13,14 +13,11 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.UserEvent;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Operation;
-import ru.yandex.practicum.filmorate.model.UserEvent;
 import ru.yandex.practicum.filmorate.model.SearchParams;
 import ru.yandex.practicum.filmorate.storage.*;
 
-import java.time.Instant;
+import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +47,7 @@ public class FilmServiceImpl implements FilmService {
                 .entityId(filmId)
                 .eventType(EventType.LIKE)
                 .operation(Operation.ADD)
-                .timestamp(LocalDate.now())
+                .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
 
         return FilmMapper.mapToFilmDto(film);
@@ -69,7 +66,7 @@ public class FilmServiceImpl implements FilmService {
                 .entityId(filmId)
                 .eventType(EventType.LIKE)
                 .operation(Operation.REMOVE)
-                .timestamp(LocalDate.now())
+                .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
 
         return FilmMapper.mapToFilmDto(film);

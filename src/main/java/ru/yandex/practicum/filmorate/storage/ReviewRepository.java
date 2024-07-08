@@ -14,7 +14,7 @@ public interface ReviewRepository {
 
     Review update(Review review);
 
-    void deleteById(int id);
+    Review deleteById(int id);
 
     void likeReview(int reviewId, int userId);
 

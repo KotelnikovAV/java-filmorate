@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.UserEventDto;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.mapper.UserEventMapper;
 import ru.yandex.practicum.filmorate.model.UserEvent;
 import ru.yandex.practicum.filmorate.storage.UserEventRepository;
@@ -20,9 +21,15 @@ public class UserEventServiceImpl implements UserEventService {
     public List<UserEventDto> getAllUserEvents(int userId) {
         log.info("Начало процесса получения UserEvent по userId:{}", userId);
         List<UserEvent> userEvents = userEventRepository.getAllUserEvents(userId);
+
         log.info("Преобразование UserEvent в UserEventDto ");
-        return userEvents.stream()
+        List<UserEventDto> listUserEventsDto =  userEvents.stream()
                 .map(UserEventMapper::mapToUserEventDto)
                 .toList();
+
+        if (listUserEventsDto.isEmpty()) {
+            throw new NotFoundException("Список Событий пуст");
+        }
+        return listUserEventsDto;
     }
 }

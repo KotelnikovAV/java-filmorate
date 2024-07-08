@@ -7,6 +7,8 @@ import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Operation;
 import ru.yandex.practicum.filmorate.model.UserEvent;
 
+import java.sql.Timestamp;
+
 @UtilityClass
 @Slf4j
 public class UserEventMapper {
@@ -22,7 +24,7 @@ public class UserEventMapper {
                 .entityId(userEventDto.getEntityId())
                 .eventType(EventType.valueOf(userEventDto.getEventType()))
                 .operation(Operation.valueOf(userEventDto.getOperation()))
-                .timestamp(userEventDto.getTimestamp())
+                .timestamp(new Timestamp(userEventDto.getTimestamp()))
                 .build();
 
         log.info("Преобразование UserEventDto в UserEvent успешно завершено");
@@ -40,7 +42,7 @@ public class UserEventMapper {
                 .entityId(userEvent.getEntityId())
                 .eventType(userEvent.getEventType().name())
                 .operation(userEvent.getOperation().name())
-                .timestamp(userEvent.getTimestamp())
+                .timestamp(userEvent.getTimestamp().getTime())
                 .build();
 
         log.info("Преобразование UserEvent в UserEventDto успешно завершено");
