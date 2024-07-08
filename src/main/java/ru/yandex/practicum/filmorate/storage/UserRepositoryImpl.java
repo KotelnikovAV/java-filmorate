@@ -71,7 +71,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(int id) {
-        log.info("Отправка запроса DELETE_ADDING_FRIENDS");
         log.info("Отправка запроса DELETE_USER");
         jdbc.update(Query.DELETE_USER.getQuery(), id);
     }
