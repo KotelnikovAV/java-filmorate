@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.Query;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -96,6 +97,10 @@ public class UserRepositoryImpl implements UserRepository {
 
         List<Integer> userLikedFilms = likesRepository.getIdFilmsLikedByUser(userId);
         List<Integer> userIds = likesRepository.getAllUserWhoLikedFilms();
+
+        if(userIds.isEmpty() && userLikedFilms.isEmpty()){
+            return new ArrayList<>();
+        }
 
         int minLength = getSizeCommonFilmsList(userId, userIds.getFirst());
         int anotherUserId = userId;
