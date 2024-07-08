@@ -54,11 +54,10 @@ CREATE TABLE IF NOT EXISTS films_like
 
 );
 
-CREATE TABLE IF NOT EXISTS adding_friends
-(
-    outgoing_request_user_id INTEGER REFERENCES users (id),
-    incoming_request_user_id INTEGER REFERENCES users (id),
-    confirmation             BIT
+CREATE TABLE IF NOT EXISTS adding_friends (
+    outgoing_request_user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    incoming_request_user_id INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    confirmation BIT
 );
 
 CREATE TABLE IF NOT EXISTS genre

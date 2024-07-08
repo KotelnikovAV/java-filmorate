@@ -106,11 +106,9 @@ public enum Query {
     REMOVE_LIKE("UPDATE reviews SET useful = useful - 1 WHERE review_id = ?"),
     DISLIKE_REVIEW("UPDATE reviews SET useful = useful - 2 WHERE review_id = ?"),
 
-
     FIND_LIST_LIKED_FILMS("SELECT film_id " +
             "FROM films_like " +
             "WHERE user_id = ?"),
-
     FIND_COMMON_FILMS_LIST("(SELECT fl1.film_id " +
             "FROM films_like fl1 " +
             "WHERE fl1.user_id = ? )" +
@@ -119,16 +117,12 @@ public enum Query {
             "FROM films_like fl2 " +
             "WHERE fl2.user_id = ?)" +
             "ORDER BY film_id DESC"),
-
     DELETE_FILM("DELETE FROM films " +
             "WHERE id = ?"),
     DELETE_FILMS_LIKE("DELETE FROM films_like " +
             "WHERE film_id = ?;"),
     DELETE_USER("DELETE FROM users " +
             "WHERE id = ?"),
-    DELETE_MUTUAL_FRIEND("DELETE FROM adding_friends " +
-            "WHERE (outgoing_request_user_id = ? OR incoming_request_user_id = ?) AND " +
-            " confirmation = TRUE"),
     GET_FILMS_BY_DIRECTOR_ID_SORT_BY_YEAR("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
             "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
             "FROM films AS f " +
@@ -136,7 +130,6 @@ public enum Query {
             "WHERE f.directors LIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY f.releaseDate"),
-
     GET_FILMS_BY_DIRECTOR_ID_SORT_BY_LIKES("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
             "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
             "FROM films AS f " +
@@ -146,7 +139,6 @@ public enum Query {
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
     GET_USERS_ID_FROM_FILMS_LIKE("SELECT DISTINCT user_id FROM films_like"),
-
     GET_ALL_FILMS_BY_DIRECTOR_ID_SORT_BY_LIKES("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
             "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
             "FROM films AS f " +
@@ -155,7 +147,6 @@ public enum Query {
             "WHERE f.directors LIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
-
     FIND_POPULAR_FILMS_BY_TITLE("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +
             "m.name AS mpa_name, f.directors " +
             "FROM films AS f " +
@@ -164,7 +155,6 @@ public enum Query {
             "WHERE f.name LIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
-
     FIND_DIRECTOR_LIST_BY_NAME("SELECT * " +
             "FROM directors " +
             "WHERE directors.name LIKE ? ");
