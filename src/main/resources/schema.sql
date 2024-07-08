@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS films
 CREATE TABLE IF NOT EXISTS films_like
 (
     film_id INTEGER REFERENCES films (id),
-    user_id INTEGER REFERENCES users (id)
+    user_id INTEGER REFERENCES users (id),
 
     releaseDate date NOT NULL,
     duration INTEGER NOT NULL,
