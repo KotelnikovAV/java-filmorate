@@ -24,5 +24,5 @@ public class ReviewDto {
     @NotNull
     private Integer filmId;
 
-    private Integer useful;
+    private int useful;
 }
