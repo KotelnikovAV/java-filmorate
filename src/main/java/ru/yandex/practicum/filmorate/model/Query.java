@@ -155,10 +155,21 @@ public enum Query {
             "WHERE f.name iLIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
+
+    FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
+            "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
+            "FROM films AS f " +
+            "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
+            "LEFT JOIN films_like AS fl ON f.id = fl.film_id " +
+            "WHERE f.name iLIKE ? OR f.directors iLIKE (SELECT CAST(directors.id AS VARCHAR(10)) " +
+            "FROM directors " +
+            "WHERE directors.name iLIKE ?) " +
+            "GROUP BY f.id " +
+            "ORDER BY COUNT(fl.user_id) DESC"),
+
     FIND_DIRECTOR_LIST_BY_NAME("SELECT * " +
             "FROM directors " +
             "WHERE directors.name iLIKE ? ");
-
 
     private final String query;
 
