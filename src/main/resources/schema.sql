@@ -73,5 +73,5 @@ CREATE TABLE IF NOT EXISTS users_events_table (
     user_id INTEGER,
     user_events_id INTEGER,
     FOREIGN KEY (user_events_id) REFERENCES users_events (id),
-    FOREIGN KEY (user_id) REFERENCES users (id)
+    FOREIGN KEY (user_id) REFERENCES users_events (user_id)
 );

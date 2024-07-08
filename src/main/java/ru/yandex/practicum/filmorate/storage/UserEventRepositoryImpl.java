@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Query;
 import ru.yandex.practicum.filmorate.model.UserEvent;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -28,7 +28,7 @@ public class UserEventRepositoryImpl implements UserEventRepository {
                 userEvent.getEventType().name(),
                 userEvent.getOperation().name(),
                 userEvent.getEntityId(),
-                LocalDateTime.from(userEvent.getTimestamp())
+                LocalDate.from(userEvent.getTimestamp())
         );
         userEvent.setEventId(id);
 
