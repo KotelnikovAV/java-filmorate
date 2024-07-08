@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Query;
 import ru.yandex.practicum.filmorate.model.User;
@@ -80,7 +82,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     //add-recommendations
     @Override
-    public List<Film> getRecommendationsFilms(int userId) {
+    public List<FilmDto> getRecommendationsFilms(int userId) {
         log.info("Запущен метод getRecommendationsFilms для пользователя userId = {}", userId);
 
         List<Film> recommendationsFilms = findRecommendationsId(userId)
@@ -88,36 +90,41 @@ public class UserRepositoryImpl implements UserRepository {
                 .map(filmRepository::getFilmById)
                 .toList();
 
-        return recommendationsFilms;
+        return recommendationsFilms.stream().map(FilmMapper::mapToFilmDto).toList();
     }
 
     @Override
     public List<Integer> findRecommendationsId(int userId) {
         log.info("Запущен вспомогательный метод findRecommendationsId, для поиска id фильмов для рекоммендаций.");
 
-        List<Integer> userLikedFilms = likesRepository.getIdFilmsLikedByUser(userId);
-        List<Integer> userIds = likesRepository.getAllUserWhoLikedFilms();
+        List<Integer> userLikedFilms = likesRepository.getIdFilmsLikedByUser(userId); // получаем список ID фильмов понравившихся пользователю
+        List<Integer> userIds = likesRepository.getAllUserWhoLikedFilms(); // получаем список Id ВСЕХ ПОЛЬЗОВАТЕЛЕЙ которые лайкали какие-нибудь фильмы
 
-        if(userIds.isEmpty() && userLikedFilms.isEmpty()){
+        if(userIds.isEmpty() && userLikedFilms.isEmpty()){  // если списки пусты возвращаем пустой список
             return new ArrayList<>();
         }
 
-        int minLength = getSizeCommonFilmsList(userId, userIds.getFirst());
-        int anotherUserId = userId;
+        int minLength = getSizeCommonFilmsList(userId, userIds.getFirst()); // минимальная длина списка общих фильмов, сначала берём для 1 го пользователя в списке
+        int anotherUserId = userId;  // инициализируем переменную для итерации
 
         for (Integer id : userIds) {
-            if (minLength < getSizeCommonFilmsList(userId, id)) {
-                minLength = getSizeCommonFilmsList(userId, id);
-                anotherUserId = id;
+            if (minLength < getSizeCommonFilmsList(userId, id)) { // если minLength меньше списка общих фильмов
+                minLength = getSizeCommonFilmsList(userId, id);    // присвоим величина списка общих фильмов
+                anotherUserId = id;                               // также присвоим anotherUser = id пользователя
             }
         }
+        if (minLength < 0  ) {  // если minLength меньше нуля значит список пользователя больше списка друзей.
+            List<Integer> filmsExceptUserLiked = filmRepository.findAll().stream().map(Film::getId).toList(); //добавим в список id всехфильмов
+            filmsExceptUserLiked.retainAll(userLikedFilms); // уберём из списка все Id из списка пользователя
+            return filmsExceptUserLiked; // возвращаем список id всех фильмов которые ещё не лайкал пользователь
+        }
 
-        List<Integer> anotherUserList = likesRepository.getIdFilmsLikedByUser(anotherUserId);
-        anotherUserList.removeAll(userLikedFilms);
+        List<Integer> anotherUserList = likesRepository.getIdFilmsLikedByUser(anotherUserId); // получим Id всех фильмов которые лайкал пользователь anotherUserId
+        anotherUserList.removeAll(userLikedFilms); // уберём из списка, список с лайками userId (userLikedFilms)
 
         List<Integer> recommendationsId = anotherUserList;
 
-        return recommendationsId;
+        return recommendationsId; //вернём список
     }
 
     private int getSizeCommonFilmsList(int userId, int anotherId) {
@@ -125,13 +132,17 @@ public class UserRepositoryImpl implements UserRepository {
                 "для получения размера списка общих фильмов для пользователей " +
                 "userId = {} и anotherId = {}", userId, anotherId);
 
-        List<Integer> userFilm = likesRepository.getIdFilmsLikedByUser(userId);
-        List<Integer> friendFilm = likesRepository.getIdFilmsLikedByUser(anotherId);
+        List<Integer> userFilm = likesRepository.getIdFilmsLikedByUser(userId);   // список ID фильмов которые понравились пользователю
+        List<Integer> friendFilm = likesRepository.getIdFilmsLikedByUser(anotherId); // список ID фильмов которые понравились "другу"
 
-        if (friendFilm.size() > userFilm.size()) {
-            friendFilm.retainAll(userFilm);
-            return friendFilm.size();
-        } else {
+        if (friendFilm.size() > userFilm.size() && userId != anotherId) {  // сравниваем размеры списков если список "друга" больше
+            friendFilm.retainAll(userFilm);     // убираем из списка "друга" все общие ID
+            return friendFilm.size();           // возвращаем размер этого списка
+        } else if(userId == anotherId){         // если попадается сам пользователь сразу 0
+            return 0;
+        } else if (userFilm.size() > friendFilm.size()) { // если список пользователя больше чем список "друга"
+            return friendFilm.size()- userFilm.size(); // вернём разницу между размерами  со знаком "-"
+        }else {
             return 0;
         }
     }
