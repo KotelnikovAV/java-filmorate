@@ -16,7 +16,6 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 @Slf4j
 public class ReviewServiceImpl implements ReviewService {
@@ -32,7 +31,7 @@ public class ReviewServiceImpl implements ReviewService {
         log.info("Создание UserEvent добавление отзыва");
         userEventRepository.createUserEvent(UserEvent.builder()
                 .userId(review.getUserId())
-                .entityId(review.getReviewId())
+                .entityId(cratedReview.getReviewId())
                 .eventType(EventType.REVIEW)
                 .operation(Operation.ADD)
                 .timestamp(new Timestamp(System.currentTimeMillis()))
@@ -55,8 +54,8 @@ public class ReviewServiceImpl implements ReviewService {
 
         log.info("Создание UserEvent обновление отзыва");
         userEventRepository.createUserEvent(UserEvent.builder()
-                .userId(review.getUserId())
-                .entityId(review.getReviewId())
+                .userId(cratedReview.getUserId())
+                .entityId(cratedReview.getReviewId())
                 .eventType(EventType.REVIEW)
                 .operation(Operation.UPDATE)
                 .timestamp(new Timestamp(System.currentTimeMillis()))
@@ -68,10 +67,10 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void deleteById(int id) {
+        Review review = storage.findById(id);
         log.info("Начало процесса удаления отзыва");
         storage.deleteById(id);
         log.info("Отзыв удален");
-        Review review = storage.deleteById(id);
 
         log.info("Создание UserEvent удаление отзыва");
         userEventRepository.createUserEvent(UserEvent.builder()
