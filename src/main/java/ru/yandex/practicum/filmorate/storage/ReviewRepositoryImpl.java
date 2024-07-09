@@ -63,10 +63,9 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
 
     @Override
-    public Review deleteById(int id) {
+    public void deleteById(int id) {
         log.info("Отправка запроса DELETE_REVIEW");
         jdbc.update(Query.DELETE_REVIEW.getQuery(), id);
-        return findById(id);
     }
 
     @Override
