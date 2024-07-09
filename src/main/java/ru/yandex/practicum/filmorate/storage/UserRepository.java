@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public interface UserRepository {
 
     void delete(int id);
 
-    List<Film> getRecommendationsFilms(int userId);
+    List<FilmDto> getRecommendationsFilms(int userId);
 
     List<Integer> findRecommendationsId(int userId);
 }
