@@ -97,34 +97,37 @@ public class UserRepositoryImpl implements UserRepository {
     public List<Integer> findRecommendationsId(int userId) {
         log.info("Запущен вспомогательный метод findRecommendationsId, для поиска id фильмов для рекоммендаций.");
 
-        List<Integer> userLikedFilms = likesRepository.getIdFilmsLikedByUser(userId); // получаем список ID фильмов понравившихся пользователю
-        List<Integer> userIds = likesRepository.getAllUserWhoLikedFilms(); // получаем список Id ВСЕХ ПОЛЬЗОВАТЕЛЕЙ которые лайкали какие-нибудь фильмы
+        List<Integer> userLikedFilms = likesRepository.getIdFilmsLikedByUser(userId);
+        List<Integer> userIds = likesRepository.getAllUserWhoLikedFilms();
 
-        if(userIds.isEmpty() && userLikedFilms.isEmpty()){  // если списки пусты возвращаем пустой список
+        if (userIds.isEmpty() || userLikedFilms.isEmpty()) {
+            return new ArrayList<>();
+        } else if (userIds.size() == 1) {
             return new ArrayList<>();
         }
 
-        int minLength = getSizeCommonFilmsList(userId, userIds.getFirst()); // минимальная длина списка общих фильмов, сначала берём для 1 го пользователя в списке
-        int anotherUserId = userId;  // инициализируем переменную для итерации
+        int countSameLikes = -1;
+        int anotherUserId = userId;
 
-        for (Integer id : userIds) {
-            if (minLength < getSizeCommonFilmsList(userId, id)) { // если minLength меньше списка общих фильмов
-                minLength = getSizeCommonFilmsList(userId, id);    // присвоим величина списка общих фильмов
-                anotherUserId = id;                               // также присвоим anotherUser = id пользователя
+        for (int i = 0; i < userIds.size(); i++) {
+            if (countSameLikes < getSizeCommonFilmsList(userId, userIds.get(i))) {
+                countSameLikes = getSizeCommonFilmsList(userId, userIds.get(i));
+                anotherUserId = userIds.get(i);
             }
         }
-        if (minLength < 0  ) {  // если minLength меньше нуля значит список пользователя больше списка друзей.
-            List<Integer> filmsExceptUserLiked = filmRepository.findAll().stream().map(Film::getId).toList(); //добавим в список id всехфильмов
-            filmsExceptUserLiked.retainAll(userLikedFilms); // уберём из списка все Id из списка пользователя
-            return filmsExceptUserLiked; // возвращаем список id всех фильмов которые ещё не лайкал пользователь
+
+        if (countSameLikes < 0) {
+            List<Integer> filmsExceptUserLiked = filmRepository.findAll().stream().map(Film::getId).toList();
+            filmsExceptUserLiked.retainAll(userLikedFilms);
+            return filmsExceptUserLiked;
         }
 
-        List<Integer> anotherUserList = likesRepository.getIdFilmsLikedByUser(anotherUserId); // получим Id всех фильмов которые лайкал пользователь anotherUserId
-        anotherUserList.removeAll(userLikedFilms); // уберём из списка, список с лайками userId (userLikedFilms)
+        List<Integer> anotherUserList = likesRepository.getIdFilmsLikedByUser(anotherUserId);
+        anotherUserList.removeAll(userLikedFilms);
 
         List<Integer> recommendationsId = anotherUserList;
 
-        return recommendationsId; //вернём список
+        return recommendationsId;
     }
 
     private int getSizeCommonFilmsList(int userId, int anotherId) {
@@ -132,17 +135,16 @@ public class UserRepositoryImpl implements UserRepository {
                 "для получения размера списка общих фильмов для пользователей " +
                 "userId = {} и anotherId = {}", userId, anotherId);
 
-        List<Integer> userFilm = likesRepository.getIdFilmsLikedByUser(userId);   // список ID фильмов которые понравились пользователю
-        List<Integer> friendFilm = likesRepository.getIdFilmsLikedByUser(anotherId); // список ID фильмов которые понравились "другу"
+        List<Integer> userFilm = likesRepository.getIdFilmsLikedByUser(userId);
+        List<Integer> friendFilm = likesRepository.getIdFilmsLikedByUser(anotherId);
 
-        if (friendFilm.size() > userFilm.size() && userId != anotherId) {  // сравниваем размеры списков если список "друга" больше
-            friendFilm.retainAll(userFilm);     // убираем из списка "друга" все общие ID
-            return friendFilm.size();           // возвращаем размер этого списка
-        } else if(userId == anotherId){         // если попадается сам пользователь сразу 0
-            return 0;
-        } else if (userFilm.size() > friendFilm.size()) { // если список пользователя больше чем список "друга"
-            return friendFilm.size()- userFilm.size(); // вернём разницу между размерами  со знаком "-"
-        }else {
+        if (friendFilm.size() > userFilm.size() && userId != anotherId) {
+            friendFilm.retainAll(userFilm);
+            return friendFilm.size();
+        } else if (userFilm.size() > friendFilm.size()) {
+            userFilm.retainAll(friendFilm);
+            return -1 * userFilm.size();
+        } else {
             return 0;
         }
     }
