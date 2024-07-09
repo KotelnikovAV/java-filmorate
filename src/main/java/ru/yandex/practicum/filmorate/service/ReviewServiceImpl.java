@@ -16,7 +16,6 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 @Slf4j
 public class ReviewServiceImpl implements ReviewService {
