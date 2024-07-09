@@ -159,13 +159,10 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public List<Film> getPopularFilmsByTitleAndDirector(String query) {
-        List<Film> popularFilmsByDirector = getPopularFilmsByDirector(query);
-        List<Film> popularFilmsByTitle = getPopularFilmsByTitle(query);
-        List<Film> filmList = new ArrayList<>();
-        filmList.addAll(popularFilmsByTitle);
-        filmList.addAll(popularFilmsByDirector);
-
-        return filmList;
+        return jdbc.query(Query.FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR.getQuery(),
+                mapperFilm,
+                getSearchString(query),
+                getSearchString(query));
     }
 
     private String convertGenresToString(List<Genre> genres) {

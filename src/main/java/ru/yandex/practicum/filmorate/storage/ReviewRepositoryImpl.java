@@ -40,7 +40,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
     }
 
     public Review findById(int id) {
-        log.info("Отправка запроса GET_REVIEW_WITH_FILM_ID в методе findById");
+        log.info("Отправка запроса GET_REVIEW_WITH_ID в методе findById");
         List<Review> reviews = jdbc.query(Query.GET_REVIEW_WITH_ID.getQuery(), rowMapper, id);
         if (reviews.isEmpty()) {
             throw new NotFoundException(String.format("Отзыв с id %d не существует.", id));
@@ -54,14 +54,11 @@ public class ReviewRepositoryImpl implements ReviewRepository {
         int rowsUpdated = jdbc.update(Query.UPDATE_REVIEW.getQuery(),
                 review.getContent(),
                 review.getIsPositive(),
-                review.getUserId(),
-                review.getFilmId(),
-                review.getUseful(),
                 review.getReviewId());
         if (rowsUpdated == 0) {
             throw new NotFoundException("Отзыв не обновлен");
         }
-        return review;
+        return findById(review.getReviewId());
     }
 
 
@@ -80,7 +77,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
             log.info("Отправка запроса GET_REVIEWS_WITH_COUNT");
             return jdbc.query(Query.GET_REVIEWS_WITH_COUNT.getQuery(), rowMapper, count);
         } else if (count == 0) {
-            log.info("Отправка запроса GET_REVIEW_WITH_FILM_ID в методе findAll");
+            log.info("Отправка запроса GET_REVIEW_WITH_ID в методе findAll");
             return jdbc.query(Query.GET_REVIEW_WITH_ID.getQuery(), rowMapper, filmId);
         } else {
             log.info("Отправка запроса GET_REVIEWS");
@@ -102,13 +99,13 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
     @Override
     public void removeLikeFromReview(int reviewId, int userId) {
-        log.info("Отправка запроса removeLikeFromReview");
+        log.info("Отправка запроса REMOVE_LIKE");
         jdbc.update(Query.REMOVE_LIKE.getQuery(), reviewId);
     }
 
     @Override
     public void removeDislikeFromReview(int reviewId, int userId) {
-        log.info("Отправка запроса removeDislikeFromReview");
+        log.info("Отправка запроса LIKE_REVIEW");
         jdbc.update(Query.LIKE_REVIEW.getQuery(), reviewId);
     }
 }

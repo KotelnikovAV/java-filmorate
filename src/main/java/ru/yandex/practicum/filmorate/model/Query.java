@@ -97,14 +97,14 @@ public enum Query {
             "WHERE id = ?"),
 
     ADD_REVIEW("INSERT INTO reviews(content, isPositive, user_id, films_id, useful) VALUES (?, ?, ?, ?, ?)"),
-    UPDATE_REVIEW("UPDATE reviews SET content = ?, isPositive = ?, user_id = ?, films_id = ?, useful = ? WHERE review_id = ?"),
+    UPDATE_REVIEW("UPDATE reviews SET content = ?, isPositive = ? WHERE review_id = ?"),
     DELETE_REVIEW("DELETE FROM reviews WHERE review_id = ?"),
     GET_REVIEWS_WITH_COUNT("SELECT * FROM reviews ORDER BY useful DESC LIMIT ?"),
     GET_REVIEW_WITH_ID("SELECT * FROM reviews WHERE review_id = ?"),
     GET_REVIEWS("SELECT * FROM reviews WHERE films_id = ? ORDER BY useful DESC LIMIT ?"),
     LIKE_REVIEW("UPDATE reviews SET useful = useful + 1 WHERE review_id = ?"),
     REMOVE_LIKE("UPDATE reviews SET useful = useful - 1 WHERE review_id = ?"),
-    DISLIKE_REVIEW("UPDATE reviews SET useful = useful - 2 WHERE review_id = ?"),
+    DISLIKE_REVIEW("UPDATE reviews SET useful = useful - 1 WHERE review_id = ?"),
 
     FIND_LIST_LIKED_FILMS("SELECT film_id " +
             "FROM films_like " +
@@ -152,7 +152,7 @@ public enum Query {
             "FROM films AS f " +
             "JOIN mpa AS m ON f.mpa_id = m.id " +
             "LEFT JOIN films_like AS fl ON f.id = fl.film_id " +
-            "WHERE f.directors LIKE ? " +
+            "WHERE f.directors iLIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
     FIND_POPULAR_FILMS_BY_TITLE("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +
@@ -160,13 +160,24 @@ public enum Query {
             "FROM films AS f " +
             "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
             "LEFT JOIN films_like AS fl ON f.id = fl.film_id " +
-            "WHERE f.name LIKE ? " +
+            "WHERE f.name iLIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
+
+    FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
+            "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
+            "FROM films AS f " +
+            "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
+            "LEFT JOIN films_like AS fl ON f.id = fl.film_id " +
+            "WHERE f.name iLIKE ? OR f.directors iLIKE (SELECT CAST(directors.id AS VARCHAR(10)) " +
+            "FROM directors " +
+            "WHERE directors.name iLIKE ?) " +
+            "GROUP BY f.id " +
+            "ORDER BY COUNT(fl.user_id) DESC"),
+
     FIND_DIRECTOR_LIST_BY_NAME("SELECT * " +
             "FROM directors " +
-            "WHERE directors.name LIKE ? ");
-
+            "WHERE directors.name iLIKE ? ");
 
     private final String query;
 
