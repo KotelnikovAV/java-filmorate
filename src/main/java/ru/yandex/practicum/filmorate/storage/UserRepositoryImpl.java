@@ -120,6 +120,8 @@ public class UserRepositoryImpl implements UserRepository {
             List<Integer> filmsExceptUserLiked = filmRepository.findAll().stream().map(Film::getId).toList();
             filmsExceptUserLiked.retainAll(userLikedFilms);
             return filmsExceptUserLiked;
+        } else if (countSameLikes == 0) {
+            return new ArrayList<>();
         }
 
         List<Integer> anotherUserList = likesRepository.getIdFilmsLikedByUser(anotherUserId);
