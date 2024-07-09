@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -175,7 +176,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Film> getRecommendationsFilms(int userId) {
+    public List<FilmDto> getRecommendationsFilms(int userId) {
         return userRepository.getRecommendationsFilms(userId);
     }
 
