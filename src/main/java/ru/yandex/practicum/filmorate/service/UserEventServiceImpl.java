@@ -28,7 +28,7 @@ public class UserEventServiceImpl implements UserEventService {
                 .toList();
 
         if (listUserEventsDto.isEmpty()) {
-            throw new NotFoundException("Список Событий пуст");
+            throw new NotFoundException("Список событий пуст");
         }
         return listUserEventsDto;
     }

@@ -54,8 +54,8 @@ public class ReviewServiceImpl implements ReviewService {
 
         log.info("Создание UserEvent обновление отзыва");
         userEventRepository.createUserEvent(UserEvent.builder()
-                .userId(review.getUserId())
-                .entityId(review.getReviewId())
+                .userId(cratedReview.getUserId())
+                .entityId(cratedReview.getReviewId())
                 .eventType(EventType.REVIEW)
                 .operation(Operation.UPDATE)
                 .timestamp(new Timestamp(System.currentTimeMillis()))
@@ -97,15 +97,6 @@ public class ReviewServiceImpl implements ReviewService {
         log.info("Начало процесса: пользователь ставит лайк отзыву.");
         log.debug("Значения переменных при добавлении лайка отзыву reviewId и userId: {}, {}", reviewId, userId);
         storage.likeReview(reviewId, userId);
-
-        log.info("Создание UserEvent лайк ревью");
-        userEventRepository.createUserEvent(UserEvent.builder()
-                .userId(userId)
-                .entityId(reviewId)
-                .eventType(EventType.REVIEW)
-                .operation(Operation.ADD)//nen
-                .timestamp(new Timestamp(System.currentTimeMillis()))
-                .build());
     }
 
     @Override
