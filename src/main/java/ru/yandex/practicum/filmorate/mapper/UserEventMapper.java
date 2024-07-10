@@ -15,9 +15,11 @@ public class UserEventMapper {
 
     public UserEvent mapToUserEvent(UserEventDto userEventDto) {
         log.info("Начало преобразования UserEventDto в UserEvent");
+
         if (userEventDto == null) {
             return null;
         }
+
         UserEvent userEvent = UserEvent.builder()
                 .eventId(userEventDto.getEventId())
                 .userId(userEventDto.getUserId())
@@ -33,9 +35,11 @@ public class UserEventMapper {
 
     public UserEventDto mapToUserEventDto(UserEvent userEvent) {
         log.info("Начало преобразования UserEvent в UserEventDto");
+
         if (userEvent == null) {
             return null;
         }
+
         UserEventDto userEventDto = UserEventDto.builder()
                 .eventId(userEvent.getEventId())
                 .userId(userEvent.getUserId())

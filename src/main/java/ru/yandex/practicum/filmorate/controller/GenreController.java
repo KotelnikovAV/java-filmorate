@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/genres")
+@RequestMapping("genres")
 public class GenreController {
     private final GenreService genreService;
 
@@ -24,7 +24,7 @@ public class GenreController {
         return genreService.getAllGenres();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public GenreDto getGenre(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /genres/{id} (метод GET). Вызван метод getGenre(id)");
         return genreService.getGenre(id);

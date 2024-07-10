@@ -12,11 +12,11 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/films")
+@RequestMapping("films")
 public class FilmLikeController {
     private final FilmService filmService;
 
-    @GetMapping("/popular")
+    @GetMapping("popular")
     public List<FilmDto> getPopularFilms(@RequestParam(defaultValue = "10") int count,
                                                            @RequestParam Optional<Integer> genreId,
                                                            @RequestParam Optional<Integer> year) {
@@ -26,19 +26,17 @@ public class FilmLikeController {
         return filmService.getPopularFilms(count, genreId, year);
     }
 
-    @PutMapping("/{id}/like/{userId}")
+    @PutMapping("{id}/like/{userId}")
     public FilmDto addLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен HTTP-запрос по адресу /films/{id}/like/{userId} (метод PUT). Вызван метод "
                 + "addLike(@PathVariable int id, @PathVariable int userId)");
-        log.debug("Полученные переменные пути при Put запросе id = " + id + ", userId = " + userId);
         return filmService.addLike(id, userId);
     }
 
-    @DeleteMapping("/{id}/like/{userId}")
+    @DeleteMapping("{id}/like/{userId}")
     public FilmDto deleteLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен HTTP-запрос по адресу /films/{id}/like/{userId} (метод DELETE). Вызван метод "
                 + "deleteLike(@PathVariable int id, @PathVariable int userId)");
-        log.debug("Полученные переменные пути при Delete запросе id = " + id + ", userId = " + userId);
         return filmService.deleteLike(id, userId);
     }
 
@@ -47,7 +45,6 @@ public class FilmLikeController {
     public List<FilmDto> getCommonFilms(@RequestParam("userId") int userId, @RequestParam("friendId") int friendId) {
         log.info("Получен HTTP-запрос по адресу /films/common?userId={userId}&friendId={friendId}. " +
                 "Вызван метод getCommonFilms(@PathVariable int userId, @PathVariable int friendId");
-        log.debug("Полученные переменные при GET - запросе userId = {}, friendId = {}", userId, friendId);
         return filmService.getCommonFilms(userId, friendId);
     }
 }

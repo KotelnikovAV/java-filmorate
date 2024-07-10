@@ -67,24 +67,8 @@ public class LikesRepositoryImpl implements LikesRepository {
     }
 
     @Override
-    public List<Film> getCommonFilms(int userId, int friendId) {
-        log.info("Запущен метод getCommonFilms, переданы userId = {}, friendId = {}", userId, friendId);
-
-        List<Integer> userFilm = getIdFilmsLikedByUser(userId);
-        List<Integer> friendFilm = getIdFilmsLikedByUser(friendId);
-        userFilm.retainAll(friendFilm);
-
-        return userFilm.stream().map(filmRepository::getFilmById).toList();
-    }
-
-    @Override
     public List<Integer> getIdFilmsLikedByUser(int userId) {
         log.info("Отправка запроса FIND_LIST_LIKED_FILMS");
         return jdbc.queryForList(Query.FIND_LIST_LIKED_FILMS.getQuery(), Integer.class, userId);
-    }
-
-    public List<Integer> getAllUserWhoLikedFilms() {
-        log.info("Отправка запроса GET_USERS_ID_FROM_FILMS_LIKE");
-        return jdbc.queryForList(Query.GET_USERS_ID_FROM_FILMS_LIKE.getQuery(), Integer.class);
     }
 }

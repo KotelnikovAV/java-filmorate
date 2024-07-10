@@ -24,9 +24,11 @@ public class ReviewRepositoryImpl implements ReviewRepository {
     @Override
     public Review add(Review review) {
         log.info("Отправка запроса ADD_REVIEW");
+
         if (review.getFilmId() < 0 || review.getUserId() < 0) {
             throw new NotFoundException("Такого фильма или пользователя не существует");
         }
+
         int id = insert(
                 jdbc,
                 Query.ADD_REVIEW.getQuery(),
@@ -42,10 +44,10 @@ public class ReviewRepositoryImpl implements ReviewRepository {
     public Review findById(int id) {
         log.info("Отправка запроса GET_REVIEW_WITH_ID в методе findById");
         List<Review> reviews = jdbc.query(Query.GET_REVIEW_WITH_ID.getQuery(), rowMapper, id);
+
         if (reviews.isEmpty()) {
             throw new NotFoundException(String.format("Отзыв с id %d не существует.", id));
-        } else return reviews.get(0);
-
+        } else return reviews.getFirst();
     }
 
     @Override
@@ -55,9 +57,11 @@ public class ReviewRepositoryImpl implements ReviewRepository {
                 review.getContent(),
                 review.getIsPositive(),
                 review.getReviewId());
+
         if (rowsUpdated == 0) {
             throw new NotFoundException("Отзыв не обновлен");
         }
+
         return findById(review.getReviewId());
     }
 
@@ -72,6 +76,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
     public List<Review> findAll(int filmId, int count) {
         log.info("Получение всех отзывов по идентификатору фильма, если фильм не указан то все. " +
                 "Если кол-во не указано то 10.");
+
         if (filmId == 0) {
             log.info("Отправка запроса GET_REVIEWS_WITH_COUNT");
             return jdbc.query(Query.GET_REVIEWS_WITH_COUNT.getQuery(), rowMapper, count);

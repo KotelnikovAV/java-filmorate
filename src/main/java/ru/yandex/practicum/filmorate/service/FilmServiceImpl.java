@@ -8,12 +8,7 @@ import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
-import ru.yandex.practicum.filmorate.model.EventType;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Operation;
-import ru.yandex.practicum.filmorate.model.UserEvent;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.SearchParams;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.*;
 
 import java.sql.Timestamp;
@@ -49,6 +44,7 @@ public class FilmServiceImpl implements FilmService {
                 .operation(Operation.ADD)
                 .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
+        log.info("Создание UserEvent добавление лайка успешно завершено");
 
         return FilmMapper.mapToFilmDto(film);
     }
@@ -68,6 +64,7 @@ public class FilmServiceImpl implements FilmService {
                 .operation(Operation.REMOVE)
                 .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
+        log.info("Создание UserEvent удаление лайка успешно завершено");
 
         return FilmMapper.mapToFilmDto(film);
     }
@@ -117,9 +114,14 @@ public class FilmServiceImpl implements FilmService {
     public List<FilmDto> getCommonFilms(int userId, int friendId) {
         log.info("Начало процесса получения списка общих фильмов");
         log.debug("Значение переменной userID: {}, значение переменной friendId: {}", userId, friendId);
-        List<Film> userFilm = likesRepository.getCommonFilms(userId, friendId);
+        List<Integer> userFilm = likesRepository.getIdFilmsLikedByUser(userId);
+        List<Integer> friendFilm = likesRepository.getIdFilmsLikedByUser(friendId);
+        userFilm.retainAll(friendFilm);
         log.info("Список общих фильмов получен");
-        return userFilm.stream().map(FilmMapper::mapToFilmDto).toList();
+        return userFilm.stream()
+                .map(filmRepository::getFilmById)
+                .map(FilmMapper::mapToFilmDto)
+                .toList();
 
     }
 
@@ -182,7 +184,7 @@ public class FilmServiceImpl implements FilmService {
     public FilmDto getFilmById(int filmId) {
         log.info("Начало процесса получения фильма по filmId = {}", filmId);
         Film film = checkFilm(filmId).orElseThrow(() -> {
-            log.error("Фильма с id {}, нет", filmId);
+            log.error("Ошибка получения фильма. Фильма с id {}, нет", filmId);
             return new NotFoundException("Фильма с id " + filmId + " нет");
         });
         log.info("Фильм получен");
@@ -193,7 +195,7 @@ public class FilmServiceImpl implements FilmService {
     public void delete(int filmId) {
         log.info("Начало процесса удаления фильма по filmId = {}", filmId);
         checkFilm(filmId).orElseThrow(() -> {
-            log.error("Фильма с id {}, нет", filmId);
+            log.error("Ошибка удаления фильма. Фильма с id {}, нет", filmId);
             return new NotFoundException("Фильма с id " + filmId + " нет");
         });
         filmRepository.delete(filmId);
@@ -243,7 +245,6 @@ public class FilmServiceImpl implements FilmService {
             return films;
         } else {
             throw new NotFoundException("Выбран неверный метод сортировки");
-
         }
     }
 
@@ -275,7 +276,8 @@ public class FilmServiceImpl implements FilmService {
                     .map(FilmMapper::mapToFilmDto)
                     .toList();
         } else {
-            throw new NotFoundException(String.format("Выбран неверный параметр поиска: %s,\nДоступные параметры: %s, %s",
+            throw new NotFoundException(String.format("Выбран неверный параметр поиска: %s,\nДоступные параметры: " +
+                            "%s, %s",
                     query,
                     SearchParams.DIRECTOR,
                     SearchParams.TITLE));

@@ -24,10 +24,6 @@ public class FilmRepositoryImpl implements FilmRepository {
     private final RowMapper<Film> mapperFilm;
     private final RowMapper<Director> directorRowMapper;
 
-    private static String getSearchString(String query) {
-        return MessageFormat.format("%{0}%", query);
-    }
-
     @Override
     public List<Film> findAll() {
         log.info("Отправка запроса FIND_ALL_FILMS");
@@ -159,6 +155,7 @@ public class FilmRepositoryImpl implements FilmRepository {
 
     @Override
     public List<Film> getPopularFilmsByTitleAndDirector(String query) {
+        log.info("Отправка запроса FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR");
         return jdbc.query(Query.FIND_POPULAR_FILMS_BY_TITLE_AND_DIRECTOR.getQuery(),
                 mapperFilm,
                 getSearchString(query),
@@ -193,5 +190,9 @@ public class FilmRepositoryImpl implements FilmRepository {
         }
 
         return stringBuilder.toString();
+    }
+
+    private static String getSearchString(String query) {
+        return MessageFormat.format("%{0}%", query);
     }
 }

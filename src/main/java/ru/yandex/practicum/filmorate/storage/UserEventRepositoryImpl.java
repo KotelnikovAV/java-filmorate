@@ -19,7 +19,7 @@ public class UserEventRepositoryImpl implements UserEventRepository {
     private final RowMapper<UserEvent> mapper;
 
     @Override
-    public UserEvent createUserEvent(UserEvent userEvent) {
+    public void createUserEvent(UserEvent userEvent) {
         log.info("Отправка запроса INSERT_USER_EVENT");
         int id = BaseDbStorage.insert(
                 jdbc,
@@ -34,7 +34,6 @@ public class UserEventRepositoryImpl implements UserEventRepository {
 
         log.info("Отправка запроса INSERT_USERS_EVENTS_TABLE");
         jdbc.update(Query.INSERT_USERS_EVENTS_TABLE.getQuery(), userEvent.getUserId(), userEvent.getEventId());
-        return userEvent;
     }
 
     @Override

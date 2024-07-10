@@ -21,8 +21,8 @@ public class UserEventServiceImpl implements UserEventService {
     public List<UserEventDto> getAllUserEvents(int userId) {
         log.info("Начало процесса получения UserEvent по userId:{}", userId);
         List<UserEvent> userEvents = userEventRepository.getAllUserEvents(userId);
+        log.info("UserEvent успешно получены");
 
-        log.info("Преобразование UserEvent в UserEventDto ");
         List<UserEventDto> listUserEventsDto =  userEvents.stream()
                 .map(UserEventMapper::mapToUserEventDto)
                 .toList();

@@ -12,14 +12,14 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/reviews")
+@RequestMapping("reviews")
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
     public ReviewDto add(@Valid @RequestBody ReviewDto review) {
-        log.info("Получен HTTP-запрос по адресу /reviews (метод POST). Вызван метод add(reviewDto)");
+        log.info("Получен HTTP-запрос по адресу /reviews (метод POST). Вызван метод add(review)");
         return reviewService.add(review);
     }
 
@@ -29,13 +29,13 @@ public class ReviewController {
         return reviewService.update(review);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public void deleteById(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /reviews/{id} (метод DELETE). Вызван метод deleteById(id)");
         reviewService.deleteById(id);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ReviewDto findById(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /reviews/{id} (метод GET). Вызван метод findById(id)");
         return reviewService.findById(id);
@@ -44,35 +44,40 @@ public class ReviewController {
     @GetMapping
     public List<ReviewDto> findAll(@RequestParam(defaultValue = "0", required = false) int filmId,
                                    @RequestParam(defaultValue = "10", required = false) int count) {
-        log.info("Получен HTTP-запрос по адресу /reviews?filmId={filmId}&count={count} (метод GET). Вызван метод findAll(filmId, count)");
+        log.info("Получен HTTP-запрос по адресу /reviews?filmId={filmId}&count={count} (метод GET). " +
+                "Вызван метод findAll(filmId, count)");
         return reviewService.findAll(filmId, count);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{id}/like/{userId}")
+    @PutMapping("{id}/like/{userId}")
     public void likeReview(@PathVariable("id") int id, @PathVariable("userId") int userId) {
-        log.info("Получен HTTP-запрос по адресу /reviews/{id}/like/{userId} (метод PUT). Вызван метод likeReview(id, userId)");
+        log.info("Получен HTTP-запрос по адресу /reviews/{id}/like/{userId} (метод PUT). " +
+                "Вызван метод likeReview(id, userId)");
         reviewService.likeReview(id, userId);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{id}/dislike/{userId}")
+    @PutMapping("{id}/dislike/{userId}")
     public void dislikeReview(@PathVariable("id") int id, @PathVariable("userId") int userId) {
-        log.info("Получен HTTP-запрос по адресу /reviews/{id}/dislike/{userId} (метод PUT). Вызван метод dislikeReview(id, userId)");
+        log.info("Получен HTTP-запрос по адресу /reviews/{id}/dislike/{userId} (метод PUT). " +
+                "Вызван метод dislikeReview(id, userId)");
         reviewService.dislikeReview(id, userId);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/{id}/like/{userId}")
+    @DeleteMapping("{id}/like/{userId}")
     public void removeLikeFromReview(@PathVariable("id") int id, @PathVariable("userId") int userId) {
-        log.info("Получен HTTP-запрос по адресу /reviews/{id}/like/{userId} (метод DELETE). Вызван метод removeLikeFromReview(id, userId)");
+        log.info("Получен HTTP-запрос по адресу /reviews/{id}/like/{userId} (метод DELETE). " +
+                "Вызван метод removeLikeFromReview(id, userId)");
         reviewService.removeLikeFromReview(id, userId);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/{id}/dislike/{userId}")
+    @DeleteMapping("{id}/dislike/{userId}")
     public void removeDislikeFromReview(@PathVariable("id") int id, @PathVariable("userId") int userId) {
-        log.info("Получен HTTP-запрос по адресу /reviews/{id}/dislike/{userId} (метод DELETE). Вызван метод removeDislikeFromReview(id, userId)");
+        log.info("Получен HTTP-запрос по адресу /reviews/{id}/dislike/{userId} (метод DELETE). " +
+                "Вызван метод removeDislikeFromReview(id, userId)");
         reviewService.removeDislikeFromReview(id, userId);
     }
 }

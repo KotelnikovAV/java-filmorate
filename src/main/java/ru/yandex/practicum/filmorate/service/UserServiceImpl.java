@@ -8,11 +8,9 @@ import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
-import ru.yandex.practicum.filmorate.model.EventType;
-import ru.yandex.practicum.filmorate.model.Operation;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.UserEvent;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.FriendsRepository;
 import ru.yandex.practicum.filmorate.storage.UserEventRepository;
 import ru.yandex.practicum.filmorate.storage.UserRepository;
@@ -65,7 +63,7 @@ public class UserServiceImpl implements UserService {
         User user = friendsRepository.deleteFriend(id, friendId);
         log.info("Пользователь удален из друзей");
 
-        log.info("Создание UserEvent удаление из  друзей");
+        log.info("Создание UserEvent удаление из друзей");
         userEventRepository.createUserEvent(UserEvent.builder()
                 .userId(id)
                 .entityId(friendId)
@@ -73,6 +71,7 @@ public class UserServiceImpl implements UserService {
                 .operation(Operation.REMOVE)
                 .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
+        log.info("Создание UserEvent удаление из друзей успешно завершено");
 
         return UserMapper.mapToUserDto(user);
     }
@@ -176,7 +175,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<FilmDto> getRecommendationsFilms(int userId) {
-        return userRepository.getRecommendationsFilms(userId);
+        log.info("Начало процесса получения рекомендаций для пользователя с id = {}", userId);
+        List<Film> films = userRepository.findRecommendationsId(userId);
+        log.info("Рекомендации успешно получены");
+        return films.stream()
+                .map(FilmMapper::mapToFilmDto)
+                .toList();
     }
 
     private Optional<User> checkUser(int id) {

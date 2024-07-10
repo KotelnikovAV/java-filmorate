@@ -14,7 +14,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/mpa")
+@RequestMapping("mpa")
 public class MpaController {
     private final MpaService mpaService;
 
@@ -24,7 +24,7 @@ public class MpaController {
         return mpaService.getAllMpa();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public MpaDto getMpa(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /mpa/{id} (метод GET). Вызван метод getMpa(id)");
         return mpaService.getMpa(id);

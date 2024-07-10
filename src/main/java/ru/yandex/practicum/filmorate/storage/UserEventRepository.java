@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface UserEventRepository {
 
-    UserEvent createUserEvent(UserEvent userEvent);
+    void createUserEvent(UserEvent userEvent);
 
     List<UserEvent> getAllUserEvents(int userId);
 }

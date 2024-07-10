@@ -7,9 +7,9 @@ import ru.yandex.practicum.filmorate.dto.ReviewDto;
 import ru.yandex.practicum.filmorate.mapper.ReviewMapper;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.Operation;
+import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.UserEvent;
 import ru.yandex.practicum.filmorate.storage.ReviewRepository;
-import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.UserEventRepository;
 
 import java.sql.Timestamp;
@@ -24,9 +24,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewDto add(ReviewDto review) {
-        log.info("Начало процесса получения всех отзывов");
+        log.info("Начало процесса добавления отзыва");
         Review cratedReview = storage.add(ReviewMapper.mapToReview(review));
-        log.info("Список всех отзывов получен");
+        log.info("Отзыв успешно добавлен");
 
         log.info("Создание UserEvent добавление отзыва");
         userEventRepository.createUserEvent(UserEvent.builder()
@@ -36,6 +36,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .operation(Operation.ADD)
                 .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
+        log.info("Создание UserEvent добавление отзыва успешно завершено");
 
         return ReviewMapper.mapToReviewDto(cratedReview);
     }
@@ -43,8 +44,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewDto findById(int id) {
         log.info("Начало процесса получения отзыва по id = {}", id);
+        Review review = storage.findById(id);
         log.info("Отзыв получен");
-        return ReviewMapper.mapToReviewDto(storage.findById(id));
+        return ReviewMapper.mapToReviewDto(review);
     }
 
     @Override
@@ -60,6 +62,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .operation(Operation.UPDATE)
                 .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
+        log.info("Создание UserEvent обновление отзыва успешно завершено");
 
         log.info("Отзыв обновлен");
         return ReviewMapper.mapToReviewDto(cratedReview);
@@ -80,6 +83,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .operation(Operation.REMOVE)
                 .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
+        log.info("Создание UserEvent удаление отзыва успешно завершено");
     }
 
     @Override
@@ -97,26 +101,30 @@ public class ReviewServiceImpl implements ReviewService {
         log.info("Начало процесса: пользователь ставит лайк отзыву.");
         log.debug("Значения переменных при добавлении лайка отзыву reviewId и userId: {}, {}", reviewId, userId);
         storage.likeReview(reviewId, userId);
+        log.info("Лайк ревью успешно поставлен");
     }
 
     @Override
     public void dislikeReview(int reviewId, int userId) {
         log.info("Начало процесса: пользователь ставит дизлайк отзыву.");
-        log.debug("Значения переменных при добавлении лайка отзыву reviewId и userId: {}, {}", reviewId, userId);
+        log.debug("Значения переменных при добавлении дизлайка отзыву reviewId и userId: {}, {}", reviewId, userId);
         storage.dislikeReview(reviewId, userId);
+        log.info("Дизлайк ревью успешно поставлен");
     }
 
     @Override
     public void removeLikeFromReview(int reviewId, int userId) {
         log.info("Начало процесса: пользователь удаляет лайк/дизлайк отзыву..");
-        log.debug("Значения переменных при добавлении лайка отзыву reviewId и userId: {}, {}", reviewId, userId);
+        log.debug("Значения переменных при удалении лайка отзыву reviewId и userId: {}, {}", reviewId, userId);
         storage.removeLikeFromReview(reviewId, userId);
+        log.info("Лайк ревью успешно удален");
     }
 
     @Override
     public void removeDislikeFromReview(int reviewId, int userId) {
         log.info("Начало процесса: пользователь удаляет дизлайк отзыву.");
-        log.debug("Значения переменных при добавлении лайка отзыву reviewId и userId: {}, {}", reviewId, userId);
+        log.debug("Значения переменных при удалении дизлайка отзыву reviewId и userId: {}, {}", reviewId, userId);
         storage.removeDislikeFromReview(reviewId, userId);
+        log.info("Дизлайк ревью успешно удален");
     }
 }
