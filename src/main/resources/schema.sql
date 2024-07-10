@@ -1,5 +1,6 @@
 SET REFERENTIAL_INTEGRITY TRUE;
 
+DROP TABLE IF EXISTS review_user_likes;
 DROP TABLE IF EXISTS reviews;
 DROP TABLE IF EXISTS films_like;
 DROP TABLE IF EXISTS films;
@@ -92,4 +93,12 @@ CREATE TABLE IF NOT EXISTS reviews
     user_id    INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
     films_id   INTEGER NOT NULL REFERENCES films (id) ON DELETE CASCADE ON UPDATE CASCADE,
     useful     INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS review_user_likes
+(
+    review_id       INTEGER NOT NULL REFERENCES reviews (review_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    user_id         INTEGER NOT NULL REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    like_or_dislike INTEGER,
+    CONSTRAINT pk_review_user_likes PRIMARY KEY (review_id, user_id)
 )

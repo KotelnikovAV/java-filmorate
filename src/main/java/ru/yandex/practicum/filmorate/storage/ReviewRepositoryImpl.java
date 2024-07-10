@@ -86,25 +86,51 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
     @Override
     public void likeReview(int reviewId, int userId) {
-        log.info("Отправка запроса LIKE_REVIEW");
-        jdbc.update(Query.LIKE_REVIEW.getQuery(), reviewId);
+        if (isReviewLikeOrDislike(reviewId, userId)) {
+            log.info("Отправка запроса LIKE_REVIEW_IF_DISLIKE");
+            jdbc.update(Query.LIKE_REVIEW_IF_DISLIKE.getQuery(), reviewId);
+        } else {
+            log.info("Отправка запроса LIKE_REVIEW");
+            jdbc.update(Query.LIKE_REVIEW.getQuery(), reviewId);
+            log.info("Отправка запроса INSERT_LIKE");
+            jdbc.update(Query.INSERT_LIKE.getQuery(), reviewId, userId, 1);
+        }
     }
 
     @Override
     public void dislikeReview(int reviewId, int userId) {
-        log.info("Отправка запроса DISLIKE_REVIEW");
-        jdbc.update(Query.DISLIKE_REVIEW.getQuery(), reviewId);
+        if (isReviewLikeOrDislike(reviewId, userId)) {
+            log.info("Отправка запроса DISLIKE_REVIEW");
+            jdbc.update(Query.REMOVE_LIKE_IF_DISLIKE.getQuery(), reviewId);
+        } else {
+            log.info("Отправка запроса REMOVE_LIKE");
+            jdbc.update(Query.REMOVE_LIKE.getQuery(), reviewId);
+            log.info("Отправка запроса INSERT_LIKE");
+            jdbc.update(Query.INSERT_LIKE.getQuery(), reviewId, userId, -1);
+        }
     }
 
     @Override
     public void removeLikeFromReview(int reviewId, int userId) {
-        log.info("Отправка запроса REMOVE_LIKE");
-        jdbc.update(Query.REMOVE_LIKE.getQuery(), reviewId);
+        if (isReviewLikeOrDislike(reviewId, userId)) {
+            log.info("Отправка запроса REMOVE_LIKE");
+            jdbc.update(Query.REMOVE_LIKE.getQuery(), reviewId);
+            jdbc.update(Query.DELETE_LIKE_FROM_REVIEW.getQuery(), reviewId, userId);
+        }
     }
 
     @Override
     public void removeDislikeFromReview(int reviewId, int userId) {
-        log.info("Отправка запроса LIKE_REVIEW");
-        jdbc.update(Query.LIKE_REVIEW.getQuery(), reviewId);
+        if (isReviewLikeOrDislike(reviewId, userId)) {
+            log.info("Отправка запроса LIKE_REVIEW");
+            jdbc.update(Query.LIKE_REVIEW.getQuery(), reviewId);
+            jdbc.update(Query.DELETE_LIKE_FROM_REVIEW.getQuery(), reviewId, userId);
+        }
+    }
+
+    private boolean isReviewLikeOrDislike(int reviewId, int userId) {
+        Integer count = jdbc.queryForObject(Query.IS_REVIEW_LIKE_OR_DISLIKE.getQuery(),
+                Integer.class, reviewId, userId);
+        return count != null && count > 0;
     }
 }

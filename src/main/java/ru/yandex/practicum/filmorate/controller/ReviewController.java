@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.ReviewDto;
 import ru.yandex.practicum.filmorate.service.ReviewService;
@@ -47,24 +48,28 @@ public class ReviewController {
         return reviewService.findAll(filmId, count);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{id}/like/{userId}")
     public void likeReview(@PathVariable("id") int id, @PathVariable("userId") int userId) {
         log.info("Получен HTTP-запрос по адресу /reviews/{id}/like/{userId} (метод PUT). Вызван метод likeReview(id, userId)");
         reviewService.likeReview(id, userId);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping("/{id}/dislike/{userId}")
     public void dislikeReview(@PathVariable("id") int id, @PathVariable("userId") int userId) {
         log.info("Получен HTTP-запрос по адресу /reviews/{id}/dislike/{userId} (метод PUT). Вызван метод dislikeReview(id, userId)");
         reviewService.dislikeReview(id, userId);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}/like/{userId}")
     public void removeLikeFromReview(@PathVariable("id") int id, @PathVariable("userId") int userId) {
         log.info("Получен HTTP-запрос по адресу /reviews/{id}/like/{userId} (метод DELETE). Вызван метод removeLikeFromReview(id, userId)");
         reviewService.removeLikeFromReview(id, userId);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{id}/dislike/{userId}")
     public void removeDislikeFromReview(@PathVariable("id") int id, @PathVariable("userId") int userId) {
         log.info("Получен HTTP-запрос по адресу /reviews/{id}/dislike/{userId} (метод DELETE). Вызван метод removeDislikeFromReview(id, userId)");
