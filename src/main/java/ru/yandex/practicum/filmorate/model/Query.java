@@ -103,8 +103,12 @@ public enum Query {
     GET_REVIEW_WITH_ID("SELECT * FROM reviews WHERE review_id = ?"),
     GET_REVIEWS("SELECT * FROM reviews WHERE films_id = ? ORDER BY useful DESC LIMIT ?"),
     LIKE_REVIEW("UPDATE reviews SET useful = useful + 1 WHERE review_id = ?"),
+    LIKE_REVIEW_IF_DISLIKE("UPDATE reviews SET useful = useful + 2 WHERE review_id = ?"),
     REMOVE_LIKE("UPDATE reviews SET useful = useful - 1 WHERE review_id = ?"),
-    DISLIKE_REVIEW("UPDATE reviews SET useful = useful - 1 WHERE review_id = ?"),
+    REMOVE_LIKE_IF_DISLIKE("UPDATE reviews SET useful = useful - 2 WHERE review_id = ?"),
+    INSERT_LIKE("INSERT INTO review_user_likes (review_id, user_id, like_or_dislike) VALUES (?, ?, ?)"),
+    DELETE_LIKE_FROM_REVIEW("DELETE FROM review_user_likes WHERE review_id = ? AND user_id = ?"),
+    IS_REVIEW_LIKE_OR_DISLIKE("SELECT COUNT(*) FROM review_user_likes WHERE REVIEW_ID = ? AND USER_ID = ?"),
 
     FIND_LIST_LIKED_FILMS("SELECT film_id " +
             "FROM films_like " +
