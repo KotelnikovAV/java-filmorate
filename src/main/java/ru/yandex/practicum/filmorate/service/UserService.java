@@ -27,5 +27,4 @@ public interface UserService {
     void delete(int id);
 
     List<FilmDto> getRecommendationsFilms(int userId);
-
 }

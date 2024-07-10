@@ -142,6 +142,14 @@ public enum Query {
             "WHERE f.directors LIKE ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(fl.user_id) DESC"),
+    INSERT_USER_EVENT("INSERT INTO users_events(user_id, event_type, operation, entity_id, timestamp) " +
+            " VALUES (?, ?, ?, ?, ?)"),
+    INSERT_USERS_EVENTS_TABLE("INSERT INTO users_events_table( user_id, user_events_id) VALUES (?, ?)"),
+    GET_USERS_EVENTS("SELECT ue.* " +
+            "FROM users_events_table AS uet " +
+            "JOIN users_events AS ue ON uet.user_events_id = ue.id " +
+            "WHERE uet.user_id = ? " +
+            "ORDER BY ue.timestamp"),
     GET_USERS_ID_FROM_FILMS_LIKE("SELECT DISTINCT user_id FROM films_like"),
     GET_ALL_FILMS_BY_DIRECTOR_ID_SORT_BY_LIKES("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, " +
             "m.id AS mpa_id, m.name AS mpa_name, f.directors " +
