@@ -11,10 +11,8 @@ import java.sql.Timestamp;
 @Builder
 public class UserEvent {
     private int eventId;
-    @NotNull
     @Positive
     private int userId;
-    @NotNull
     @Positive
     private int entityId;
     @NotNull

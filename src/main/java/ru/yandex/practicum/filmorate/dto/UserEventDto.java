@@ -9,19 +9,14 @@ import lombok.Data;
 @Data
 @Builder
 public class UserEventDto {
-    @NotNull
     @Positive
     private int eventId;
-    @NotNull
     @Positive
     private int userId;
-    @NotNull
     @Positive
     private int entityId;
-    @NotNull
     @NotBlank
     private String eventType;
-    @NotNull
     @NotBlank
     private String operation;
     @NotNull
