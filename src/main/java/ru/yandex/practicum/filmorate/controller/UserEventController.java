@@ -19,7 +19,7 @@ public class UserEventController {
     private final UserEventService userEventService;
 
     @GetMapping("{id}/feed")
-    public List<UserEventDto> getUserEvents(@PathVariable int id) {
+    public List<UserEventDto> getAllUserEvents(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /users/{id}/feed (метод GET). "
                 + "Вызван метод getAllUserEvents(@PathVariable int id)");
         return userEventService.getAllUserEvents(id);

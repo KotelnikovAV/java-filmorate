@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,9 +11,17 @@ import java.sql.Timestamp;
 @Builder
 public class UserEvent {
     private int eventId;
+    @NotNull
+    @Positive
     private int userId;
+    @NotNull
+    @Positive
     private int entityId;
+    @NotNull
     private EventType eventType;
+    @NotNull
     private Operation operation;
+    @NotNull
+    @Positive
     private Timestamp timestamp;
 }
