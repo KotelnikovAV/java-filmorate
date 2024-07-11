@@ -169,8 +169,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(int id) {
         log.info("Начало процесса удаления пользователя с id = {}", id);
-        checkUser(id);
+        checkUser(id).orElseThrow(() -> {
+            log.error("Пользователя с id {}, нет. Удаление не произошло", id);
+            return new NotFoundException("Пользователя с id " + id + " нет");
+        });
         userRepository.delete(id);
+        log.info("User c id {}, успешно удален", id);
     }
 
     @Override
