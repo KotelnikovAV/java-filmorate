@@ -44,7 +44,6 @@ public class UserController {
         log.info("Получен HTTP-запрос по адресу /users/{userId} (метод DELETE). " +
                 " Вызван метод delete(@PathVariable int userId)");
         userService.delete(userId);
-        log.info("User c id {}, успешно удален", userId);
     }
 
     @GetMapping("/{userId}")
