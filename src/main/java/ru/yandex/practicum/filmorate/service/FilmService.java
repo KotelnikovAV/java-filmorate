@@ -3,15 +3,14 @@ package ru.yandex.practicum.filmorate.service;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface FilmService {
 
-    FilmDto addLike(int filmId, int userId);
+    void addLike(int filmId, int userId);
 
-    FilmDto deleteLike(int filmId, int userId);
+    void deleteLike(int filmId, int userId);
 
-    List<FilmDto> getPopularFilms(int count, Optional<Integer> genreId, Optional<Integer> year);
+    List<FilmDto> getPopularFilms(int count, int genreId, int year);
 
     List<FilmDto> findAll();
 

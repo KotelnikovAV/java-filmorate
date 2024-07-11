@@ -60,13 +60,14 @@ public enum Query {
             "FROM films AS f " +
             "INNER JOIN mpa as m ON f.mpa_id = m.id " +
             "WHERE f.id = ?"),
-    FIND_FRIEND("SELECT incoming_request_user_id AS user_id " +
+    FIND_FRIEND("SELECT * FROM users " +
+            "WHERE id IN (SELECT incoming_request_user_id AS user_id " +
             "FROM adding_friends " +
             "WHERE outgoing_request_user_id = ? " +
             "UNION " +
             "SELECT outgoing_request_user_id AS user_id " +
             "FROM adding_friends " +
-            "WHERE incoming_request_user_id = ? AND confirmation = true"),
+            "WHERE incoming_request_user_id = ? AND confirmation = true)"),
     FIND_LIST_LIKED_FILMS("SELECT film_id " +
             "FROM films_like " +
             "WHERE user_id = ?"),
@@ -78,6 +79,30 @@ public enum Query {
             "FROM films AS f " +
             "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
             "LEFT JOIN (SELECT film_id, COUNT(user_id) AS likes_count FROM films_like GROUP BY film_id) AS fl ON f.id = fl.film_id " +
+            "ORDER BY fl.likes_count DESC " +
+            "LIMIT ?"),
+    FIND_POPULAR_FILMS_SORT_BY_GENRE("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +
+            "m.name AS mpa_name, f.directors " +
+            "FROM films AS f " +
+            "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
+            "LEFT JOIN (SELECT film_id, COUNT(user_id) AS likes_count FROM films_like GROUP BY film_id) AS fl ON f.id = fl.film_id " +
+            "WHERE f.genre iLIKE ? " +
+            "ORDER BY fl.likes_count DESC " +
+            "LIMIT ?"),
+    FIND_POPULAR_FILMS_SORT_BY_GENRE_AND_YEAR("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +
+            "m.name AS mpa_name, f.directors " +
+            "FROM films AS f " +
+            "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
+            "LEFT JOIN (SELECT film_id, COUNT(user_id) AS likes_count FROM films_like GROUP BY film_id) AS fl ON f.id = fl.film_id " +
+            "WHERE f.genre iLIKE ? AND EXTRACT(year FROM f.releaseDate) = ? " +
+            "ORDER BY fl.likes_count DESC " +
+            "LIMIT ?"),
+    FIND_POPULAR_FILMS_SORT_BY_YEAR("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +
+            "m.name AS mpa_name, f.directors " +
+            "FROM films AS f " +
+            "INNER JOIN mpa AS m ON f.mpa_id = m.id " +
+            "LEFT JOIN (SELECT film_id, COUNT(user_id) AS likes_count FROM films_like GROUP BY film_id) AS fl ON f.id = fl.film_id " +
+            "WHERE EXTRACT(year FROM f.releaseDate) = ? " +
             "ORDER BY fl.likes_count DESC " +
             "LIMIT ?"),
     FIND_POPULAR_FILMS_BY_TITLE("SELECT f.id, f.name, f.description, f.releaseDate, f.duration, f.genre, m.id AS mpa_id, " +

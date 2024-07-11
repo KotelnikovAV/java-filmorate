@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,7 @@ public class UserEventController {
     private final UserEventService userEventService;
 
     @GetMapping("{id}/feed")
-    public List<UserEventDto> getAllUserEvents(@PathVariable int id) {
+    public List<UserEventDto> getAllUserEvents(@Valid @PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /users/{id}/feed (метод GET). "
                 + "Вызван метод getAllUserEvents(@PathVariable int id)");
         return userEventService.getAllUserEvents(id);

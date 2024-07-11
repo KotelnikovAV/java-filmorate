@@ -33,6 +33,9 @@ public class FilmController {
     @GetMapping("director/{directorId}")
     public List<FilmDto> getFilmsByDirectorId(@PathVariable int directorId,
                                               @RequestParam(defaultValue = "year") String sortBy) {
+        log.info("Получен HTTP-запрос по адресу /films (метод GET). "
+                + "Вызван метод getFilmsByDirectorId(@PathVariable int directorId, " +
+                "@RequestParam(defaultValue = \"year\") String sortBy)");
         return filmService.getFilmsByDirectorId(directorId, sortBy);
     }
 

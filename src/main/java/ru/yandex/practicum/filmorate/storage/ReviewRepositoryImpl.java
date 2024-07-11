@@ -17,7 +17,6 @@ import static ru.yandex.practicum.filmorate.storage.BaseDbStorage.insert;
 @RequiredArgsConstructor
 @Repository
 public class ReviewRepositoryImpl implements ReviewRepository {
-
     private final JdbcTemplate jdbc;
     private final RowMapper<Review> rowMapper;
 

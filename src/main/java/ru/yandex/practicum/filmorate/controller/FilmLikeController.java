@@ -7,7 +7,6 @@ import ru.yandex.practicum.filmorate.dto.FilmDto;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -18,8 +17,8 @@ public class FilmLikeController {
 
     @GetMapping("popular")
     public List<FilmDto> getPopularFilms(@RequestParam(defaultValue = "10") int count,
-                                                           @RequestParam Optional<Integer> genreId,
-                                                           @RequestParam Optional<Integer> year) {
+                                         @RequestParam(defaultValue = "0") int genreId,
+                                         @RequestParam(defaultValue = "0") int year) {
         log.info("Получен HTTP-запрос по адресу /films/popular?count={limit}&genreId={genreId}&year={year} (метод GET). "
                 + "Вызван метод getPopularFilmsSortByGenreAndYear(@RequestParam(defaultValue = \"10\") int count, " +
                 "@RequestParam Optional<Integer> genreId, @RequestParam Optional<Integer> year)");
@@ -27,20 +26,19 @@ public class FilmLikeController {
     }
 
     @PutMapping("{id}/like/{userId}")
-    public FilmDto addLike(@PathVariable int id, @PathVariable int userId) {
+    public void addLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен HTTP-запрос по адресу /films/{id}/like/{userId} (метод PUT). Вызван метод "
                 + "addLike(@PathVariable int id, @PathVariable int userId)");
-        return filmService.addLike(id, userId);
+        filmService.addLike(id, userId);
     }
 
     @DeleteMapping("{id}/like/{userId}")
-    public FilmDto deleteLike(@PathVariable int id, @PathVariable int userId) {
+    public void deleteLike(@PathVariable int id, @PathVariable int userId) {
         log.info("Получен HTTP-запрос по адресу /films/{id}/like/{userId} (метод DELETE). Вызван метод "
                 + "deleteLike(@PathVariable int id, @PathVariable int userId)");
-        return filmService.deleteLike(id, userId);
+        filmService.deleteLike(id, userId);
     }
 
-    // add-common-films
     @GetMapping("/common")
     public List<FilmDto> getCommonFilms(@RequestParam("userId") int userId, @RequestParam("friendId") int friendId) {
         log.info("Получен HTTP-запрос по адресу /films/common?userId={userId}&friendId={friendId}. " +

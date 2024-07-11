@@ -8,7 +8,7 @@ public interface FriendsRepository {
 
     List<User> getAllFriendsById(int id);
 
-    User addFriend(int id, int friendId);
+    void addFriend(int id, int friendId);
 
-    User deleteFriend(int id, int friendId);
+    void deleteFriend(int id, int friendId);
 }

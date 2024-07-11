@@ -30,10 +30,10 @@ public class FilmServiceImpl implements FilmService {
     private final UserEventRepository userEventRepository;
 
     @Override
-    public FilmDto addLike(int filmId, int userId) {
+    public void addLike(int filmId, int userId) {
         log.info("Начало процесса добавление лайка");
         log.debug("Значение переменных при добавлении лайка filmId и userId: {}, {}", filmId, userId);
-        Film film = likesRepository.addLike(filmId, userId);
+        likesRepository.addLike(filmId, userId);
         log.info("Лайк поставлен");
 
         log.info("Создание UserEvent добавление лайка");
@@ -45,15 +45,13 @@ public class FilmServiceImpl implements FilmService {
                 .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
         log.info("Создание UserEvent добавление лайка успешно завершено");
-
-        return FilmMapper.mapToFilmDto(film);
     }
 
     @Override
-    public FilmDto deleteLike(int filmId, int userId) {
+    public void deleteLike(int filmId, int userId) {
         log.info("Начало процесса удаления лайка");
         log.debug("Значение переменных при удалении лайка filmId и userId: {}, {}", filmId, userId);
-        Film film = likesRepository.deleteLike(filmId, userId);
+        likesRepository.deleteLike(filmId, userId);
         log.info("Лайк удален");
 
         log.info("Создание UserEvent удаление лайка");
@@ -65,43 +63,23 @@ public class FilmServiceImpl implements FilmService {
                 .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
         log.info("Создание UserEvent удаление лайка успешно завершено");
-
-        return FilmMapper.mapToFilmDto(film);
     }
 
     @Override
-    public List<FilmDto> getPopularFilms(int count, Optional<Integer> genreId, Optional<Integer> year) {
+    public List<FilmDto> getPopularFilms(int count, int genreId, int year) {
         log.info("Начало процесса получения списка популярных фильмов");
         log.debug("Значение переменной count: {} ", count);
         List<Film> popularFilms;
 
-        if (genreId.isPresent() && year.isPresent()) {
-            log.info("Сортировка по genreId: {}, year: {}", genreId.get(), year.get());
-            popularFilms = likesRepository.getPopularFilms(Integer.MAX_VALUE)
-                    .stream()
-                    .filter(film -> film.getGenre()
-                            .stream()
-                            .map(Genre::getId)
-                            .toList().contains(genreId.get()))
-                    .filter(filmDto -> filmDto.getReleaseDate().getYear() == year.get())
-                    .limit(count)
-                    .toList();
-        } else if (genreId.isEmpty() && year.isPresent()) {
-            log.info("Сортировка по year: {}", year.get());
-            popularFilms = likesRepository.getPopularFilms(Integer.MAX_VALUE).stream()
-                    .filter(filmDto -> filmDto.getReleaseDate().getYear() == year.get())
-                    .limit(count)
-                    .toList();
-        } else if (genreId.isPresent()) {
-            log.info("Сортировка по genreId: {}", genreId.get());
-            popularFilms = likesRepository.getPopularFilms(Integer.MAX_VALUE)
-                    .stream()
-                    .filter(film -> film.getGenre()
-                            .stream()
-                            .map(Genre::getId)
-                            .toList().contains(genreId.get()))
-                    .limit(count)
-                    .toList();
+        if (genreId != 0 && year != 0) {
+            log.info("Сортировка по genreId: {}, year: {}", genreId, year);
+            popularFilms = likesRepository.getPopularFilmsSortByGenreAndYear(count, genreId, year);
+        } else if (genreId == 0 && year != 0) {
+            log.info("Сортировка по year: {}", year);
+            popularFilms = likesRepository.getPopularFilmsSortByYear(count, year);
+        } else if (genreId != 0) {
+            log.info("Сортировка по genreId: {}", genreId);
+            popularFilms = likesRepository.getPopularFilmsSortByGenre(count, genreId);
         } else {
             popularFilms = likesRepository.getPopularFilms(count);
         }
@@ -111,6 +89,7 @@ public class FilmServiceImpl implements FilmService {
                 .toList();
     }
 
+    @Override
     public List<FilmDto> getCommonFilms(int userId, int friendId) {
         log.info("Начало процесса получения списка общих фильмов");
         log.debug("Значение переменной userID: {}, значение переменной friendId: {}", userId, friendId);
@@ -141,11 +120,9 @@ public class FilmServiceImpl implements FilmService {
             throw new ValidationException(e.getMessage());
         }
 
-        if (film.getReleaseDate() != null) {
-            if (film.getReleaseDate().isBefore(MINIMUM_RELEASE_DATE)) {
-                log.error("Дата релиза фильма при создании до 28 декабря 1895 г.");
-                throw new ValidationException("Дата релиза фильма должна быть не раньше 28 декабря 1895 г.");
-            }
+        if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(MINIMUM_RELEASE_DATE)) {
+            log.error("Дата релиза фильма при создании до 28 декабря 1895 г.");
+            throw new ValidationException("Дата релиза фильма должна быть не раньше 28 декабря 1895 г.");
         }
 
         Film cratedFilm = filmRepository.create(FilmMapper.mapToFilm(film));
@@ -168,11 +145,9 @@ public class FilmServiceImpl implements FilmService {
             throw new ValidationException(e.getMessage());
         }
 
-        if (newFilm.getReleaseDate() != null) {
-            if (newFilm.getReleaseDate().isBefore(MINIMUM_RELEASE_DATE)) {
-                log.error("Дата релиза фильма при обновлении до 28 декабря 1895 г.");
-                throw new ValidationException("Дата релиза фильма должна быть не раньше 28 декабря 1895 г.");
-            }
+        if (newFilm.getReleaseDate() != null && newFilm.getReleaseDate().isBefore(MINIMUM_RELEASE_DATE)) {
+            log.error("Дата релиза фильма при обновлении до 28 декабря 1895 г.");
+            throw new ValidationException("Дата релиза фильма должна быть не раньше 28 декабря 1895 г.");
         }
 
         Film film = filmRepository.update(FilmMapper.mapToFilm(newFilm));

@@ -18,7 +18,6 @@ import java.util.Optional;
 @Slf4j
 public class LikesRepositoryImpl implements LikesRepository {
     private final JdbcTemplate jdbc;
-    private final FilmRepository filmRepository;
     private final RowMapper<Film> filmRowMapper;
 
     @Override
@@ -28,7 +27,32 @@ public class LikesRepositoryImpl implements LikesRepository {
     }
 
     @Override
-    public Film addLike(int filmId, int userId) {
+    public List<Film> getPopularFilmsSortByGenreAndYear(int count, int genreId, int year) {
+        log.info("Отправка запроса FIND_POPULAR_FILMS_SORT_BY_GENRE_AND_YEAR");
+        return jdbc.query(Query.FIND_POPULAR_FILMS_SORT_BY_GENRE_AND_YEAR.getQuery(),
+                filmRowMapper,
+                "%" + genreId + "%",
+                year,
+                count);
+    }
+
+    @Override
+    public List<Film> getPopularFilmsSortByGenre(int count, int genreId) {
+        log.info("Отправка запроса FIND_POPULAR_FILMS_SORT_BY_GENRE");
+        return jdbc.query(Query.FIND_POPULAR_FILMS_SORT_BY_GENRE.getQuery(),
+                filmRowMapper,
+                "%" + genreId + "%",
+                count);
+    }
+
+    @Override
+    public List<Film> getPopularFilmsSortByYear(int count, int year) {
+        log.info("Отправка запроса FIND_POPULAR_FILMS_SORT_BY_YEAR");
+        return jdbc.query(Query.FIND_POPULAR_FILMS_SORT_BY_YEAR.getQuery(), filmRowMapper, year, count);
+    }
+
+    @Override
+    public void addLike(int filmId, int userId) {
         log.info("Начало проверки наличия лайка");
         Optional<Integer> count = Optional.ofNullable(jdbc.queryForObject(Query.CHECKING_AVAILABILITY_FILM.getQuery(),
                 Integer.class, filmId, userId));
@@ -44,20 +68,16 @@ public class LikesRepositoryImpl implements LikesRepository {
         if (rowsCreated == 0) {
             throw new InternalServerException("Не удалось поставить лайк");
         }
-
-        return filmRepository.getFilmById(filmId);
     }
 
     @Override
-    public Film deleteLike(int filmId, int userId) {
+    public void deleteLike(int filmId, int userId) {
         log.info("Отправка запроса DELETE_LIKE");
         int rowsDeleted = jdbc.update(Query.DELETE_LIKE.getQuery(), filmId, userId);
 
         if (rowsDeleted == 0) {
             throw new NotFoundException("Данный пользователь лайк не ставил");
         }
-
-        return filmRepository.getFilmById(filmId);
     }
 
     @Override

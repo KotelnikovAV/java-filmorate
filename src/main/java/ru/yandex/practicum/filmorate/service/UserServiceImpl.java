@@ -11,11 +11,10 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.*;
-import ru.yandex.practicum.filmorate.storage.FriendsRepository;
-import ru.yandex.practicum.filmorate.storage.UserEventRepository;
-import ru.yandex.practicum.filmorate.storage.UserRepository;
+import ru.yandex.practicum.filmorate.storage.*;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,9 +25,11 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final FriendsRepository friendsRepository;
     private final UserEventRepository userEventRepository;
+    private final LikesRepository likesRepository;
+    private final FilmRepository filmRepository;
 
     @Override
-    public UserDto addFriend(int id, int friendId) {
+    public void addFriend(int id, int friendId) {
         log.info("Начало процесса добавления друга");
         log.debug("Значения переменных при добавлении друга id и friendId: {}, {}", id, friendId);
 
@@ -36,7 +37,7 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("Вы не можете добавить самого себя в друзья.");
         }
 
-        User user = friendsRepository.addFriend(id, friendId);
+        friendsRepository.addFriend(id, friendId);
         log.info("Заявка успешно отправлена");
 
         log.info("Создание UserEvent добавление в друзья");
@@ -47,12 +48,10 @@ public class UserServiceImpl implements UserService {
                 .operation(Operation.ADD)
                 .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
-
-        return UserMapper.mapToUserDto(user);
     }
 
     @Override
-    public UserDto deleteFriend(int id, int friendId) {
+    public void deleteFriend(int id, int friendId) {
         log.info("Начало процесса удаления друга");
         log.debug("Значения переменных при удалении друга id и friendId: {}, {}", id, friendId);
 
@@ -60,7 +59,7 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("Вы не можете удалить самого себя из друзей.");
         }
 
-        User user = friendsRepository.deleteFriend(id, friendId);
+        friendsRepository.deleteFriend(id, friendId);
         log.info("Пользователь удален из друзей");
 
         log.info("Создание UserEvent удаление из друзей");
@@ -72,8 +71,6 @@ public class UserServiceImpl implements UserService {
                 .timestamp(new Timestamp(System.currentTimeMillis()))
                 .build());
         log.info("Создание UserEvent удаление из друзей успешно завершено");
-
-        return UserMapper.mapToUserDto(user);
     }
 
     @Override
@@ -180,9 +177,44 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<FilmDto> getRecommendationsFilms(int userId) {
         log.info("Начало процесса получения рекомендаций для пользователя с id = {}", userId);
-        List<Film> films = userRepository.findRecommendationsId(userId);
+        List<Integer> userLikedFilms = likesRepository.getIdFilmsLikedByUser(userId);
+        List<Integer> userIds = userRepository.getAllUserWhoLikedFilms();
+
+        if (userIds.isEmpty() || userLikedFilms.isEmpty()) {
+            return new ArrayList<>();
+        } else if (userIds.size() == 1) {
+            return new ArrayList<>();
+        }
+
+        int countSameLikes = -1;
+        int anotherUserId = userId;
+
+        for (Integer id : userIds) {
+            if (countSameLikes < getSizeCommonFilmsList(userId, id)) {
+                countSameLikes = getSizeCommonFilmsList(userId, id);
+                anotherUserId = id;
+            }
+        }
+
+        if (countSameLikes < 0) {
+            List<Integer> filmsExceptUserLiked = new ArrayList<>(filmRepository.findAll().stream()
+                    .map(Film::getId)
+                    .toList());
+            filmsExceptUserLiked.retainAll(userLikedFilms);
+            log.info("Рекомендации успешно получены");
+            return filmsExceptUserLiked.stream()
+                    .map(filmRepository::getFilmById)
+                    .map(FilmMapper::mapToFilmDto)
+                    .toList();
+        }
+
+        List<Integer> recommendationsId = likesRepository.getIdFilmsLikedByUser(anotherUserId);
+        recommendationsId.removeAll(userLikedFilms);
         log.info("Рекомендации успешно получены");
-        return films.stream()
+
+        return recommendationsId
+                .stream()
+                .map(filmRepository::getFilmById)
                 .map(FilmMapper::mapToFilmDto)
                 .toList();
     }
@@ -193,6 +225,25 @@ public class UserServiceImpl implements UserService {
             return Optional.ofNullable(user);
         } catch (EmptyResultDataAccessException ignored) {
             return Optional.empty();
+        }
+    }
+
+    private int getSizeCommonFilmsList(int userId, int anotherId) {
+        log.debug("Запущен вспомогателный метод getSizeCommonFilmsList, " +
+                "для получения размера списка общих фильмов для пользователей " +
+                "userId = {} и anotherId = {}", userId, anotherId);
+
+        List<Integer> userFilm = likesRepository.getIdFilmsLikedByUser(userId);
+        List<Integer> friendFilm = likesRepository.getIdFilmsLikedByUser(anotherId);
+
+        if (friendFilm.size() > userFilm.size() && userId != anotherId) {
+            friendFilm.retainAll(userFilm);
+            return friendFilm.size();
+        } else if (userFilm.size() > friendFilm.size()) {
+            userFilm.retainAll(friendFilm);
+            return -1 * userFilm.size();
+        } else {
+            return 0;
         }
     }
 }

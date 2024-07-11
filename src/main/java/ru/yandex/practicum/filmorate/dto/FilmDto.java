@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -21,6 +22,7 @@ public class FilmDto {
     @Positive
     private int duration;
     private LinkedHashSet<GenreDto> genres;
+    @NotNull
     private MpaDto mpa;
     private LinkedHashSet<DirectorDto> directors;
 }
