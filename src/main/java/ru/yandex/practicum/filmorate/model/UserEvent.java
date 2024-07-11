@@ -22,5 +22,6 @@ public class UserEvent {
     @NotNull
     private Operation operation;
     @NotNull
+    @Positive
     private Timestamp timestamp;
 }
