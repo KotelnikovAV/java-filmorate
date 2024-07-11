@@ -17,33 +17,38 @@ import java.util.List;
 public class ReviewController {
     private final ReviewService reviewService;
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public ReviewDto add(@Valid @RequestBody ReviewDto review) {
         log.info("Получен HTTP-запрос по адресу /reviews (метод POST). Вызван метод add(review)");
         return reviewService.add(review);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PutMapping
     public ReviewDto update(@Valid @RequestBody ReviewDto review) {
         log.info("Получен HTTP-запрос по адресу /reviews (метод PUT). Вызван метод update(review)");
         return reviewService.update(review);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("{id}")
     public void deleteById(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /reviews/{id} (метод DELETE). Вызван метод deleteById(id)");
         reviewService.deleteById(id);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("{id}")
     public ReviewDto findById(@PathVariable int id) {
         log.info("Получен HTTP-запрос по адресу /reviews/{id} (метод GET). Вызван метод findById(id)");
         return reviewService.findById(id);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping
-    public List<ReviewDto> findAll(@RequestParam(defaultValue = "0", required = false) int filmId,
-                                   @RequestParam(defaultValue = "10", required = false) int count) {
+    public List<ReviewDto> findAll(@RequestParam(defaultValue = "0") int filmId,
+                                   @RequestParam(defaultValue = "10") int count) {
         log.info("Получен HTTP-запрос по адресу /reviews?filmId={filmId}&count={count} (метод GET). " +
                 "Вызван метод findAll(filmId, count)");
         return reviewService.findAll(filmId, count);

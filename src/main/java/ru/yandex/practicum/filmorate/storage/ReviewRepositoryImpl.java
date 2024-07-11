@@ -25,10 +25,6 @@ public class ReviewRepositoryImpl implements ReviewRepository {
     public Review add(Review review) {
         log.info("Отправка запроса ADD_REVIEW");
 
-        if (review.getFilmId() < 0 || review.getUserId() < 0) {
-            throw new NotFoundException("Такого фильма или пользователя не существует");
-        }
-
         int id = insert(
                 jdbc,
                 Query.ADD_REVIEW.getQuery(),
