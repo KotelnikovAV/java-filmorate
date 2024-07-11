@@ -12,6 +12,9 @@ public class ReviewMapper {
     public Review mapToReview(ReviewDto reviewDto) {
         log.info("Начало преобразования ReviewDto в Review");
 
+        if (reviewDto == null) {
+            return null;
+        }
         Review review = Review.builder()
                 .reviewId(reviewDto.getReviewId())
                 .content(reviewDto.getContent())
@@ -28,6 +31,10 @@ public class ReviewMapper {
 
     public ReviewDto mapToReviewDto(Review review) {
         log.info("Начало преобразования Review в ReviewDto");
+
+        if (review == null) {
+            return null;
+        }
 
         ReviewDto reviewDto = ReviewDto.builder()
                 .reviewId(review.getReviewId())
