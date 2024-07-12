@@ -13,4 +13,16 @@ public interface FilmRepository {
     Film update(Film newFilm);
 
     Film getFilmById(int filmId);
+
+    void delete(int filmId);
+
+    List<Film> getFilmsByDirectorIdSortByYear(int directorId);
+
+    List<Film> getFilmsByDirectorIdSortByLikes(int directorId);
+
+    List<Film> getPopularFilmsByTitleAndDirector(String query);
+
+    List<Film> getPopularFilmsByTitle(String query);
+
+    List<Film> getPopularFilmsByDirector(String query);
 }

@@ -11,6 +11,11 @@ public class MpaMapper {
 
     public Mpa mapToMpa(MpaDto mpaDto) {
         log.info("Начало преобразования MpaDto в Mpa");
+
+        if (mpaDto == null) {
+            return null;
+        }
+
         Mpa mpa = Mpa.builder()
                 .id(mpaDto.getId())
                 .build();
@@ -20,6 +25,11 @@ public class MpaMapper {
 
     public MpaDto mapToMpaDto(Mpa mpa) {
         log.info("Начало преобразования Mpa в MpaDto");
+
+        if (mpa == null) {
+            return null;
+        }
+
         MpaDto mpaDto = MpaDto.builder()
                 .id(mpa.getId())
                 .name(mpa.getName())

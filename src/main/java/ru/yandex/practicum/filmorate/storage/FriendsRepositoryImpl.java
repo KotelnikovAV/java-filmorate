@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.storage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -17,21 +18,17 @@ import java.util.Optional;
 @Slf4j
 public class FriendsRepositoryImpl implements FriendsRepository {
     private final JdbcTemplate jdbc;
-    private final UserRepository userRepository;
+    private final RowMapper<User> userRowMapper;
 
     @Override
     public List<User> getAllFriendsById(int id) {
         log.info("Отправка запроса FIND_FRIEND");
         checkUsers(id);
-        List<Integer> idFriends = jdbc.queryForList(Query.FIND_FRIEND.getQuery(), Integer.class, id, id);
-        return idFriends
-                .stream()
-                .map(userRepository::getUser)
-                .toList();
+        return jdbc.query(Query.FIND_FRIEND.getQuery(), userRowMapper, id, id);
     }
 
     @Override
-    public User addFriend(int id, int friendId) {
+    public void addFriend(int id, int friendId) {
         checkUsers(id);
         checkUsers(friendId);
         log.info("Начало проверки на наличие ранее отправленной заявки");
@@ -55,7 +52,6 @@ public class FriendsRepositoryImpl implements FriendsRepository {
             }
 
             log.info("Заявка принята");
-            return userRepository.getUser(id);
         }
 
         log.info("Отправка запроса ADD_FRIEND");
@@ -64,17 +60,14 @@ public class FriendsRepositoryImpl implements FriendsRepository {
         if (rowsCreated == 0) {
             throw new InternalServerException("Не удалось добавить пользователя в друзья");
         }
-
-        return userRepository.getUser(id);
     }
 
     @Override
-    public User deleteFriend(int id, int friendId) {
+    public void deleteFriend(int id, int friendId) {
         log.info("Отправка запроса DELETE_FRIEND");
         checkUsers(id);
         checkUsers(friendId);
         jdbc.update(Query.DELETE_FRIEND.getQuery(), id, friendId);
-        return userRepository.getUser(id);
     }
 
     private void checkUsers(int id) {

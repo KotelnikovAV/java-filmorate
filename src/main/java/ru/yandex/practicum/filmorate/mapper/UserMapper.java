@@ -11,6 +11,11 @@ public class UserMapper {
 
     public User mapToUser(UserDto userDto) {
         log.info("Начало преобразования UserDto в User");
+
+        if (userDto == null) {
+            return null;
+        }
+
         User user = User.builder()
                 .id(userDto.getId())
                 .email(userDto.getEmail())
@@ -24,7 +29,12 @@ public class UserMapper {
 
     public UserDto mapToUserDto(User user) {
         log.info("Начало преобразования User в UserDto");
-        UserDto userDto =  UserDto.builder()
+
+        if (user == null) {
+            return null;
+        }
+
+        UserDto userDto = UserDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .login(user.getLogin())

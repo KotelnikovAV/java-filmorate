@@ -13,4 +13,8 @@ public interface UserRepository {
     User update(User newUser);
 
     User getUser(int id);
+
+    void delete(int id);
+
+    List<Integer> getAllUserWhoLikedFilms();
 }

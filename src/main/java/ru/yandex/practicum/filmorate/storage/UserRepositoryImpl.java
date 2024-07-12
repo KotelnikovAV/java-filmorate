@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.sql.Date;
 import java.util.List;
 
+
 @Repository
 @RequiredArgsConstructor
 @Slf4j
@@ -63,5 +64,17 @@ public class UserRepositoryImpl implements UserRepository {
     public User getUser(int id) {
         log.info("Отправка запроса FIND_USERS_BY_ID");
         return jdbc.queryForObject(Query.FIND_USERS_BY_ID.getQuery(), mapper, id);
+    }
+
+    @Override
+    public void delete(int id) {
+        log.info("Отправка запроса DELETE_USER");
+        jdbc.update(Query.DELETE_USER.getQuery(), id);
+    }
+
+    @Override
+    public List<Integer> getAllUserWhoLikedFilms() {
+        log.info("Отправка запроса GET_USERS_ID_FROM_FILMS_LIKE");
+        return jdbc.queryForList(Query.GET_USERS_ID_FROM_FILMS_LIKE.getQuery(), Integer.class);
     }
 }
