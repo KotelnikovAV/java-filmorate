@@ -12,6 +12,11 @@ public class GenreMapper {
 
     public Genre mapToGenre(GenreDto genreDto) {
         log.info("Начало преобразования GenreDto в Genre");
+
+        if (genreDto == null) {
+            return null;
+        }
+
         Genre genre = Genre.builder()
                 .id(genreDto.getId())
                 .build();
@@ -21,6 +26,11 @@ public class GenreMapper {
 
     public GenreDto mapToGenreDto(Genre genre) {
         log.info("Начало преобразования Genre в GenreDto");
+
+        if (genre == null) {
+            return null;
+        }
+
         GenreDto genreDto = GenreDto.builder()
                 .id(genre.getId())
                 .name(genre.getName())

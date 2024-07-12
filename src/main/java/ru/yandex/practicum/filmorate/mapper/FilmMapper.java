@@ -20,6 +20,11 @@ public class FilmMapper {
 
     public Film mapToFilm(FilmDto filmDto) {
         log.info("Начало преобразования FilmDto в Film");
+
+        if (filmDto == null) {
+            return null;
+        }
+
         LinkedHashSet<GenreDto> requestGenreDto = filmDto.getGenres();
         LinkedHashSet<DirectorDto> requestDirectorDto = filmDto.getDirectors();
         List<Genre> genres = new ArrayList<>();
@@ -54,6 +59,11 @@ public class FilmMapper {
 
     public FilmDto mapToFilmDto(Film film) {
         log.info("Начало преобразования Film в FilmDto");
+
+        if (film == null) {
+            return null;
+        }
+
         List<Genre> genres = film.getGenre();
         List<Director> directors = film.getDirectors();
         LinkedHashSet<GenreDto> responseGenreDto = new LinkedHashSet<>();

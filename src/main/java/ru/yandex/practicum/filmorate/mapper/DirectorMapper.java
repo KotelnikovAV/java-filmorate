@@ -11,9 +11,11 @@ public class DirectorMapper {
 
     public Director mapToDirector(DirectorDto directorDto) {
         log.info("Начало преобразования DirectorDto в Director");
+
         if (directorDto == null) {
             return null;
         }
+
         Director director = Director.builder()
                 .id(directorDto.getId())
                 .name(directorDto.getName())
@@ -24,9 +26,11 @@ public class DirectorMapper {
 
     public DirectorDto mapToDirectorDto(Director director) {
         log.info("Начало преобразования Director в DirectorDto");
+
         if (director == null) {
             return null;
         }
+
         DirectorDto directorDto = DirectorDto.builder()
                 .id(director.getId())
                 .name(director.getName())
